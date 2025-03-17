@@ -7,7 +7,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 import 'package:googleapis_auth/auth_io.dart' as auth;
 import 'package:path_provider/path_provider.dart';
-
 import '../XXX/XXXFirebase.dart';
 
 
@@ -569,18 +568,18 @@ List<Message>? mes =[];
 
   final  largeIconpath = await downloadAndSaveFile1(image, 'downloaded_image.png');
 
-  final bigPickger = await downloadAndSaveFile1(image, 'downloaded_image.png');
+  // final bigPickger = await downloadAndSaveFile1(image, 'downloaded_image.png');
 
 
 
 
 
 
-  final  styleInformation = BigPictureStyleInformation(
-    FilePathAndroidBitmap(bigPickger),
-    largeIcon: FilePathAndroidBitmap(largeIconpath),
-
-  );
+  // final  styleInformation = BigPictureStyleInformation(
+  //   FilePathAndroidBitmap(bigPickger),
+  //   largeIcon: FilePathAndroidBitmap(largeIconpath),
+  //
+  // );
 
 
 
@@ -743,7 +742,6 @@ static sendNotificationMessageToUser(String to ,String title,String body,String 
 
   final String serverKey = await getAccessToken() ;
 
-  final String fcmEndpoint = 'https://fcm.googleapis.com/v1/projects/codora-app1/messages:send';
 
 
   final Map<String, dynamic> message = {
@@ -762,7 +760,7 @@ static sendNotificationMessageToUser(String to ,String title,String body,String 
   };
 
   final http.Response response = await http.post(
-    Uri.parse(fcmEndpoint),
+    Uri.parse(dotenv.env['FCME_NDPOINT']!),
     headers: <String, String>{
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $serverKey',

@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "1055248567801",
+    "project_id": "codora-app1",
+    "storage_bucket": "codora-app1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1055248567801:android:e27474049d164abcd20128",
+        "android_client_info": {
+          "package_name": "com.homy.codora"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1055248567801-lh1d88b86k9v645q4mfu7q261268cirt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-_5Y1y1O3mQV2HmzIhsj7mjKjvZMSbr8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1055248567801-5uckb1hu9qjncav6ahmjnfa1h5dlqd59.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1055248567801-1m88bdj7h49pupand41n468ql0rem01h.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.homy.codora"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

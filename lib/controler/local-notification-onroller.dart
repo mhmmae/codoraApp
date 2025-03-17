@@ -743,7 +743,7 @@ static sendNotificationMessageToUser(String to ,String title,String body,String 
 
   final String serverKey = await getAccessToken() ;
 
-  final String fcmEndpoint = 'https://fcm.googleapis.com/v1/projects/homy-3693e/messages:send';
+  final String fcmEndpoint = 'https://fcm.googleapis.com/v1/projects/codora-app1/messages:send';
 
 
   final Map<String, dynamic> message = {

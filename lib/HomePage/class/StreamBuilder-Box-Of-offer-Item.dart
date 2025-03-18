@@ -120,13 +120,10 @@ class StreambuilderBoxOfOfferItem extends StatelessWidget {
                                 GestureDetector(
                                   onTap: ()async{
 
-                                    // Navigator.push(context, MaterialPageRoute(builder: (context)=>DetalesOfItems(url:dede['url'] ,priceOfItem:  dede['priceOfItem'],
-                                    //     typeItem: '',rate: dede['rate'],
-                                    //     nameOfItem: dede['nameOfItem'],descriptionOfItem: dede['descriptionOfItem'],uid:dede['uid'] ,isOffer: true,VideoURL: dede['videoURL']
-                                    // )));
-                                    // ============================================================================================== لا تمسح====================
-                                    // ============================================================================================== لا تمسح====================
-                                    // ============================================================================================== لا تمسح====================
+                                    Navigator.push(context, MaterialPageRoute(builder: (context)=>DetalesOfItems(url:dede['url'] ,priceOfItem:  dede['priceOfItem'],
+                                        typeItem: '',rate: dede['rate'],images: dede["manyImages"]??'',
+                                        nameOfItem: dede['nameOfItem'],descriptionOfItem: dede['descriptionOfItem'],uid:dede['uid'] ,isOffer: true,VideoURL: dede['videoURL']
+                                    )));
 
 
 
@@ -134,23 +131,6 @@ class StreambuilderBoxOfOfferItem extends StatelessWidget {
 
 
 
-
-                                    // FirebaseMessaging.instance.getToken().then((val){
-                                    //   print(val);
-                                    // });
-                                   await localNotification.showNotofication('body', 'body', 'payload',
-                                        'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg');
-
-                                    //  await localNotification.sendNotificationMessageToUser(
-                                    // 'cvn7Bn1gS0iilzXWJ6_lbH:APA91bE_CqJ1iHnfD5VVkCJRimptKS1OjOY7_TV2rRTsTR1JHjp8fR3RboIRqFWynDq4A-p4pdXYMbIrkNJWSSioWBmGLzuxqvUp85JhK3sWftDeQy3V1Hk',
-                                    //      'dhdh', 'body', 'sgsdg', "type", "https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg");
-                                    //
-
-                                    // Get.to(DetalesOfItems(url:dede['url'] ,priceOfItem:  dede['priceOfItem'],
-                                    //   nameOfItem: dede['nameOfItem'],descriptionOfItem: dede['descriptionOfItem'],uid:dede['uid'] ,
-                                    //   isOffer: true,VideoURL: dede['videoURL'],
-                                    // ));
-                                    //
 
                                   },
                                   child: Padding(

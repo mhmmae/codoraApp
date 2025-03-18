@@ -105,7 +105,7 @@ class Fuctionofmasagesendandwhrit extends StatelessWidget {
                             onTap: () {
 
 
-                              // logic.sendMessage2();
+                              logic.sendMessage2();
 
 
                             },

@@ -25,7 +25,7 @@ class FirebaseX{
 
   //مهم جدا++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-  static String UIDOfWnerApp ='CkYi1UK0oDOkUHes2vFzkQCFeuZ2';
+  static String UIDOfWnerApp ='KD7Y21Kxgdez64CaVi4eOrE7gOH3';
   static String EmailOfWnerApp ='mhmmae19@gmail.com';
 }
 
@@ -33,21 +33,21 @@ class ImageX{
   //الصورة المستخدمة في التسجيل
   static String ImageOfSignUp = 'assete/logo.png';
 
-  static String ImageOfGoogle ='assete/ddd.png';
+  static String ImageOfGoogle ='assete/imgeGoogle.png';
 
-  static String ImageOfPerson = 'assete/fff.png';
+  static String ImageOfPerson = 'assete/person2.png';
 
-  static String ImageApp = 'assete/ggg.png';
-  static String ImageHome = 'assete/sss.png';
+  static String ImageApp = 'assete/logo.png';
+  static String ImageHome = 'assete/home.png';
   static String ImageAddVodioItem = 'assete/youtube.png';
   static String ImageAddImage = 'assete/menuPickgers.png';
 
 
 
 //   الصور المستخدمة في الصفحة الشخصية الخريطة
-   static String imageofColok ='asset/colok.png';
-   static String imageofdilivery ='asset/dilivery.png';
-   static String imageofDiliveryDone ='asset/doneDilivery.png';
+   static String imageofColok ='assete/clock.png';
+   static String imageofdilivery ='assete/inway.png';
+   static String imageofDiliveryDone ='assete/dane.png';
 
 
 }

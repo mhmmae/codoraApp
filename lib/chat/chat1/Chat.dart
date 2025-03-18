@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../XXX/XXXFirebase.dart';
 import '../../bottonBar/botonBar.dart';
+import 'Getx/GetxSendMassage.dart';
 import 'class/FuctionOfMasageSendAndWhrit.dart';
 import 'class/StreamGetMasageList.dart';
 
@@ -63,8 +65,8 @@ class chat extends StatelessWidget {
 
 
       body:
-      // Stack(
-      //   children: [
+      Stack(
+        children: [
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -96,35 +98,35 @@ class chat extends StatelessWidget {
             ],
           ),
 
-          // GetBuilder<Getxsendmassage>(init: Getxsendmassage(Maseage: Maseage, uid: uid),builder: (val){
-          //   return val.isRecord ==true? Positioned(bottom: hi/14,right: wi/40,child: Container(width: wi/5,height: hi/20,decoration: BoxDecoration(
-          //     color: Colors.redAccent,
-          //     borderRadius: BorderRadius.circular(7)
-          //   ),
-          //     child: Center(child: Row(
-          //       mainAxisAlignment: MainAxisAlignment.center,
-          //       children: [
-          //         Text('${val.minut}',style: TextStyle(color: Colors.white70),),
-          //         Text(':',style: TextStyle(color: Colors.white70),),
-          //
-          //         Text('${val.second}',style: TextStyle(color: Colors.white70),),
-          //       ],
-          //     )),
-          //   )): Container() ;
-          //
-          // }),
-          // GetBuilder<Getxsendmassage>(init: Getxsendmassage(Maseage: Maseage, uid: uid),builder: (val){
-          //   return  val.isdelete == true ? Positioned(bottom: hi/14,right: wi/1.9,child: Container(width: wi/5,height: hi/20,decoration: BoxDecoration(
-          //       color: Colors.black45,
-          //       borderRadius: BorderRadius.circular(7)
-          //   ),
-          //     child: Center(child:Icon(Icons.delete_forever,color: Colors.redAccent,size: wi/15,)),
-          //   )): Container() ;
-          //
-          // })
-      //
-      //   ],
-      // ),
+          GetBuilder<Getxsendmassage>(init: Getxsendmassage(Maseage: Maseage, uid: uid),builder: (val){
+            return val.isRecord ==true? Positioned(bottom: hi/14,right: wi/40,child: Container(width: wi/5,height: hi/20,decoration: BoxDecoration(
+              color: Colors.redAccent,
+              borderRadius: BorderRadius.circular(7)
+            ),
+              child: Center(child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('${val.minut}',style: TextStyle(color: Colors.white70),),
+                  Text(':',style: TextStyle(color: Colors.white70),),
+
+                  Text('${val.second}',style: TextStyle(color: Colors.white70),),
+                ],
+              )),
+            )): Container() ;
+
+          }),
+          GetBuilder<Getxsendmassage>(init: Getxsendmassage(Maseage: Maseage, uid: uid),builder: (val){
+            return  val.isdelete == true ? Positioned(bottom: hi/14,right: wi/1.9,child: Container(width: wi/5,height: hi/20,decoration: BoxDecoration(
+                color: Colors.black45,
+                borderRadius: BorderRadius.circular(7)
+            ),
+              child: Center(child:Icon(Icons.delete_forever,color: Colors.redAccent,size: wi/15,)),
+            )): Container() ;
+
+          })
+
+        ],
+      ),
 
     );
   }

@@ -2,12 +2,12 @@
 import 'package:get/get.dart';
 import 'package:video_player/video_player.dart';
 
-class GetVideoFromFirebase extends GetxController{
+class GetVideoFromFirebase1 extends GetxController{
   VideoPlayerController? videoController;
   String VideoURL;
   double valum =0;
   bool isfull =true;
-  GetVideoFromFirebase({required this.VideoURL});
+  GetVideoFromFirebase1({required this.VideoURL});
 
   vois(){
     if(valum ==0){

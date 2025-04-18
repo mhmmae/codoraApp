@@ -71,6 +71,8 @@
 	<string>This app require access to Microphone</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app require access for Photo library Usage</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+    <string>We need permission to save photos and videos to your library for your convenience.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

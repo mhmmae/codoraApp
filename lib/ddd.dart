@@ -184,3 +184,19 @@
 //   }
 // }
 
+//
+// Future<void> BarCodeScanner(List<Barcode> scannedBarcodes, BuildContext context) async {
+//   if (!isProcessing) {
+//     startProcessing();
+//     try {
+//       // --- عمليات قراءة ومعالجة الباركود ---
+//     } catch (e) {
+//       // عرض التنبيه باستخدام Get.snackbar
+//     } finally {
+//       stopProcessing();
+//     }
+//   } else {
+//     // إذا كانت العملية جارية، توقف الماسح والتنقل مرة واحدة
+//     await _stopScannerAndNavigate(context);
+//   }
+// }

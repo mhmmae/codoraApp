@@ -17,16 +17,16 @@ class Getrequest extends GetxController{
 
     ).then((notification){
       if(notification.get('RequestAccept')) {
-        Get.to(Orderofuser(uid: uidOfOrder,));
+        Get.to(OrderOfUser(uid: uidOfOrder,));
 
       }else{
         FirebaseFirestore.instance.collection(FirebaseX.collectionApp).doc(uidOfOrder).get().then((uid)async{
-          localNotification.sendNotificationMessageToUser(uid.get('token'), FirebaseX.appName, 'تم قبول طلب الشراء يتم تجهيز الطلب', uidOfOrder, 'AcceptTheRequest', '');
+         await LocalNotification.sendNotificationToUser(token: uid.get('token'),title:  FirebaseX.appName,body:  'تم قبول طلب الشراء يتم تجهيز الطلب',uid:  uidOfOrder,type:  'AcceptTheRequest', image: '');
           await FirebaseFirestore.instance.collection('order').doc(uidOfOrder).update({
             'RequestAccept': true
           });
 
-          Get.to(Orderofuser(uid: uidOfOrder,));
+          Get.to(OrderOfUser(uid: uidOfOrder,));
         });
       }
 
@@ -61,9 +61,9 @@ class Getrequest extends GetxController{
                         await FirebaseFirestore.instance.collection('order').doc(uidOfOrder).collection('TheOrder').doc(doc1['uidOfDoc']).delete().then((val)async{
 
                             await  FirebaseFirestore.instance.collection(FirebaseX.collectionApp).doc(uidOfOrder).get().then((uid)async{
-                              await  localNotification.sendNotificationMessageToUser(uid.get('token'), FirebaseX.appName, 'تم الغاء الطلب', uidOfOrder, 'RequestRejected', '');
+                              await  LocalNotification.sendNotificationToUser(token: uid.get('token'),title:  FirebaseX.appName,body:  'تم الغاء الطلب',uid:  uidOfOrder,type:  'RequestRejected',image:  '');
 
-                              Get.to(bottonBar(theIndex: 2,));
+                              Get.to(BottomBar(theIndex: 2,));
                             });
 
                         }

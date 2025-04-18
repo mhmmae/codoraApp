@@ -100,7 +100,7 @@ class uplodeVoisMessage {
           })).then((message)async{
             FirebaseFirestore.instance.collection(FirebaseX.collectionApp).doc(FirebaseAuth.instance.currentUser!.uid).get().then((name)async{
               FirebaseFirestore.instance.collection(FirebaseX.collectionApp).doc(uid).get().then((uid)async{
-                await localNotification.sendNotificationMessageToUser(uid.get('token'), name.get('name'), 'رسالة صوتية', uid.toString(), 'audio', '');
+                await LocalNotification.sendNotificationToUser(token: uid.get('token'),title:  name.get('name'),body:  'رسالة صوتية',uid:  uid.toString(),type:  'audio',image:  '');
               } );
             } );
            

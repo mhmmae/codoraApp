@@ -1,9 +1,13 @@
 import 'package:codora/bottonBar/botonBar.dart';
 import 'package:codora/registration/signin/signinPage.dart';
+import 'package:codora/registration/welcomePage/WelcomePage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 
 import 'controler/local-notification-onroller.dart';
@@ -19,17 +23,15 @@ void main() async{
 
 
 
-  // await Firebase.initializeApp(
-  //   name: 'homy-3693e',
-  //   options: DefaultFirebaseOptions.currentPlatform,
-  // );
+
   await Firebase.initializeApp(
     name: 'codora',
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
 
-   await messaging.requestPermission(
+  // طلب إذن الإشعارات
+  await messaging.requestPermission(
     alert: true,
     announcement: false,
     badge: true,
@@ -38,19 +40,30 @@ void main() async{
     provisional: false,
     sound: true,
   );
+  // إعداد عرض الإشعارات عند ظهورها في المقدمة
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-    alert: true, // Required to display a heads up notification
+    alert: true, // لعرض إشعارات مرئية
     badge: true,
     sound: true,
   );
 
-  await localNotification.inti();
-  requestNotificationPermission();
+  // تهيئة نظام الإشعارات المحلية
+  await LocalNotification.init();
+
+  // طلب إذن الإشعارات عبر Permission Handler
+  await requestNotificationPermission();
 
    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
 
 
+  await GetStorage.init();
+  await initializeDateFormatting();
+// <-- تهيئة GetStorage هنا
+
+
+
+  final User? currentUser = FirebaseAuth.instance.currentUser;
 
 
 
@@ -62,9 +75,7 @@ void main() async{
 
 
 
-
-
-  runApp(const MyApp());
+  runApp( MyApp(isLoggedIn: currentUser != null, )  ); // إذا كان المستخدم مسجل دخولًا أم لا));
 }
 
 
@@ -87,13 +98,13 @@ Future<void> requestNotificationPermission() async {
 
 
 @pragma('vm:entry-point')
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+Future<void> _firebaseMessagingBackgroundHandler1(RemoteMessage message) async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
   if (message.data['type'] == 'message') {
-    await localNotification.showNotoficationMsseage(message.notification!.title.toString(), message.notification!.body.toString(), message.data['uid'], );
+    await LocalNotification.showNotificationMessage(message.notification!.title.toString(), message.notification!.body.toString(), message.data['uid'], );
   }
   // ====================================================================================================================================================================
   // ====================================================================================================================================================================
@@ -101,7 +112,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 
   if (message.data['type'] == 'audio') {
-    await localNotification.showNotoficationMsseage(message.notification!.title.toString(), message.notification!.body.toString(), message.data['uid'], );
+    await LocalNotification.showNotificationMessage(message.notification!.title.toString(), message.notification!.body.toString(), message.data['uid'], );
   }
   // ====================================================================================================================================================================
   // ====================================================================================================================================================================
@@ -115,21 +126,21 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // ====================================================================================================================================================================
 
   if (message.data['type'] == 'AcceptTheRequest') {
-    await localNotification.showNotoficationAcceptTheRequest(message.notification!.title.toString(), message.notification!.body.toString(), message.data['uid'], );
+    await LocalNotification.showNotificationAcceptTheRequest(message.notification!.title.toString(), message.notification!.body.toString(), message.data['uid'], );
   }
   // ====================================================================================================================================================================
   // ====================================================================================================================================================================
   // ====================================================================================================================================================================
 
   if (message.data['type'] == 'RequestRejected') {
-    await localNotification.showNotoficationRequestRejected(message.notification!.title.toString(), message.notification!.body.toString(), message.data['uid'], );
+    await LocalNotification.showNotificationRequestRejected(message.notification!.title.toString(), message.notification!.body.toString(), message.data['uid'], );
   }
   // ====================================================================================================================================================================
   // ====================================================================================================================================================================
   // ====================================================================================================================================================================
 
   if (message.data['type'] == 'ScanerBarCode') {
-    await localNotification.showNotoficationScanerBarCode(message.notification!.title.toString(), message.notification!.body.toString(), message.data['uid'], );
+    await LocalNotification.showNotificationScannerBarCode(message.notification!.title.toString(), message.notification!.body.toString(), message.data['uid'], );
   }
 
   // ====================================================================================================================================================================
@@ -137,7 +148,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // ====================================================================================================================================================================
 
   if (message.data['type'] == 'Done') {
-    await localNotification.showNotoficationDone(message.notification!.title.toString(), message.notification!.body.toString(), message.data['uid'],  );
+    await LocalNotification.showNotificationDone(message.notification!.title.toString(), message.notification!.body.toString(), message.data['uid'],  );
   }
 
   // ====================================================================================================================================================================
@@ -145,14 +156,14 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // ====================================================================================================================================================================
 
   if (message.data['type'] == 'image') {
-    await localNotification.showNotoficationMsseage(message.notification!.title.toString(), message.notification!.body.toString(), message.data['uid'],);
+    await LocalNotification.showNotificationMessage(message.notification!.title.toString(), message.notification!.body.toString(), message.data['uid'],);
   }
   // ====================================================================================================================================================================
   // ====================================================================================================================================================================
   // ====================================================================================================================================================================
 
   if (message.data['type'] == 'video') {
-    await localNotification.showNotoficationMsseage(message.notification!.title.toString(), message.notification!.body.toString(), message.data['uid'], );
+    await LocalNotification.showNotificationMessage(message.notification!.title.toString(), message.notification!.body.toString(), message.data['uid'], );
   }
   // ====================================================================================================================================================================
   // ====================================================================================================================================================================
@@ -161,22 +172,110 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 
 }
+/// التعامل مع الإشعارات الواردة في الخلفية
+@pragma('vm:entry-point')
+Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
+  try {
+    final String type = message.data['type'];
+
+    switch (type) {
+      case 'message':
+        await LocalNotification.showNotificationMessage(
+          message.notification!.title!,
+          message.notification!.body!,
+          message.data['uid'],
+        );
+        break;
+      case 'audio':
+        await LocalNotification.showNotificationMessage(
+          message.notification!.title!,
+          message.notification!.body!,
+          message.data['uid'],
+        );
+        break;
+      case 'AcceptTheRequest':
+        await LocalNotification.showNotificationAcceptTheRequest(
+          message.notification!.title!,
+          message.notification!.body!,
+          message.data['uid'],
+        );
+        break;
+      case 'RequestRejected':
+        await LocalNotification.showNotificationRequestRejected(
+          message.notification!.title!,
+          message.notification!.body!,
+          message.data['uid'],
+        );
+        break;
+      case 'ScanerBarCode':
+        await LocalNotification.showNotificationScannerBarCode(
+          message.notification!.title!,
+          message.notification!.body!,
+          message.data['uid'],
+        );
+        break;
+      case 'Done':
+        await LocalNotification.showNotificationDone(
+          message.notification!.title!,
+          message.notification!.body!,
+          message.data['uid'],
+        );
+        break;
+      case 'image':
+        await LocalNotification.showNotificationMessage(
+          message.notification!.title!,
+          message.notification!.body!,
+          message.data['uid'],
+        );
+        break;
+      case 'video':
+        await LocalNotification.showNotificationMessage(
+          message.notification!.title!,
+          message.notification!.body!,
+          message.data['uid'],
+        );
+        break;
+      default:
+        print('Unhandled notification type: $type');
+    }
+  } catch (e) {
+    print('Error handling background notification: $e');
+  }
+}
 
 
 
 
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+   MyApp({super.key, this.isLoggedIn});
+  final bool? isLoggedIn;
 
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+        scaffoldBackgroundColor: Colors.white,
+        appBarTheme: const AppBarTheme(
+
+        elevation: 0,
+        titleTextStyle: TextStyle(
+        color: Colors.white,
+        fontSize: 20,
+        fontWeight: FontWeight.bold, ),
+             ),
+             ),
 
       // You can use the library anywhere in the app even in theme
 
-      home: bottonBar(theIndex: 0,)
+      home:isLoggedIn!
+          ? BottomBar(theIndex: 2,)
+          : WelcomePage(),
     );
   }
 }

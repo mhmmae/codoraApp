@@ -16,11 +16,11 @@ class personallPage extends StatelessWidget {
       body: ListView(
         shrinkWrap: true,
         children: [
-          Streamofinformtionofuser(),
+          UserInformationStream(),
           SizedBox(height: hi / 70,),
           Divider(),
-          Streamoforderofuser(),
-          Classofsetingofperonall()
+          UserOrderStream(),
+          PersonalSettings()
         ],
       ),
     );

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!-- Disable warnings for obsolete Java versions -->
+    <issue id="ObsoleteJavaVersion" severity="ignore" />
+    <issue id="GradleDeprecated" severity="ignore" />
+    <issue id="GradleCompatible" severity="ignore" />
+    
+    <!-- Disable other common warnings -->
+    <issue id="UnsafeNativeCodeLocation" severity="ignore" />
+    <issue id="UnusedResources" severity="ignore" />
+    <issue id="IconMissingDensityFolder" severity="ignore" />
+    <issue id="GoogleAppIndexingWarning" severity="ignore" />
+    
+    <!-- Firebase related warnings -->
+    <issue id="MissingFirebaseInstanceIdService" severity="ignore" />
+    <issue id="FirebaseInstanceIdService" severity="ignore" />
+    
+    <!-- Performance warnings that can be ignored in debug -->
+    <issue id="UnusedAttribute" severity="ignore" />
+    <issue id="Overdraw" severity="ignore" />
+</lint> 

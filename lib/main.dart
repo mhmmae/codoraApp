@@ -1,78 +1,135 @@
-import 'package:codora/bottonBar/botonBar.dart';
-import 'package:codora/registration/signin/signinPage.dart';
+import 'package:codora/%D8%A7%D9%84%D9%83%D9%88%D8%AF%20%D8%A7%D9%84%D8%AE%D8%A7%D8%B5%20%D8%A8%D8%AA%D8%B7%D8%A8%D9%8A%D9%82%20%D8%A7%D9%84%D8%A8%D8%A7%D8%A6%D8%B9/ui/controllers/retail_cart_controller.dart';
+import 'package:codora/%D8%A7%D9%84%D9%83%D9%88%D8%AF%20%D8%A7%D9%84%D8%AE%D8%A7%D8%B5%20%D8%A8%D8%AA%D8%B7%D8%A8%D9%8A%D9%82%20%D8%A7%D9%84%D8%A8%D8%A7%D8%A6%D8%B9/seller_app_auth/controllers/seller_auth_bindings.dart';
+import 'package:codora/%D8%A7%D9%84%D9%83%D9%88%D8%AF%20%D8%A7%D9%84%D8%AE%D8%A7%D8%B5%20%D8%A8%D8%AA%D8%B7%D8%A8%D9%8A%D9%82%20%D8%A7%D9%84%D8%A8%D8%A7%D8%A6%D8%B9/seller_app_auth/ui/welcome1.dart';
+import 'package:codora/%D8%A7%D9%84%D9%83%D9%88%D8%AF%20%D8%A7%D9%84%D8%AE%D8%A7%D8%B5%20%D8%A8%D8%AA%D8%B7%D8%A8%D9%8A%D9%82%20%D8%A7%D9%84%D8%A8%D8%A7%D8%A6%D8%B9/ui/seller_main_screen.dart';
+import 'routes/app_pages.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'dart:io';
 
-
-import 'controler/local-notification-onroller.dart';
+import 'الكود الخاص بتطبيق العميل /controler/local-notification-onroller.dart';
 import 'firebase_options.dart';
-import 'registration/SginUp/SginUp.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+late FirebaseMessaging messaging;
 
-
-
-void main() async{
-  WidgetsFlutterBinding.ensureInitialized();
-
-
-
-  // await Firebase.initializeApp(
-  //   name: 'homy-3693e',
-  //   options: DefaultFirebaseOptions.currentPlatform,
-  // );
-  await Firebase.initializeApp(
-    name: 'codora',
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-
-
-   await messaging.requestPermission(
-    alert: true,
-    announcement: false,
-    badge: true,
-    carPlay: false,
-    criticalAlert: false,
-    provisional: false,
-    sound: true,
-  );
-  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-    alert: true, // Required to display a heads up notification
-    badge: true,
-    sound: true,
-  );
-
-  await localNotification.inti();
-  requestNotificationPermission();
-
-   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  runApp(const MyApp());
+class InitialBindings extends Bindings {
+  @override
+  void dependencies() {
+    Get.put(SellerAuthBindings());
+    Get.put(RetailCartController(), permanent: true);
+  }
 }
 
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
+  // Initialize Firebase properly with iOS-specific handling
+  try {
+    print("🔧 Starting Firebase initialization...");
+    
+    // Always try to initialize from Dart to ensure proper configuration
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    print("✅ Firebase initialized successfully from Dart");
+    
+    // Wait longer for iOS to ensure everything is ready
+    if (Platform.isIOS) {
+      await Future.delayed(Duration(milliseconds: 5000));
+      print("✅ iOS Firebase extended initialization delay completed");
+    } else {
+      await Future.delayed(Duration(milliseconds: 2000));
+      print("✅ Android Firebase initialization delay completed");
+    }
+    
+    // Initialize Firebase Messaging safely
+    try {
+      messaging = FirebaseMessaging.instance;
+      print("✅ Firebase Messaging initialized");
+      
+    } catch (messagingError) {
+      print("⚠️ Firebase Messaging initialization error: $messagingError");
+      // Continue without messaging features
+    }
+    
+  } catch (e) {
+    print("⚠️ Firebase initialization error: $e");
+    
+    // If initialization fails, try to use existing app (for iOS)
+    if (Platform.isIOS && Firebase.apps.isNotEmpty) {
+      print("🔄 Using existing Firebase app on iOS");
+      try {
+        messaging = FirebaseMessaging.instance;
+        print("✅ Firebase Messaging initialized with existing app");
+      } catch (msgError) {
+        print("⚠️ Messaging error with existing app: $msgError");
+      }
+    } else {
+      print("⚠️ App will continue with limited Firebase features");
+    }
+  }
 
-FirebaseMessaging messaging = FirebaseMessaging.instance;
+  // Configure messaging permissions safely
+  try {
+    await messaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+    
+    // Configure foreground notifications
+    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+    
+    print("✅ Firebase Messaging permissions configured");
+  } catch (e) {
+    print("⚠️ Firebase Messaging configuration error: $e");
+  }
 
+  // Initialize local notifications
+  await LocalNotification.init();
 
+  // Request notification permissions
+  await requestNotificationPermission();
 
+  // Set background message handler safely
+  try {
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    print("✅ Background message handler set");
+  } catch (e) {
+    print("⚠️ Background message handler error: $e");
+  }
+
+  await GetStorage.init();
+  await initializeDateFormatting();
+
+  final User? currentUser = FirebaseAuth.instance.currentUser;
+
+  runApp(
+    ScreenUtilInit(
+      designSize: const Size(375, 812),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (context, child) {
+        return MyApp(isLoggedIn: currentUser != null);
+      },
+    ),
+  );
+}
 
 Future<void> requestNotificationPermission() async {
   if (await Permission.notification.isDenied) {
@@ -80,103 +137,113 @@ Future<void> requestNotificationPermission() async {
   }
 }
 
-
-
-
-
-
-
+/// التعامل مع الإشعارات الواردة في الخلفية
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-
-  if (message.data['type'] == 'message') {
-    await localNotification.showNotoficationMsseage(message.notification!.title.toString(), message.notification!.body.toString(), message.data['uid'], );
+  // Initialize Firebase if not already initialized
+  if (Firebase.apps.isEmpty) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
   }
-  // ====================================================================================================================================================================
-  // ====================================================================================================================================================================
-  // ====================================================================================================================================================================
+  
+  print("✅ Background handler called - handling notification");
 
+  try {
+    final String type = message.data['type'] ?? '';
 
-  if (message.data['type'] == 'audio') {
-    await localNotification.showNotoficationMsseage(message.notification!.title.toString(), message.notification!.body.toString(), message.data['uid'], );
+    switch (type) {
+      case 'message':
+        await LocalNotification.showNotificationMessage(
+          message.notification?.title ?? '',
+          message.notification?.body ?? '',
+          message.data['uid'] ?? '',
+        );
+        break;
+      case 'audio':
+        await LocalNotification.showNotificationMessage(
+          message.notification?.title ?? '',
+          message.notification?.body ?? '',
+          message.data['uid'] ?? '',
+        );
+        break;
+      case 'AcceptTheRequest':
+        await LocalNotification.showNotificationAcceptTheRequest(
+          message.notification?.title ?? '',
+          message.notification?.body ?? '',
+          message.data['uid'] ?? '',
+        );
+        break;
+      case 'RequestRejected':
+        await LocalNotification.showNotificationRequestRejected(
+          message.notification?.title ?? '',
+          message.notification?.body ?? '',
+          message.data['uid'] ?? '',
+        );
+        break;
+      case 'ScanerBarCode':
+        await LocalNotification.showNotificationScannerBarCode(
+          message.notification?.title ?? '',
+          message.notification?.body ?? '',
+          message.data['uid'] ?? '',
+        );
+        break;
+      case 'Done':
+        await LocalNotification.showNotificationDone(
+          message.notification?.title ?? '',
+          message.notification?.body ?? '',
+          message.data['uid'] ?? '',
+        );
+        break;
+      case 'image':
+        await LocalNotification.showNotificationMessage(
+          message.notification?.title ?? '',
+          message.notification?.body ?? '',
+          message.data['uid'] ?? '',
+        );
+        break;
+      case 'video':
+        await LocalNotification.showNotificationMessage(
+          message.notification?.title ?? '',
+          message.notification?.body ?? '',
+          message.data['uid'] ?? '',
+        );
+        break;
+      default:
+        debugPrint('Unhandled notification type: $type');
+    }
+  } catch (e) {
+    debugPrint('Error handling background notification: $e');
   }
-  // ====================================================================================================================================================================
-  // ====================================================================================================================================================================
-  // ====================================================================================================================================================================
-
-  // if (message.data['type'] == 'order') {
-  //   await localNotification.showNotofication(message.notification!.title.toString(), message.notification!.body.toString(), message.data['uid'] );
-  // }
-  // ====================================================================================================================================================================
-  // ====================================================================================================================================================================
-  // ====================================================================================================================================================================
-
-  if (message.data['type'] == 'AcceptTheRequest') {
-    await localNotification.showNotoficationAcceptTheRequest(message.notification!.title.toString(), message.notification!.body.toString(), message.data['uid'], );
-  }
-  // ====================================================================================================================================================================
-  // ====================================================================================================================================================================
-  // ====================================================================================================================================================================
-
-  if (message.data['type'] == 'RequestRejected') {
-    await localNotification.showNotoficationRequestRejected(message.notification!.title.toString(), message.notification!.body.toString(), message.data['uid'], );
-  }
-  // ====================================================================================================================================================================
-  // ====================================================================================================================================================================
-  // ====================================================================================================================================================================
-
-  if (message.data['type'] == 'ScanerBarCode') {
-    await localNotification.showNotoficationScanerBarCode(message.notification!.title.toString(), message.notification!.body.toString(), message.data['uid'], );
-  }
-
-  // ====================================================================================================================================================================
-  // ====================================================================================================================================================================
-  // ====================================================================================================================================================================
-
-  if (message.data['type'] == 'Done') {
-    await localNotification.showNotoficationDone(message.notification!.title.toString(), message.notification!.body.toString(), message.data['uid'],  );
-  }
-
-  // ====================================================================================================================================================================
-  // ====================================================================================================================================================================
-  // ====================================================================================================================================================================
-
-  if (message.data['type'] == 'image') {
-    await localNotification.showNotoficationMsseage(message.notification!.title.toString(), message.notification!.body.toString(), message.data['uid'],);
-  }
-  // ====================================================================================================================================================================
-  // ====================================================================================================================================================================
-  // ====================================================================================================================================================================
-
-  if (message.data['type'] == 'video') {
-    await localNotification.showNotoficationMsseage(message.notification!.title.toString(), message.notification!.body.toString(), message.data['uid'], );
-  }
-  // ====================================================================================================================================================================
-  // ====================================================================================================================================================================
-  // ====================================================================================================================================================================
-
-
-
 }
 
-
-
-
-
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+   const MyApp({super.key, this.isLoggedIn});
+  final bool? isLoggedIn;
 
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      initialBinding: InitialBindings(),
+      getPages: AppPages.routes,
       debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+        scaffoldBackgroundColor: Colors.white,
+        appBarTheme: const AppBarTheme(
+
+        elevation: 0,
+        titleTextStyle: TextStyle(
+        color: Colors.white,
+        fontSize: 20,
+        fontWeight: FontWeight.bold, ),
+             ),
+             ),
 
       // You can use the library anywhere in the app even in theme
 
-      home: bottonBar(theIndex: 0,)
+      home:isLoggedIn!
+          ? SellerMainScreen()
+          : WelcomePage1(),
     );
   }
 }

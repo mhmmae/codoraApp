@@ -1,0 +1,234 @@
+# تكوين هيكل التطبيقات الأربعة في مشروع كودورا
+# هذا الملف يوضح التنظيم والقواعد للذكاء الاصطناعي
+
+project_structure:
+  name: "كودورا - Codora"
+  type: "Multi-App E-commerce Platform"
+  architecture: "4 Separate Applications + Shared Components"
+
+# التطبيقات الأربعة
+applications:
+  
+  # تطبيق البائع - Seller App
+  seller:
+    name: "تطبيق البائع"
+    folder: "lib/الكود الخاص بتطبيق البائع/"
+    description: "تطبيق إدارة المتاجر والمنتجات للبائعين"
+    features:
+      - "إدارة المتجر"
+      - "إضافة/تعديل المنتجات"
+      - "إدارة الطلبات"
+      - "التقارير والإحصائيات"
+      - "إدارة المنتجات الأصلية"
+    colors: "🏪 أخضر/برتقالي"
+    state_management: "GetX"
+    widgets: "StatelessWidget only"
+    
+  # تطبيق التوصيل - Delivery App  
+  delivery:
+    name: "تطبيق التوصيل"
+    folder: "lib/الكود الخاص بتطبيق التوصيل/"
+    description: "تطبيق إدارة التوصيل وتتبع الطلبات"
+    features:
+      - "استلام طلبات التوصيل"
+      - "تتبع المسارات"
+      - "تأكيد التسليم"
+      - "إدارة الملف الشخصي"
+    colors: "🚚 أزرق/أصفر"
+    state_management: "GetX"
+    widgets: "StatelessWidget only"
+    
+  # تطبيق العميل - Customer App
+  customer:
+    name: "تطبيق العميل"
+    folder: "lib/الكود الخاص بتطبيق العميل/"
+    description: "تطبيق التسوق والشراء للعملاء"
+    features:
+      - "تصفح المنتجات"
+      - "البحث والفلترة"
+      - "سلة التسوق"
+      - "إتمام الطلبات"
+      - "تتبع الطلبات"
+    colors: "👤 أزرق/أبيض"
+    state_management: "GetX"
+    widgets: "StatelessWidget only"
+    
+  # تطبيق الأدمن - Admin App
+  admin:
+    name: "تطبيق الأدمن"
+    folder: "lib/الكود الخاص بتطبيق صاحب التطبيق/"
+    description: "تطبيق إدارة النظام والتحكم الكامل"
+    features:
+      - "إدارة المستخدمين"
+      - "إدارة الفئات"
+      - "مراقبة النظام"
+      - "التقارير الشاملة"
+      - "إعدادات التطبيق"
+    colors: "👨‍💼 أحمر/رمادي"
+    state_management: "GetX"
+    widgets: "StatelessWidget only"
+
+# المجلد المشترك
+shared_components:
+  name: "المكونات المشتركة"
+  folder: "lib/shared/"
+  description: "كود مشترك بين جميع التطبيقات"
+  includes:
+    - "Services (خدمات Firebase وAPI)"
+    - "Utils (أدوات مساعدة)"
+    - "Widgets (عناصر واجهة مشتركة)"
+    - "Controllers (كنترولرات عامة)"
+    - "Constants (ثوابت مشتركة)"
+
+# مجلد النماذج المركزي
+models_folder:
+  name: "نماذج البيانات"
+  folder: "lib/Model/"
+  description: "جميع نماذج البيانات (Models) للتطبيقات الأربعة"
+  importance: "مركزي ومشترك بين جميع التطبيقات"
+  includes:
+    - "ItemModel (نموذج المنتج)"
+    - "UserModel (نموذج المستخدم)"
+    - "OrderModel (نموذج الطلب)"
+    - "CategoryModel (نموذج الفئة)"
+    - "CompanyModel (نموذج الشركة)"
+    - "OfferModel (نموذج العرض)"
+  required_methods:
+    - "fromMap() - تحويل من Map إلى Object"
+    - "toMap() - تحويل من Object إلى Map"
+    - "fromJson() - تحويل من JSON (اختياري)"
+    - "toJson() - تحويل إلى JSON (اختياري)"
+    - "toString() - عرض محتوى الكائن (اختياري)"
+
+# قواعد التطوير
+development_rules:
+  
+  widget_type:
+    rule: "استخدم StatelessWidget فقط"
+    reason: "لتحسين الأداء واستخدام GetX"
+    exception: "لا توجد استثناءات"
+    
+  state_management:
+    rule: "استخدم GetX حصرياً"
+    forbidden: ["setState", "Provider", "Bloc", "ValueNotifier"]
+    required: ["GetxController", ".obs", "GetBuilder/Obx"]
+    
+  imports:
+    allowed:
+      - "من نفس التطبيق"
+      - "من مجلد shared"
+      - "من مجلد Model"
+      - "من packages خارجية"
+    forbidden:
+      - "من تطبيق إلى تطبيق آخر"
+    example_correct: "import '../../shared/widgets/loading_widget.dart';"
+    example_wrong: "import '../الكود الخاص بتطبيق البائع/controllers/seller_controller.dart';"
+    
+  code_separation:
+    rule: "فصل كامل بين التطبيقات"
+    multi_app_features: "تكرار الكود في كل تطبيق بدلاً من المشاركة"
+    mixed_code: "فصل الكود المختلط وتوزيعه على التطبيقات المناسبة"
+    independence: "كل تطبيق مستقل تماماً عن الآخرين"
+    exceptions: "فقط shared components والنماذج يمكن مشاركتها"
+
+  error_checking:
+    auto_fix: true
+    trigger: "بعد كل عملية إنشاء أو تعديل كود"
+    checks:
+      - "syntax errors (أخطاء التركيب)"
+      - "import errors (أخطاء الاستيراد)"
+      - "type errors (أخطاء النوع)"
+      - "analysis errors (أخطاء التحليل)"
+      - "quality warnings (تحذيرات الجودة)"
+    max_retries: 3
+    tools:
+      - "flutter analyze"
+      - "dart fix --apply"
+      - "custom error detection"
+    goal: "صفر أخطاء نهائياً"
+
+  firebase_management:
+    collections_file: "lib/XXX/XXXFirebase.dart"
+    reference_class: "FirebaseCollections"
+    naming_convention: "snake_case"
+    organization:
+      - "collections أساسية"
+      - "collections خاصة بالبائع"
+      - "collections خاصة بالعميل"
+      - "collections خاصة بالتوصيل"
+      - "collections خاصة بالأدمن"
+    auto_detection: true
+    enforce_references: true
+    prevent_hardcoded_names: true
+    
+  file_naming:
+    convention: "snake_case"
+    examples:
+      - "product_card_widget.dart"
+      - "order_management_controller.dart"
+      - "firebase_service.dart"
+      
+  folder_structure:
+    seller: "lib/الكود الخاص بتطبيق البائع/[controllers|widgets|screens]/"
+    delivery: "lib/الكود الخاص بتطبيق التوصيل/[controllers|widgets|screens]/"
+    customer: "lib/الكود الخاص بتطبيق العميل/[controllers|widgets|screens|class]/"
+    admin: "lib/الكود الخاص بتطبيق صاحب التطبيق/[controllers|widgets|screens]/"
+    shared: "lib/shared/[controllers|widgets|services|utils]/"
+    models: "lib/Model/[all_models_here]/"
+
+# أمثلة للاستخدام الصحيح
+correct_examples:
+  
+  widget_creation:
+    description: "إنشاء widget جديد"
+    correct: |
+      class ProductCardWidget extends StatelessWidget {
+        final ProductController controller = Get.find();
+        
+        @override
+        Widget build(BuildContext context) {
+          return GetBuilder<ProductController>(
+            builder: (ctrl) => Container(...)
+          );
+        }
+      }
+    
+  controller_creation:
+    description: "إنشاء controller جديد"
+    correct: |
+      class ProductController extends GetxController {
+        final RxList<Product> products = <Product>[].obs;
+        final RxBool isLoading = false.obs;
+        
+        void loadProducts() {
+          isLoading.value = true;
+          // منطق التحميل
+          isLoading.value = false;
+        }
+      }
+      
+  shared_component:
+    description: "مكون مشترك"
+    correct: |
+      // في lib/shared/widgets/loading_widget.dart
+      class LoadingWidget extends StatelessWidget {
+        @override
+        Widget build(BuildContext context) {
+          return Center(child: CircularProgressIndicator());
+        }
+      }
+
+# أمثلة للاستخدام الخاطئ
+incorrect_examples:
+  
+  cross_app_import:
+    wrong: "import '../seller/controllers/seller_controller.dart'; // في customer app"
+    correct: "انقل الكود إلى shared أو استخدم interface مشترك"
+    
+  stateful_widget:
+    wrong: "class MyWidget extends StatefulWidget"
+    correct: "class MyWidget extends StatelessWidget + GetX Controller"
+    
+  wrong_state_management:
+    wrong: "setState(() => counter++)"
+    correct: "counter.value++ // مع RxInt counter = 0.obs" 

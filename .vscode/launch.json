@@ -1,0 +1,10 @@
+{
+    "configurations": [
+        {
+            "name": "Codora copy 2 (Flutter)",
+            "program": "lib/main.dart",
+            "request": "launch",
+            "type": "dart"
+        }
+    ]
+}

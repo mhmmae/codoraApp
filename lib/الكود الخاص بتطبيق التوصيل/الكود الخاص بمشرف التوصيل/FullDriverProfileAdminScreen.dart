@@ -5,7 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:intl/intl.dart';
 
 import 'CompanyAdminDashboardController.dart';
-import 'DeliveryTaskModel.dart';
+import '../../Model/DeliveryTaskModel.dart';
 import 'FullDriverProfileAdminController.dart'; // لتنسيق التواريخ
 // استورد المتحكم والنماذج
 // import 'full_driver_profile_admin_controller.dart';

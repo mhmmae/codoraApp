@@ -1,0 +1,18 @@
+{
+    "sourceFile": "android/app/build.gradle.kts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1752658534229,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1752658534229,
+            "name": "Commit-0",
+            "content": "plugins {\n    id(\"com.android.application\")\n    id(\"org.jetbrains.kotlin.android\")\n    id(\"dev.flutter.flutter-gradle-plugin\")\n    id(\"com.google.gms.google-services\")\n}\n\nandroid {\n    namespace = \"com.homy.codora\"\n    compileSdk = flutter.compileSdkVersion\n    ndkVersion = \"27.0.12077973\"\n\n    compileOptions {\n        sourceCompatibility = JavaVersion.VERSION_1_8\n        targetCompatibility = JavaVersion.VERSION_1_8\n        isCoreLibraryDesugaringEnabled = true\n    }\n\n    kotlinOptions {\n        jvmTarget = \"1.8\"\n    }\n\n    sourceSets {\n        getByName(\"main\") {\n            java.srcDir(\"src/main/kotlin\")\n        }\n    }\n\n    defaultConfig {\n        applicationId = \"com.homy.codora\"\n        minSdk = 23\n        targetSdk = flutter.targetSdkVersion\n        versionCode = flutter.versionCode\n        versionName = flutter.versionName\n        multiDexEnabled = true\n    }\n\n    buildTypes {\n        named(\"release\") {\n            isMinifyEnabled = false\n            isShrinkResources = false\n            proguardFiles(getDefaultProguardFile(\"proguard-android-optimize.txt\"), \"proguard-rules.pro\")\n        }\n        named(\"debug\") {\n            isMinifyEnabled = false\n            isShrinkResources = false\n        }\n    }\n}\n\nflutter {\n    source = \"../..\"\n}\n\ndependencies {\n    coreLibraryDesugaring(\"com.android.tools:desugar_jdk_libs:2.1.4\")\n    implementation(\"androidx.window:window:1.0.0\")\n    implementation(\"androidx.window:window-java:1.0.0\")\n    implementation(\"androidx.multidex:multidex:2.0.1\")\n    implementation(\"com.google.android.gms:play-services-maps:18.2.0\")\n    implementation(\"com.google.android.gms:play-services-location:21.0.1\")\n    implementation(platform(\"com.google.firebase:firebase-bom:32.7.4\"))\n    implementation(\"com.google.firebase:firebase-analytics\")\n    implementation(\"com.google.firebase:firebase-messaging\")\n    implementation(\"com.google.firebase:firebase-auth\")\n    implementation(\"com.google.firebase:firebase-firestore\")\n    implementation(\"com.google.firebase:firebase-storage\")\n    implementation(\"com.facebook.android:facebook-login:latest.release\")\n}\n"
+        }
+    ]
+}

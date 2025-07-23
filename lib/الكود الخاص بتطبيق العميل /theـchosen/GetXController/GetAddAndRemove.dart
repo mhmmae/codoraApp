@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 
 import '../../../XXX/xxx_firebase.dart';
 
-
 /// يتحكم هذا المتحكم في إضافة وحذف العناصر من السلة وحساب الأسعار الإجمالية.
 /// يعتمد على خريطة لتخزين الكميات الحالية لكل مستند ويستخدم استعلامات متوازية (Future.wait)
 /// للحصول على الأسعار من مجموعتي "Item" و"Itemoffer".
@@ -23,23 +22,21 @@ class GetAddAndRemove extends GetxController {
 
   /// دالة لحساب الأسعار الإجمالية بشكل متوازي مع استرجاع بيانات كلا المجموعتين
 
-
-
-
   Future<void> calculateTotals() async {
     final String userId = FirebaseAuth.instance.currentUser!.uid;
     debugPrint('🔥 Starting calculateTotals for user: $userId');
-    
+
     try {
       totalPriceOfItem.value = 0;
       totalPriceOfofferItem.value = 0;
       int currentTotalItems = 0; // For sum of quantities
 
-      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection('the-chosen')
-          .doc(userId)
-          .collection(FirebaseX.appName)
-          .get();
+      QuerySnapshot querySnapshot =
+          await FirebaseFirestore.instance
+              .collection('the-chosen')
+              .doc(userId)
+              .collection(FirebaseX.appName)
+              .get();
 
       debugPrint('🛒 Found ${querySnapshot.docs.length} items in cart');
 
@@ -51,14 +48,16 @@ class GetAddAndRemove extends GetxController {
       for (var doc in querySnapshot.docs) {
         final data = doc.data() as Map<String, dynamic>?;
         if (data == null) continue;
-        
+
         int itemCount = data['number'] as int? ?? 0;
         currentTotalItems += itemCount; // Summing up quantities
         final uidItem = data['uidItem'] as String? ?? "";
         final bool isOffer = data['isOfer'] as bool? ?? false;
-        
-        debugPrint('📦 Processing item: $uidItem, quantity: $itemCount, isOffer: $isOffer');
-        
+
+        debugPrint(
+          '📦 Processing item: $uidItem, quantity: $itemCount, isOffer: $isOffer',
+        );
+
         if (uidItem.isEmpty) continue;
 
         _itemQuantities[doc.id] = itemCount;
@@ -66,8 +65,14 @@ class GetAddAndRemove extends GetxController {
         // إضافة منطق حساب الأسعار الفعلي
         priceFutures.add(
           Future.wait([
-            FirebaseFirestore.instance.collection(FirebaseX.itemsCollection).doc(uidItem).get(),
-            FirebaseFirestore.instance.collection(FirebaseX.offersCollection).doc(uidItem).get(),
+            FirebaseFirestore.instance
+                .collection(FirebaseX.itemsCollection)
+                .doc(uidItem)
+                .get(),
+            FirebaseFirestore.instance
+                .collection(FirebaseX.offersCollection)
+                .doc(uidItem)
+                .get(),
           ]).then((List<DocumentSnapshot> snapshots) {
             final productSnapshot = snapshots[0];
             final offerSnapshot = snapshots[1];
@@ -81,8 +86,16 @@ class GetAddAndRemove extends GetxController {
             // قراءة السعر من مجموعة المنتجات الأساسية إذا كانت موجودة
             if (productSnapshot.exists) {
               try {
-                final priceData = productSnapshot.get('priceOfItem');
-                debugPrint('   Raw normal price data: $priceData (${priceData.runtimeType})');
+                // استخدام suggestedRetailPrice أولاً ثم priceOfItem كبديل
+                final productData =
+                    productSnapshot.data() as Map<String, dynamic>?;
+                final suggestedPriceData = productData?['suggestedRetailPrice'];
+                final regularPriceData = productSnapshot.get('priceOfItem');
+
+                final priceData = suggestedPriceData ?? regularPriceData;
+                debugPrint(
+                  '   Raw normal price data: $priceData (${priceData.runtimeType})',
+                );
                 if (priceData != null) {
                   // التعامل مع النوع المختلط (int أو double أو string)
                   if (priceData is num) {
@@ -96,12 +109,19 @@ class GetAddAndRemove extends GetxController {
                 debugPrint("❌ Error parsing normal item price: $e");
               }
             }
-            
+
             // قراءة السعر من مجموعة العروض إذا كانت موجودة
             if (offerSnapshot.exists) {
               try {
-                final priceData = offerSnapshot.get('priceOfItem');
-                debugPrint('   Raw offer price data: $priceData (${priceData.runtimeType})');
+                // استخدام suggestedRetailPrice أولاً ثم priceOfItem كبديل للعروض أيضاً
+                final offerData = offerSnapshot.data() as Map<String, dynamic>?;
+                final suggestedPriceData = offerData?['suggestedRetailPrice'];
+                final regularPriceData = offerSnapshot.get('priceOfItem');
+
+                final priceData = suggestedPriceData ?? regularPriceData;
+                debugPrint(
+                  '   Raw offer price data: $priceData (${priceData.runtimeType})',
+                );
                 if (priceData != null) {
                   // التعامل مع النوع المختلط (int أو double أو string)
                   if (priceData is num) {
@@ -123,7 +143,9 @@ class GetAddAndRemove extends GetxController {
               if (priceOffer > 0) {
                 finalPrice = priceOffer;
                 totalPriceOfofferItem.value += priceOffer * itemCount;
-                debugPrint('💰 Added offer price: ${priceOffer * itemCount} ($priceOffer x $itemCount)');
+                debugPrint(
+                  '💰 Added offer price: ${priceOffer * itemCount} ($priceOffer x $itemCount)',
+                );
               } else {
                 debugPrint('⚠️ Offer item has no valid price: $uidItem');
               }
@@ -132,14 +154,18 @@ class GetAddAndRemove extends GetxController {
               if (priceNormal > 0) {
                 finalPrice = priceNormal;
                 totalPriceOfItem.value += priceNormal * itemCount;
-                debugPrint('💰 Added normal price: ${priceNormal * itemCount} ($priceNormal x $itemCount)');
+                debugPrint(
+                  '💰 Added normal price: ${priceNormal * itemCount} ($priceNormal x $itemCount)',
+                );
               } else {
                 debugPrint('⚠️ Normal item has no valid price: $uidItem');
               }
             }
-            
+
             if (finalPrice == 0) {
-              debugPrint('🚨 NO PRICE FOUND for item: $uidItem (isOffer: $isOffer, normalPrice: $priceNormal, offerPrice: $priceOffer)');
+              debugPrint(
+                '🚨 NO PRICE FOUND for item: $uidItem (isOffer: $isOffer, normalPrice: $priceNormal, offerPrice: $priceOffer)',
+              );
             }
           }),
         );
@@ -148,15 +174,15 @@ class GetAddAndRemove extends GetxController {
       await Future.wait(priceFutures);
       total.value = totalPriceOfItem.value + totalPriceOfofferItem.value;
       totalPrice.value = total.value; // تحديث totalPrice أيضاً
-      totalCartItemCount.value = currentTotalItems; // Update the total item count
+      totalCartItemCount.value =
+          currentTotalItems; // Update the total item count
       update(); // This updates listeners to GetAddAndRemove
-      
+
       debugPrint('✅ Calculate totals completed:');
       debugPrint('   Normal items total: ${totalPriceOfItem.value}');
       debugPrint('   Offer items total: ${totalPriceOfofferItem.value}');
       debugPrint('   FINAL TOTAL: ${total.value}');
       debugPrint('   Total item count: ${totalCartItemCount.value}');
-      
     } catch (e) {
       debugPrint("❌ Error calculating totals: $e");
       totalCartItemCount.value = 0; // Reset on error
@@ -176,7 +202,6 @@ class GetAddAndRemove extends GetxController {
     debugPrint('refreshTotals11111111111111111111111');
     await calculateTotals();
     update();
-
   }
 
   /// دالة لزيادة كمية عنصر معين.
@@ -266,50 +291,51 @@ class GetAddAndRemove extends GetxController {
   Future<void> _migrateCartItemsWithSellerId() async {
     final String userId = FirebaseAuth.instance.currentUser!.uid;
     debugPrint('🔄 Starting cart migration to add seller IDs...');
-    
+
     try {
       // الحصول على جميع المنتجات في السلة
-      QuerySnapshot cartSnapshot = await FirebaseFirestore.instance
-          .collection('the-chosen')
-          .doc(userId)
-          .collection(FirebaseX.appName)
-          .get();
+      QuerySnapshot cartSnapshot =
+          await FirebaseFirestore.instance
+              .collection('the-chosen')
+              .doc(userId)
+              .collection(FirebaseX.appName)
+              .get();
 
       int migratedCount = 0;
-      
+
       for (var doc in cartSnapshot.docs) {
         final data = doc.data() as Map<String, dynamic>?;
         if (data == null) continue;
-        
+
         // التحقق من وجود uidAdd
         if (data['uidAdd'] == null || data['uidAdd'].toString().isEmpty) {
           final String uidItem = data['uidItem'] as String? ?? "";
           final bool isOffer = data['isOfer'] as bool? ?? false;
-          
+
           if (uidItem.isNotEmpty) {
             // الحصول على معلومات المنتج من المجموعة المناسبة
             DocumentSnapshot productDoc;
             if (isOffer) {
-              productDoc = await FirebaseFirestore.instance
-                  .collection(FirebaseX.offersCollection)
-                  .doc(uidItem)
-                  .get();
+              productDoc =
+                  await FirebaseFirestore.instance
+                      .collection(FirebaseX.offersCollection)
+                      .doc(uidItem)
+                      .get();
             } else {
-              productDoc = await FirebaseFirestore.instance
-                  .collection(FirebaseX.itemsCollection)
-                  .doc(uidItem)
-                  .get();
+              productDoc =
+                  await FirebaseFirestore.instance
+                      .collection(FirebaseX.itemsCollection)
+                      .doc(uidItem)
+                      .get();
             }
-            
+
             if (productDoc.exists) {
               final productData = productDoc.data() as Map<String, dynamic>?;
               final String uidAdd = productData?['uidAdd'] as String? ?? "";
-              
+
               if (uidAdd.isNotEmpty) {
                 // تحديث المستند في السلة بإضافة uidAdd
-                await doc.reference.update({
-                  'uidAdd': uidAdd,
-                });
+                await doc.reference.update({'uidAdd': uidAdd});
                 migratedCount++;
                 debugPrint('✅ Migrated item ${doc.id} with seller ID: $uidAdd');
               } else {
@@ -319,15 +345,16 @@ class GetAddAndRemove extends GetxController {
           }
         }
       }
-      
+
       if (migratedCount > 0) {
-        debugPrint('✅ Migration completed: Updated $migratedCount items with seller IDs');
+        debugPrint(
+          '✅ Migration completed: Updated $migratedCount items with seller IDs',
+        );
         // إعادة حساب الإجماليات بعد التحديث
         await refreshTotals();
       } else {
         debugPrint('ℹ️ No items needed migration');
       }
-      
     } catch (e) {
       debugPrint('❌ Error during cart migration: $e');
     }

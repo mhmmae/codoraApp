@@ -1,0 +1,18 @@
+{
+    "sourceFile": "lib/الكود الخاص بتطبيق العميل /core/error_tracker.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1752751503157,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1752751503157,
+            "name": "Commit-0",
+            "content": "import 'dart:io';\nimport 'package:flutter/foundation.dart';\n\n/// نظام متقدم لتتبع الأخطاء والتحليلات\nclass ErrorTracker {\n  static final ErrorTracker _instance = ErrorTracker._internal();\n  factory ErrorTracker() => _instance;\n  ErrorTracker._internal();\n\n  /// تسجيل خطأ مع تفاصيل شاملة\n  static Future<void> logError({\n    required String error,\n    required String location,\n    StackTrace? stackTrace,\n    Map<String, dynamic>? additionalData,\n    ErrorSeverity severity = ErrorSeverity.medium,\n  }) async {\n    try {\n      // طباعة في وضع التطوير\n      if (kDebugMode) {\n        debugPrint('🔴 ERROR [$severity] in $location:');\n        debugPrint('📍 Error: $error');\n        if (additionalData != null) {\n          debugPrint('📊 Data: $additionalData');\n        }\n        if (stackTrace != null) {\n          debugPrint('📚 Stack: $stackTrace');\n        }\n        debugPrint('─' * 50);\n      }\n\n      // تسجيل مخصص للأخطاء الحرجة\n      if (severity == ErrorSeverity.critical) {\n        await _handleCriticalError(error, location, additionalData);\n      }\n    } catch (e) {\n      debugPrint('Failed to log error: $e');\n    }\n  }\n\n  /// تسجيل حدث مخصص\n  static void logEvent({\n    required String event,\n    required String location,\n    Map<String, dynamic>? data,\n  }) {\n    if (kDebugMode) {\n      debugPrint('📝 EVENT: $event in $location');\n      if (data != null) {\n        debugPrint('📊 Data: $data');\n      }\n    }\n  }\n\n  /// تسجيل نجاح العملية\n  static void logSuccess({\n    required String operation,\n    required String location,\n    Map<String, dynamic>? data,\n  }) {\n    if (kDebugMode) {\n      debugPrint('✅ SUCCESS: $operation in $location');\n      if (data != null) {\n        debugPrint('📊 Data: $data');\n      }\n    }\n  }\n\n  /// معالجة الأخطاء الحرجة\n  static Future<void> _handleCriticalError(\n    String error,\n    String location,\n    Map<String, dynamic>? data,\n  ) async {\n    // يمكن إضافة إشعارات للمطورين هنا\n    debugPrint('🚨 CRITICAL ERROR: $error in $location');\n  }\n\n  /// تسجيل معلومات المستخدم للتتبع\n  static void setUserInfo({\n    required String userId,\n    String? phoneNumber,\n    String? email,\n  }) {\n    if (kDebugMode) {\n      debugPrint('👤 User Info Set:');\n      debugPrint('🆔 ID: $userId');\n      if (phoneNumber != null) debugPrint('📱 Phone: $phoneNumber');\n      if (email != null) debugPrint('📧 Email: $email');\n    }\n  }\n}\n\n/// مستويات خطورة الأخطاء\nenum ErrorSeverity {\n  low('LOW'),\n  medium('MEDIUM'),\n  high('HIGH'),\n  critical('CRITICAL');\n\n  const ErrorSeverity(this.name);\n  final String name;\n}\n\n/// معلومات النظام للتتبع\nclass SystemInfo {\n  static Map<String, dynamic> get deviceInfo => {\n    'platform': Platform.operatingSystem,\n    'platformVersion': Platform.operatingSystemVersion,\n    'isPhysicalDevice': !kDebugMode,\n    'timestamp': DateTime.now().toIso8601String(),\n  };\n}\n"
+        }
+    ]
+}

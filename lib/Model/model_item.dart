@@ -187,8 +187,9 @@ class ItemModel /*extends Equatable*/ {
 
   /// الحصول على الكمية المتاحة للطلب
   int get availableQuantity {
-    if ((isTrackingInventory ?? true) == false)
+    if ((isTrackingInventory ?? true) == false) {
       return 999999; // كمية غير محدودة إذا لم يتم تتبع المخزون
+    }
     final currentStock = quantity ?? 0;
     final reserved = reservedQuantity ?? 0;
     return (currentStock - reserved).clamp(0, currentStock);

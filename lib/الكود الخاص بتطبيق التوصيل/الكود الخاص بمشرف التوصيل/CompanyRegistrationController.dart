@@ -14,7 +14,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../XXX/xxx_firebase.dart';
-import 'DeliveryCompanyModel.dart';
+import '../../Model/DeliveryCompanyModel.dart';
 // قم باستيراد شاشة اختيار الموقع التي أنشأناها سابقًا
 // import '../location_picker_screen.dart'; // <--- عدّل المسار حسب هيكل مشروعك
 

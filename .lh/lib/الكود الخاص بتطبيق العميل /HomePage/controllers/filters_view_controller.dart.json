@@ -1,0 +1,18 @@
+{
+    "sourceFile": "lib/الكود الخاص بتطبيق العميل /HomePage/controllers/filters_view_controller.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1753149650095,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1753149650095,
+            "name": "Commit-0",
+            "content": "import 'package:get/get.dart';\n\n/// Controller لإدارة حالة عرض صفحة الفلاتر\nclass FiltersViewController extends GetxController {\n  // حالة عرض الفلاتر بدلاً من المنتجات\n  final RxBool showFiltersGrid = false.obs;\n\n  /// تبديل عرض الفلاتر\n  void toggleFiltersView() {\n    showFiltersGrid.value = !showFiltersGrid.value;\n    print(\n      '🔄 FiltersViewController - تبديل الفلاتر: ${showFiltersGrid.value ? 'مرئي' : 'مخفي'}',\n    );\n  }\n\n  /// إظهار الفلاتر\n  void showFilters() {\n    showFiltersGrid.value = true;\n    print('✅ FiltersViewController - إظهار الفلاتر');\n  }\n\n  /// إخفاء الفلاتر\n  void hideFilters() {\n    showFiltersGrid.value = false;\n    print('❌ FiltersViewController - إخفاء الفلاتر');\n  }\n}\n"
+        }
+    ]
+}

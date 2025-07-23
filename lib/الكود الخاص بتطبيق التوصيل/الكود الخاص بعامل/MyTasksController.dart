@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart'; // For LatLng
 import '../../XXX/xxx_firebase.dart';
 import '../../routes/app_routes.dart';
-import '../الكود الخاص بمشرف التوصيل/DeliveryTaskModel.dart';
+import '../../Model/DeliveryTaskModel.dart';
 import 'ProcessedTaskForDriverDisplay.dart';
 // استورد نماذجك، ثوابتك، مساراتك
 // import 'path_to_models/DeliveryTaskModel.dart';

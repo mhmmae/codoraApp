@@ -67,7 +67,7 @@ dependencies:
   flutter_facebook_auth: ^7.1.1
   sign_in_with_apple: ^7.0.1
   sign_in_button: ^4.0.1
-  crypto: any
+  crypto: ^3.0.5
   path_provider: any
 #  video_trimmer: ^4.0.2
   video_compress: ^3.1.4
@@ -100,6 +100,10 @@ dependencies:
   printing: ^5.14.2
   barcode: ^2.2.9
   flutter_staggered_animations: ^1.1.1
+  pinput: ^5.0.1
+  firebase_analytics: ^11.0.0
+  device_info_plus: ^10.1.2
+  package_info_plus: ^8.0.2
 
 dev_dependencies:
   flutter_test:

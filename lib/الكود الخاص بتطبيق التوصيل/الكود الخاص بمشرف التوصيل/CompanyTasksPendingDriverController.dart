@@ -6,7 +6,7 @@ import 'package:get/get.dart';
 
 import '../../XXX/xxx_firebase.dart';
 import '../../routes/app_routes.dart';
-import 'DeliveryTaskModel.dart';
+import '../../Model/DeliveryTaskModel.dart';
 // استورد النماذج، الثوابت، والمسارات
 // ...
 

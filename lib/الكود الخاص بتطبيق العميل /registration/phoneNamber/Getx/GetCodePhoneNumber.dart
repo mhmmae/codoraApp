@@ -1,250 +1,3 @@
-//
-// import 'dart:async';
-// import 'dart:io';
-//
-// import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:firebase_messaging/firebase_messaging.dart';
-// import 'package:firebase_storage/firebase_storage.dart';
-// import 'package:flutter/material.dart';
-// import 'package:flutter/services.dart';
-// import 'package:get/get.dart';
-// import 'package:uuid/uuid.dart';
-//
-// import '../../../Model/model_user.dart';
-// import '../../../XXX/xxx_firebase.dart';
-// import '../../../bottonBar/botonBar.dart';
-//
-// class Getcodephonenumber extends GetxController{
-//
-//   TextEditingController c1 = TextEditingController();
-//   TextEditingController c2 = TextEditingController();
-//   TextEditingController c3 = TextEditingController();
-//   TextEditingController c4 = TextEditingController();
-//   TextEditingController c5 = TextEditingController();
-//   TextEditingController c6 = TextEditingController();
-//   String phneNumber;
-//   bool pssworAndEmail;
-//   Uint8List imageUser;
-//   String Name;
-//   String Email;
-//   String password;
-//
-//
-//
-//   Getcodephonenumber({required this.c1,required this.c2,required this.c3,required this.c4,
-//   required this.c5,required this.c6,required this.phneNumber,required this.pssworAndEmail,required this.imageUser,
-//   required this.Name,required this.password,required this.Email});
-//
-//   bool correct1 =true;
-//
-//   int connter =100;
-//   late Timer timer1;
-//
-//   String? verifidCodeSent;
-//
-//   bool isLoding =false;
-//
-//
-//   void startTimer(){
-//     timer1= Timer.periodic(const Duration(seconds: 1), (timer) {
-//
-//         if(connter>0){
-//           connter--;
-//         }else{
-//           timer.cancel();
-//         }
-//         update();
-//
-//     });
-//   }
-//
-//   Future<void> phoneAuthCode() async{
-//
-//     try{
-//       await FirebaseAuth.instance.verifyPhoneNumber(
-//         phoneNumber: phneNumber,
-//         timeout: const Duration(seconds: 90),
-//         verificationCompleted: (PhoneAuthCredential credential) {
-//           debugPrint('111111111111111111111111111111111');
-//           debugPrint('111111111111111111111111111111111');
-//           debugPrint('111111111111111111111111111111111');
-//
-//         },
-//         verificationFailed: (FirebaseAuthException e) {
-//
-//
-//           debugPrint('22222222222222222222222222222222222');
-//           debugPrint(e);
-//           debugPrint('22222222222222222222222222222222222');
-//           debugPrint('22222222222222222222222222222222222');
-//
-//
-//
-//         },
-//         codeSent: (String verificationId, int? resendToken) async{
-//
-//           verifidCodeSent = verificationId;
-//         },
-//         codeAutoRetrievalTimeout: (String verificationId) {
-//           verifidCodeSent = verificationId;
-//         },
-//       );
-//     }catch(e){
-//
-//         correct1 =false;
-//         update();
-//     }
-//
-//   }
-//
-//   void sentCode(BuildContext context)async{
-//     try{
-//         isLoding=true;
-//         update();
-//       String smsCode = c1.text + c2.text + c3.text + c4.text + c5.text + c6.text;
-//       debugPrint(smsCode);
-//
-//       PhoneAuthCredential credential = PhoneAuthProvider
-//           .credential(verificationId: verifidCodeSent!, smsCode: smsCode);
-//       if(smsCode == credential.smsCode || smsCode != credential.smsCode){
-//
-//         // await FirebaseAuth.instance.signInWithCredential(credential).then((value)async{
-//
-//         if(pssworAndEmail = true){
-//
-//           //
-//           // await FirebaseAuth.instance.signInWithEmailAndPassword(
-//           //      email: widget.Email, password: widget.password).then((value) async{
-//
-//           Reference stprge=   FirebaseStorage.instance.ref(FirebaseX.StorgeApp).child(const Uuid().v1());
-//           UploadTask upload =  stprge.putData(imageUser);
-//           TaskSnapshot task = await upload;
-//           String url22 = await task.ref.getDownloadURL();
-//           if(Platform.isIOS){
-//             await  FirebaseMessaging.instance.getAPNSToken().then((token)async{
-//               ModelUser modelUser =ModelUser(url: url22, uid: FirebaseAuth.instance.currentUser!.uid,
-//                   token: token.toString(), phneNumber: phneNumber, password: password, email: Email, name: Name, appName: FirebaseX.appName);
-//
-//               await FirebaseFirestore.instance.collection(FirebaseX.collectionApp).doc(FirebaseAuth.instance.currentUser!.uid).set(modelUser.toMap()
-//
-//               ).then((value)async {
-//
-//
-//                 Navigator.push(
-//                     context, MaterialPageRoute(builder: (context) => bottonBar(theIndex: 0,)));
-//
-//
-//               });
-//
-//
-//             });
-//           }else{
-//             await  FirebaseMessaging.instance.getToken().then((token)async{
-//               ModelUser modelUser =ModelUser(url: url22, uid: FirebaseAuth.instance.currentUser!.uid,
-//                   token: token.toString(), phneNumber: phneNumber, password: password, email: Email, name: Name, appName: FirebaseX.appName);
-//
-//               await FirebaseFirestore.instance.collection(FirebaseX.collectionApp).doc(FirebaseAuth.instance.currentUser!.uid).set(modelUser.toMap()
-//
-//               ).then((value)async {
-//
-//
-//                 Navigator.push(
-//                     context, MaterialPageRoute(builder: (context) => bottonBar(theIndex: 0,)));
-//
-//
-//               });
-//
-//
-//             });
-//           }
-//
-//
-//
-//
-//         }else{
-//           debugPrint('//////////////////////q//////q///////q////q///q/////q///');
-//
-//
-//           Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>  bottonBar()),(rute)=>false);
-//
-//
-//         }
-//
-//
-//
-//
-//
-//         // });
-//       }
-//
-//
-//
-//     }on FirebaseAuthException catch (e){
-//       if(e.code == 'invalid-verification-code'){
-//           correct1 =false;
-//           isLoding =false;
-//           update();
-//       }
-//     }
-//     catch(e){
-//       debugPrint('3333333333333333333333333333333333');
-//       debugPrint(e);
-//
-//       debugPrint('3333333333333333333333333333333333');
-//
-//     }
-//   }
-//   @override
-//   void onInit() {
-//     startTimer();
-//     phoneAuthCode();
-//     // TODO: implement onInit
-//     super.onInit();
-//   }
-//   @override
-//   void dispose() {
-//     c1.dispose();
-//     c2.dispose();
-//     c3.dispose();
-//     c4.dispose();
-//     c5.dispose();
-//     c6.dispose();
-//     timer1.cancel();
-//     // TODO: implement dispose
-//     super.dispose();
-//   }
-//
-//
-//
-//
-// }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 import 'dart:async';
 import 'dart:io';
@@ -277,7 +30,6 @@ class GetCodePhoneNumber extends GetxController {
   final String name;
   final String email;
   final String password;
-
 
   // حالة صحة الكود
   RxBool correct = true.obs;
@@ -323,24 +75,52 @@ class GetCodePhoneNumber extends GetxController {
   /// طلب إرسال رمز التحقق عبر الهاتف باستخدام verifyPhoneNumber.
   Future<void> phoneAuthCode() async {
     try {
+      // في بيئة التطوير، يمكننا استخدام أرقام هواتف وهمية للاختبار
+      // Firebase يدعم test phone numbers في console
       await FirebaseAuth.instance.verifyPhoneNumber(
         phoneNumber: phneNumber,
         timeout: const Duration(seconds: 90),
-        verificationCompleted: (PhoneAuthCredential credential) {
+        verificationCompleted: (PhoneAuthCredential credential) async {
           // يمكن تنفيذ منطق تلقائي عند إكمال التحقق.
           // على سبيل المثال، يمكن محاولة تسجيل الدخول تلقائيًا.
-          Get.snackbar(
-            'تأكيد تلقائي',
-            'تم التحقق بشكل تلقائي.',
-            backgroundColor: Colors.greenAccent,
-            colorText: Colors.black,
-          );
+          try {
+            await FirebaseAuth.instance.signInWithCredential(credential);
+            Get.snackbar(
+              'تأكيد تلقائي',
+              'تم التحقق بشكل تلقائي.',
+              backgroundColor: Colors.greenAccent,
+              colorText: Colors.black,
+            );
+            await _completeRegistration();
+          } catch (e) {
+            debugPrint('Error in automatic verification: $e');
+          }
         },
         verificationFailed: (FirebaseAuthException e) {
           // عرض خطأ باستخدام حوار Get.defaultDialog
+          String errorMessage = 'حدث خطأ أثناء إرسال رمز التحقق.';
+
+          // معالجة رسائل خطأ محددة
+          if (e.code == 'invalid-phone-number') {
+            errorMessage =
+                'رقم الهاتف غير صحيح. الرجاء التحقق من الرقم والمحاولة مرة أخرى.';
+          } else if (e.code == 'too-many-requests') {
+            errorMessage =
+                'تم إرسال الكثير من الطلبات. الرجاء الانتظار والمحاولة لاحقاً.';
+          } else if (e.code == 'quota-exceeded') {
+            errorMessage =
+                'تم تجاوز الحد المسموح من الرسائل. الرجاء المحاولة لاحقاً.';
+          } else if (e.code == 'web-context-cancelled') {
+            errorMessage = 'تم إلغاء عملية التحقق. الرجاء المحاولة مرة أخرى.';
+          } else if (e.code == 'captcha-check-failed') {
+            errorMessage = 'فشل في التحقق الأمني. الرجاء المحاولة مرة أخرى.';
+          }
+
+          debugPrint('Firebase Auth Error: ${e.code} - ${e.message}');
+
           Get.defaultDialog(
             title: 'خطأ في التحقق',
-            middleText: e.message ?? 'حدث خطأ أثناء إرسال رمز التحقق.',
+            middleText: errorMessage,
             textConfirm: 'حسنًا',
             onConfirm: () => Get.back(),
             barrierDismissible: true,
@@ -348,6 +128,12 @@ class GetCodePhoneNumber extends GetxController {
         },
         codeSent: (String verificationId, int? resendToken) async {
           this.verificationId = verificationId;
+          Get.snackbar(
+            'تم الإرسال',
+            'تم إرسال رمز التحقق إلى رقم الهاتف المحدد',
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+          );
         },
         codeAutoRetrievalTimeout: (String verificationId) {
           this.verificationId = verificationId;
@@ -356,9 +142,11 @@ class GetCodePhoneNumber extends GetxController {
     } catch (e) {
       correct.value = false;
       update();
+      debugPrint('Phone Auth Error: $e');
       Get.defaultDialog(
         title: 'خطأ',
-        middleText: 'حدث خطأ أثناء طلب رمز التحقق. الرجاء المحاولة مرة أخرى.',
+        middleText:
+            'حدث خطأ أثناء طلب رمز التحقق. الرجاء التأكد من اتصال الإنترنت والمحاولة مرة أخرى.',
         textConfirm: 'موافق',
         onConfirm: () => Get.back(),
       );
@@ -372,7 +160,8 @@ class GetCodePhoneNumber extends GetxController {
       update();
 
       // جمع الحروف المدخلة في الخانات معاً.
-      String smsCode = c1.text + c2.text + c3.text + c4.text + c5.text + c6.text;
+      String smsCode =
+          c1.text + c2.text + c3.text + c4.text + c5.text + c6.text;
 
       // التأكد من أن الكود مكون من 6 أرقام.
       if (smsCode.length != 6) {
@@ -394,51 +183,10 @@ class GetCodePhoneNumber extends GetxController {
       );
 
       // محاولة تسجيل الدخول باستخدام الاعتماد.
-      // إذا نجح التسجيل، نستخدم المنطق التالي.
-      // await FirebaseAuth.instance.signInWithCredential(credential);
-      if(smsCode == credential.smsCode){
+      await FirebaseAuth.instance.signInWithCredential(credential);
 
-        // بناءً على حالة pssworAndEmail نقوم بالتسجيل أو تعديل بيانات المستخدم.
-
-        // رفع الصورة إلى Firebase Storage.
-        Reference storageRef = FirebaseStorage.instance
-            .ref(FirebaseX.StorgeApp)
-            .child(const Uuid().v1());
-        UploadTask uploadTask = storageRef.putData(imageUser);
-        TaskSnapshot taskSnapshot = await uploadTask;
-        String downloadUrl = await taskSnapshot.ref.getDownloadURL();
-
-        // الحصول على توكن Firebase Messaging بناءً على نوع النظام.
-        String? token;
-        if (Platform.isIOS) {
-          token = await FirebaseMessaging.instance.getAPNSToken();
-        } else {
-          token = await FirebaseMessaging.instance.getToken();
-        }
-
-        // إنشاء نموذج المستخدم وإضافته إلى Firestore.
-        UserModel modelUser = UserModel(
-          url: downloadUrl,
-          uid: FirebaseAuth.instance.currentUser!.uid,
-          token: token ?? '',
-          phoneNumber: phneNumber,
-          password:pssworAndEmail? password:'noPassword',
-          email:email ,
-          name: name,
-          appName: FirebaseX.appName,
-        );
-
-        await FirebaseFirestore.instance
-            .collection(FirebaseX.collectionApp)
-            .doc(FirebaseAuth.instance.currentUser!.uid)
-            .set(modelUser.toMap());
-
-        // التنقل إلى الشاشة الرئيسية.
-        Get.offAll(() => BottomBar(initialIndex: 0));
-
-      }
-
-
+      // إذا نجح التسجيل، نكمل التسجيل
+      await _completeRegistration();
     } on FirebaseAuthException catch (e) {
       if (e.code == 'invalid-verification-code') {
         correct.value = false;
@@ -450,17 +198,75 @@ class GetCodePhoneNumber extends GetxController {
           textConfirm: 'موافق',
           onConfirm: () => Get.back(),
         );
+      } else if (e.code == 'session-expired') {
+        Get.defaultDialog(
+          title: 'انتهت صلاحية الجلسة',
+          middleText: 'انتهت صلاحية رمز التحقق. الرجاء طلب رمز جديد.',
+          textConfirm: 'موافق',
+          onConfirm: () {
+            Get.back();
+            phoneAuthCode(); // إعادة إرسال الكود
+          },
+        );
       }
     } catch (e) {
       Get.defaultDialog(
         title: 'خطأ',
-        middleText: 'حدث خطأ أثناء التحقق: ',
+        middleText: 'حدث خطأ أثناء التحقق: ${e.toString()}',
         textConfirm: 'موافق',
         onConfirm: () => Get.back(),
       );
     } finally {
       isLoading.value = false;
       update();
+    }
+  }
+
+  /// دالة لإكمال التسجيل بعد التحقق من الهاتف
+  Future<void> _completeRegistration() async {
+    try {
+      // رفع الصورة إلى Firebase Storage.
+      Reference storageRef = FirebaseStorage.instance
+          .ref(FirebaseX.StorgeApp)
+          .child(const Uuid().v1());
+      UploadTask uploadTask = storageRef.putData(imageUser);
+      TaskSnapshot taskSnapshot = await uploadTask;
+      String downloadUrl = await taskSnapshot.ref.getDownloadURL();
+
+      // الحصول على توكن Firebase Messaging بناءً على نوع النظام.
+      String? token;
+      if (Platform.isIOS) {
+        token = await FirebaseMessaging.instance.getAPNSToken();
+      } else {
+        token = await FirebaseMessaging.instance.getToken();
+      }
+
+      // إنشاء نموذج المستخدم وإضافته إلى Firestore.
+      UserModel modelUser = UserModel(
+        url: downloadUrl,
+        uid: FirebaseAuth.instance.currentUser!.uid,
+        token: token ?? '',
+        phoneNumber: phneNumber,
+        password: pssworAndEmail ? password : 'noPassword',
+        email: email,
+        name: name,
+        appName: FirebaseX.appName,
+      );
+
+      await FirebaseFirestore.instance
+          .collection(FirebaseX.collectionApp)
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .set(modelUser.toMap());
+
+      // التنقل إلى الشاشة الرئيسية.
+      Get.offAll(() => BottomBar(initialIndex: 0));
+    } catch (e) {
+      Get.defaultDialog(
+        title: 'خطأ في حفظ البيانات',
+        middleText: 'حدث خطأ أثناء حفظ بياناتك. الرجاء المحاولة مرة أخرى.',
+        textConfirm: 'موافق',
+        onConfirm: () => Get.back(),
+      );
     }
   }
 

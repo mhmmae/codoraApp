@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart'; // For Get.snackbar context
 import 'package:get/get.dart';
 
-import 'DeliveryCompanyModel.dart';
+import '../../Model/DeliveryCompanyModel.dart';
 
 // افترض وجود هذه الملفات، قم بتعديل المسارات
 // import '../../XXX/xxx_firebase.dart';

@@ -24,11 +24,11 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
   late AnimationController _tabAnimationController;
   late AnimationController _statsAnimationController;
   late TabController _tabController;
-  
+
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
   late Animation<double> _scaleAnimation;
-  
+
   // للأنيميشن الفردي للبطاقات
   final List<AnimationController> _cardControllers = [];
   final Map<String, AnimationController> _buttonAnimations = {};
@@ -36,55 +36,55 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
   @override
   void initState() {
     super.initState();
-    
+
     // إعداد متحكمات الأنيميشن الرئيسية
     _mainAnimationController = AnimationController(
       duration: const Duration(milliseconds: 1200),
       vsync: this,
     );
-    
+
     _tabAnimationController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    
+
     _statsAnimationController = AnimationController(
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
-    
+
     _tabController = TabController(length: 3, vsync: this);
-    
+
     // إعداد الأنيميشن
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _mainAnimationController,
-      curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
-    ));
-    
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _mainAnimationController,
+        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+      ),
+    );
+
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.5),
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _mainAnimationController,
-      curve: const Interval(0.2, 0.8, curve: Curves.easeOutBack),
-    ));
-    
-    _scaleAnimation = Tween<double>(
-      begin: 0.6,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _mainAnimationController,
-      curve: const Interval(0.4, 1.0, curve: Curves.elasticOut),
-    ));
-    
+    ).animate(
+      CurvedAnimation(
+        parent: _mainAnimationController,
+        curve: const Interval(0.2, 0.8, curve: Curves.easeOutBack),
+      ),
+    );
+
+    _scaleAnimation = Tween<double>(begin: 0.6, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _mainAnimationController,
+        curve: const Interval(0.4, 1.0, curve: Curves.elasticOut),
+      ),
+    );
+
     // بدء الأنيميشن
     _mainAnimationController.forward();
     _tabAnimationController.forward();
     _statsAnimationController.forward();
-    
+
     // إضافة listener للتبويبات
     _tabController.addListener(() {
       if (_tabController.indexIsChanging) {
@@ -120,7 +120,7 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
         children: [
           // شريط الإحصائيات العلوي
           _buildAnimatedStatsBar(ordersController, width),
-          
+
           // شريط التبويب المحسن
           FadeTransition(
             opacity: _fadeAnimation,
@@ -129,9 +129,9 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
               child: _buildProfessionalTabBar(ordersController, width),
             ),
           ),
-          
+
           const SizedBox(height: 16),
-          
+
           // محتوى التبويبات
           Expanded(
             child: ScaleTransition(
@@ -237,14 +237,13 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
     double delay,
   ) {
     return Obx(() {
-      final animation = Tween<double>(
-        begin: 0.0,
-        end: 1.0,
-      ).animate(CurvedAnimation(
-        parent: _statsAnimationController,
-        curve: Interval(delay, delay + 0.5, curve: Curves.elasticOut),
-      ));
-      
+      final animation = Tween<double>(begin: 0.0, end: 1.0).animate(
+        CurvedAnimation(
+          parent: _statsAnimationController,
+          curve: Interval(delay, delay + 0.5, curve: Curves.elasticOut),
+        ),
+      );
+
       return AnimatedBuilder(
         animation: animation,
         builder: (context, child) {
@@ -259,11 +258,7 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
                     color: color.withOpacity(0.15),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
-                    icon,
-                    color: color,
-                    size: 24,
-                  ),
+                  child: Icon(icon, color: color, size: 24),
                 ),
                 const SizedBox(height: 8),
                 TweenAnimationBuilder<int>(
@@ -282,10 +277,7 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
                 ),
                 Text(
                   label,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey[600],
-                  ),
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                 ),
               ],
             ),
@@ -297,11 +289,7 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
 
   /// فاصل عمودي
   Widget _buildVerticalDivider() {
-    return Container(
-      height: 50,
-      width: 1,
-      color: Colors.grey[300],
-    );
+    return Container(height: 50, width: 1, color: Colors.grey[300]);
   }
 
   /// بناء شريط التبويب الاحترافي
@@ -342,14 +330,23 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
         indicatorPadding: const EdgeInsets.all(5),
         labelColor: Colors.white,
         unselectedLabelColor: Colors.grey[600],
-        labelStyle: const TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 14,
-        ),
+        labelStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
         tabs: [
-          _buildAnimatedTab('جديد', controller.newOrdersCount, const Color(0xFF2196F3)),
-          _buildAnimatedTab('قيد التحضير', controller.acceptedOrdersCount, const Color(0xFFFF9800)),
-          _buildAnimatedTab('جاهز', controller.readyOrdersCount, const Color(0xFF4CAF50)),
+          _buildAnimatedTab(
+            'جديد',
+            controller.newOrdersCount,
+            const Color(0xFF2196F3),
+          ),
+          _buildAnimatedTab(
+            'قيد التحضير',
+            controller.acceptedOrdersCount,
+            const Color(0xFFFF9800),
+          ),
+          _buildAnimatedTab(
+            'جاهز',
+            controller.readyOrdersCount,
+            const Color(0xFF4CAF50),
+          ),
         ],
       ),
     );
@@ -358,40 +355,45 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
   /// بناء تاب متحرك
   Widget _buildAnimatedTab(String label, RxInt count, Color color) {
     return Tab(
-      child: Obx(() => Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(label),
-          if (count.value > 0) ...[
-            const SizedBox(width: 8),
-            TweenAnimationBuilder<double>(
-              tween: Tween(begin: 0.0, end: count.value > 0 ? 1.0 : 0.0),
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.elasticOut,
-              builder: (context, value, child) {
-                return Transform.scale(
-                  scale: value,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: color,
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    child: Text(
-                      '${count.value}',
-                      style: const TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+      child: Obx(
+        () => Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(label),
+            if (count.value > 0) ...[
+              const SizedBox(width: 8),
+              TweenAnimationBuilder<double>(
+                tween: Tween(begin: 0.0, end: count.value > 0 ? 1.0 : 0.0),
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.elasticOut,
+                builder: (context, value, child) {
+                  return Transform.scale(
+                    scale: value,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: color,
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                      child: Text(
+                        '${count.value}',
+                        style: const TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
-            ),
+                  );
+                },
+              ),
+            ],
           ],
-        ],
-      )),
+        ),
+      ),
     );
   }
 
@@ -404,7 +406,7 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
     Color accentColor,
   ) {
     final ordersController = Get.find<OrdersController>();
-    
+
     return Obx(() {
       if (ordersList.isEmpty) {
         return _buildEmptyState(status, width, accentColor);
@@ -420,7 +422,7 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
           itemBuilder: (context, index) {
             final orderDoc = ordersList[index];
             final orderData = orderDoc.data() as Map<String, dynamic>;
-            
+
             // إنشاء animation controller لكل بطاقة
             if (_cardControllers.length <= index) {
               final controller = AnimationController(
@@ -430,26 +432,30 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
               _cardControllers.add(controller);
               controller.forward();
             }
-            
+
             return AnimatedBuilder(
               animation: _cardControllers[index],
               builder: (context, child) {
                 final slideAnimation = Tween<Offset>(
                   begin: const Offset(1.0, 0.0),
                   end: Offset.zero,
-                ).animate(CurvedAnimation(
-                  parent: _cardControllers[index],
-                  curve: Curves.easeOutBack,
-                ));
-                
+                ).animate(
+                  CurvedAnimation(
+                    parent: _cardControllers[index],
+                    curve: Curves.easeOutBack,
+                  ),
+                );
+
                 final fadeAnimation = Tween<double>(
                   begin: 0.0,
                   end: 1.0,
-                ).animate(CurvedAnimation(
-                  parent: _cardControllers[index],
-                  curve: Curves.easeIn,
-                ));
-                
+                ).animate(
+                  CurvedAnimation(
+                    parent: _cardControllers[index],
+                    curve: Curves.easeIn,
+                  ),
+                );
+
                 return SlideTransition(
                   position: slideAnimation,
                   child: FadeTransition(
@@ -482,10 +488,11 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
     Color accentColor,
   ) {
     return FutureBuilder<DocumentSnapshot>(
-      future: FirebaseFirestore.instance
-          .collection(FirebaseX.collectionApp)
-          .doc(orderData['uidUser'])
-          .get(),
+      future:
+          FirebaseFirestore.instance
+              .collection(FirebaseX.collectionApp)
+              .doc(orderData['uidUser'])
+              .get(),
       builder: (context, userSnapshot) {
         if (userSnapshot.connectionState == ConnectionState.waiting) {
           return _buildLoadingCard(height);
@@ -496,7 +503,7 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
         }
 
         final userData = userSnapshot.data!.data() as Map<String, dynamic>;
-        
+
         return Container(
           margin: const EdgeInsets.only(bottom: 16),
           child: Material(
@@ -504,7 +511,13 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
             child: InkWell(
               onTap: () {
                 HapticFeedback.lightImpact();
-                _showOrderDetails(orderDoc, orderData, userData, status, accentColor);
+                _showOrderDetails(
+                  orderDoc,
+                  orderData,
+                  userData,
+                  status,
+                  accentColor,
+                );
               },
               borderRadius: BorderRadius.circular(20),
               child: Container(
@@ -608,44 +621,47 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
                           // التاريخ والوقت فقط
                           GetBuilder<GetDateToText>(
                             init: GetDateToText(),
-                            builder: (dateController) => Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 14,
-                                vertical: 8,
-                              ),
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    accentColor.withOpacity(0.15),
-                                    accentColor.withOpacity(0.1),
-                                  ],
-                                ),
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                  color: accentColor.withOpacity(0.3),
-                                  width: 1.5,
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.schedule,
-                                    size: 16,
-                                    color: accentColor,
+                            builder:
+                                (dateController) => Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 14,
+                                    vertical: 8,
                                   ),
-                                  const SizedBox(width: 6),
-                                  Text(
-                                    dateController.dateToText(orderData['timeOrder']),
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      color: accentColor,
-                                      fontWeight: FontWeight.w600,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        accentColor.withOpacity(0.15),
+                                        accentColor.withOpacity(0.1),
+                                      ],
+                                    ),
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                      color: accentColor.withOpacity(0.3),
+                                      width: 1.5,
                                     ),
                                   ),
-                                ],
-                              ),
-                            ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.schedule,
+                                        size: 16,
+                                        color: accentColor,
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        dateController.dateToText(
+                                          orderData['timeOrder'],
+                                        ),
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: accentColor,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                           ),
                         ],
                       ),
@@ -682,7 +698,6 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
     double height,
     Color accentColor,
   ) {
-
     // إنشاء animation controller للأزرار
     _buttonAnimations[orderId] ??= AnimationController(
       duration: const Duration(milliseconds: 300),
@@ -690,7 +705,7 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
     );
 
     Widget content;
-    
+
     switch (status) {
       case OrderStatus.pending:
         content = Row(
@@ -824,11 +839,7 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
                 ),
                 child: Column(
                   children: [
-                    Icon(
-                      Icons.qr_code_2,
-                      color: Colors.green[700],
-                      size: 48,
-                    ),
+                    Icon(Icons.qr_code_2, color: Colors.green[700], size: 48),
                     const SizedBox(height: 12),
                     Text(
                       'عرض رمز QR للتسليم',
@@ -841,10 +852,7 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
                     const SizedBox(height: 6),
                     Text(
                       'اطلب من عامل التوصيل مسح الرمز',
-                      style: TextStyle(
-                        color: Colors.green[600],
-                        fontSize: 13,
-                      ),
+                      style: TextStyle(color: Colors.green[600], fontSize: 13),
                     ),
                   ],
                 ),
@@ -858,10 +866,7 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
         content = const SizedBox.shrink();
     }
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      child: content,
-    );
+    return Container(padding: const EdgeInsets.all(16), child: content);
   }
 
   /// بناء زر متحرك احترافي
@@ -884,25 +889,27 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
             width: isFullWidth ? double.infinity : null,
             height: 50,
             decoration: BoxDecoration(
-              gradient: isGradient && !isOutlined
-                  ? LinearGradient(
-                      colors: [color, color.withOpacity(0.8)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    )
-                  : null,
+              gradient:
+                  isGradient && !isOutlined
+                      ? LinearGradient(
+                        colors: [color, color.withOpacity(0.8)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      )
+                      : null,
               color: isOutlined ? null : (isGradient ? null : color),
               borderRadius: BorderRadius.circular(15),
               border: isOutlined ? Border.all(color: color, width: 2) : null,
-              boxShadow: !isOutlined
-                  ? [
-                      BoxShadow(
-                        color: color.withOpacity(0.3),
-                        blurRadius: 10,
-                        offset: const Offset(0, 5),
-                      ),
-                    ]
-                  : null,
+              boxShadow:
+                  !isOutlined
+                      ? [
+                        BoxShadow(
+                          color: color.withOpacity(0.3),
+                          blurRadius: 10,
+                          offset: const Offset(0, 5),
+                        ),
+                      ]
+                      : null,
             ),
             child: Material(
               color: Colors.transparent,
@@ -948,7 +955,7 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
     Color accentColor,
   ) {
     HapticFeedback.lightImpact();
-    
+
     Get.bottomSheet(
       Container(
         constraints: BoxConstraints(
@@ -975,22 +982,271 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
               ),
             ),
             // محتوى التفاصيل
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  Text(
-                    'تفاصيل الطلب',
-                    style: const TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
+            Expanded(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // عنوان التفاصيل
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: accentColor.withOpacity(0.1),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.receipt_long,
+                            color: accentColor,
+                            size: 20,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        const Text(
+                          'تفاصيل الطلب',
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  // يمكنك إضافة المزيد من التفاصيل هنا
-                ],
+                    const SizedBox(height: 24),
+
+                    // معلومات الطلب
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 10,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.info_outline,
+                                color: accentColor,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                'معلومات الطلب',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: accentColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Text('رقم الطلب: ${orderDoc.id.substring(0, 8)}'),
+                          const SizedBox(height: 8),
+
+                          // عرض نوع الطلب
+                          if (orderData['orderType'] == 'wholesale_to_retail')
+                            Container(
+                              margin: const EdgeInsets.only(bottom: 8),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.orange.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: Colors.orange.withOpacity(0.3),
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.storefront,
+                                    size: 16,
+                                    color: Colors.orange[700],
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    'طلب جملة لتجزئة',
+                                    style: TextStyle(
+                                      color: Colors.orange[700],
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                          // عرض نوع المشتري
+                          if (orderData['buyerType'] == 'retailer')
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.blue.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                  color: Colors.blue.withOpacity(0.3),
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.person_outline,
+                                    size: 16,
+                                    color: Colors.blue[700],
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    'مشتري: تاجر تجزئة',
+                                    style: TextStyle(
+                                      color: Colors.blue[700],
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // معلومات العميل
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 10,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.person_outline,
+                                color: accentColor,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                'معلومات العميل',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: accentColor,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          Text('الاسم: ${userData['name'] ?? 'غير محدد'}'),
+                          if (userData['shopName'] != null &&
+                              userData['shopName'].toString().isNotEmpty) ...[
+                            const SizedBox(height: 8),
+                            Text('اسم المتجر: ${userData['shopName']}'),
+                          ],
+                          const SizedBox(height: 8),
+                          Text(
+                            'الهاتف: ${userData['phoneNumber'] ?? 'غير محدد'}',
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
+
+            // أزرار الإجراءات (إذا كان الطلب جديد)
+            if (status == OrderStatus.pending)
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.grey[50],
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          Get.back();
+                          _showRejectDialog(context, orderDoc.id);
+                        },
+                        icon: const Icon(Icons.close, color: Colors.white),
+                        label: const Text('رفض'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      flex: 2,
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          Get.back();
+                          Get.to(
+                            () => OrderPreviewPage(
+                              orderId: orderDoc.id,
+                              orderData: orderData,
+                              userData: userData,
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.visibility, color: Colors.white),
+                        label: const Text('معاينة وقبول'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
           ],
         ),
       ),
@@ -1005,9 +1261,7 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
   void _showRejectDialog(BuildContext context, String orderId) {
     Get.dialog(
       AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Row(
           children: [
             Container(
@@ -1023,10 +1277,7 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
               ),
             ),
             const SizedBox(width: 12),
-            const Text(
-              'تأكيد رفض الطلب',
-              style: TextStyle(fontSize: 18),
-            ),
+            const Text('تأكيد رفض الطلب', style: TextStyle(fontSize: 18)),
           ],
         ),
         content: const Text(
@@ -1036,10 +1287,7 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: Text(
-              'إلغاء',
-              style: TextStyle(color: Colors.grey[600]),
-            ),
+            child: Text('إلغاء', style: TextStyle(color: Colors.grey[600])),
           ),
           const SizedBox(width: 8),
           ElevatedButton(
@@ -1057,7 +1305,10 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
             ),
             child: const Text(
               'رفض الطلب',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ],
@@ -1071,9 +1322,7 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
     HapticFeedback.mediumImpact();
     Get.dialog(
       AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Row(
           children: [
             Container(
@@ -1089,10 +1338,7 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
               ),
             ),
             const SizedBox(width: 12),
-            const Text(
-              'تأكيد جاهزية الطلب',
-              style: TextStyle(fontSize: 18),
-            ),
+            const Text('تأكيد جاهزية الطلب', style: TextStyle(fontSize: 18)),
           ],
         ),
         content: const Text(
@@ -1102,10 +1348,7 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: Text(
-              'إلغاء',
-              style: TextStyle(color: Colors.grey[600]),
-            ),
+            child: Text('إلغاء', style: TextStyle(color: Colors.grey[600])),
           ),
           const SizedBox(width: 8),
           ElevatedButton(
@@ -1123,7 +1366,10 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
             ),
             child: const Text(
               'نعم، الطلب جاهز',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ],
@@ -1148,9 +1394,7 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
           ),
         ],
       ),
-      child: const Center(
-        child: CircularProgressIndicator(strokeWidth: 2),
-      ),
+      child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),
     );
   }
 
@@ -1190,11 +1434,7 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildAnimatedEmptyIcon(
-                  data['icon'],
-                  color,
-                  data['animation'],
-                ),
+                _buildAnimatedEmptyIcon(data['icon'], color, data['animation']),
                 const SizedBox(height: 24),
                 Text(
                   data['title'],
@@ -1207,10 +1447,7 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
                 const SizedBox(height: 8),
                 Text(
                   data['subtitle'],
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: Colors.grey[500],
-                  ),
+                  style: TextStyle(fontSize: 15, color: Colors.grey[500]),
                 ),
               ],
             ),
@@ -1221,7 +1458,11 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
   }
 
   /// بناء أيقونة متحركة للحالة الفارغة
-  Widget _buildAnimatedEmptyIcon(IconData icon, Color color, String animationType) {
+  Widget _buildAnimatedEmptyIcon(
+    IconData icon,
+    Color color,
+    String animationType,
+  ) {
     switch (animationType) {
       case 'bounce':
         return TweenAnimationBuilder<double>(
@@ -1231,18 +1472,14 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
           builder: (context, value, child) {
             return Transform.translate(
               offset: Offset(0, math.sin(value * math.pi * 2) * 10),
-              child: Icon(
-                icon,
-                size: 80,
-                color: color.withOpacity(0.3),
-              ),
+              child: Icon(icon, size: 80, color: color.withOpacity(0.3)),
             );
           },
           onEnd: () {
             setState(() {});
           },
         );
-      
+
       case 'rotate':
         return TweenAnimationBuilder<double>(
           tween: Tween(begin: 0, end: 2 * math.pi),
@@ -1250,18 +1487,14 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
           builder: (context, value, child) {
             return Transform.rotate(
               angle: value,
-              child: Icon(
-                icon,
-                size: 80,
-                color: color.withOpacity(0.3),
-              ),
+              child: Icon(icon, size: 80, color: color.withOpacity(0.3)),
             );
           },
           onEnd: () {
             setState(() {});
           },
         );
-      
+
       case 'pulse':
         return TweenAnimationBuilder<double>(
           tween: Tween(begin: 0.8, end: 1.2),
@@ -1270,24 +1503,16 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
           builder: (context, value, child) {
             return Transform.scale(
               scale: value,
-              child: Icon(
-                icon,
-                size: 80,
-                color: color.withOpacity(0.3),
-              ),
+              child: Icon(icon, size: 80, color: color.withOpacity(0.3)),
             );
           },
           onEnd: () {
             setState(() {});
           },
         );
-      
+
       default:
-        return Icon(
-          icon,
-          size: 80,
-          color: color.withOpacity(0.3),
-        );
+        return Icon(icon, size: 80, color: color.withOpacity(0.3));
     }
   }
 
@@ -1298,7 +1523,7 @@ class _EnhancedOrdersViewState extends State<EnhancedOrdersView>
     Map<String, dynamic> userData,
   ) {
     HapticFeedback.lightImpact();
-    
+
     Get.to(
       () => OrderPreviewPage(
         orderId: orderId,

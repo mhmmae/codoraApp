@@ -7,7 +7,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../../XXX/xxx_firebase.dart';
 import 'CompanyDriversListScreen.dart';
 import 'DeliveryTaskDetailsAdminController.dart';
-import 'DeliveryTaskModel.dart'; // لعرض الصور من رابط
+import '../../Model/DeliveryTaskModel.dart'; // لعرض الصور من رابط
 
 Map<String, dynamic> getTaskStatusVisuals(DeliveryTaskStatus status, BuildContext context) {
   ThemeData theme = Theme.of(context);

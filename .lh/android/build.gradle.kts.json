@@ -1,0 +1,18 @@
+{
+    "sourceFile": "android/build.gradle.kts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1752658534229,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1752658534229,
+            "name": "Commit-0",
+            "content": "plugins {\n    id(\"com.android.application\") version \"8.9.0\" apply false\n    id(\"org.jetbrains.kotlin.android\") version \"2.1.0\" apply false\n}\n\nallprojects {\n    repositories {\n        google()\n        mavenCentral()\n    }\n    \n    // Suppress Java 8 warnings for all subprojects\n    tasks.withType<JavaCompile> {\n        options.compilerArgs.addAll(listOf(\"-Xlint:-options\", \"-Xlint:-deprecation\"))\n    }\n}\n\nval newBuildDir: Directory = rootProject.layout.buildDirectory.dir(\"../../build\").get()\nrootProject.layout.buildDirectory.value(newBuildDir)\n\nsubprojects {\n    val newSubprojectBuildDir: Directory = newBuildDir.dir(project.name)\n    project.layout.buildDirectory.value(newSubprojectBuildDir)\n    \n    // Apply compiler settings to all subprojects\n    afterEvaluate {\n        tasks.withType<JavaCompile> {\n            options.compilerArgs.addAll(listOf(\"-Xlint:-options\", \"-Xlint:-deprecation\"))\n        }\n    }\n}\n\nsubprojects {\n    project.evaluationDependsOn(\":app\")\n}\n\ntasks.register<Delete>(\"clean\") {\n    delete(rootProject.layout.buildDirectory)\n}\n"
+        }
+    ]
+}

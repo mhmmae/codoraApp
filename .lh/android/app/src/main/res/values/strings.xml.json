@@ -1,0 +1,18 @@
+{
+    "sourceFile": "android/app/src/main/res/values/strings.xml",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1752662835258,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1752662835258,
+            "name": "Commit-0",
+            "content": "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>\n    <string name=\"facebook_app_id\">2706958992839491</string>\n    <string name=\"fb_login_protocol_scheme\">fb2706958992839491</string>\n    <string name=\"facebook_client_token\">a2bdf5f7f2f18c0aa25dd9a3269ecfd3</string>\n    <string name=\"google_maps_key\">AIzaSyC8YAMGRKrLJxeMR1uLJm49PZ5xjS_BKoc</string>\n</resources>\n"
+        }
+    ]
+}

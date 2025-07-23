@@ -1,7 +1,7 @@
-import 'package:codora/%D8%A7%D9%84%D9%83%D9%88%D8%AF%20%D8%A7%D9%84%D8%AE%D8%A7%D8%B5%20%D8%A8%D8%AA%D8%B7%D8%A8%D9%8A%D9%82%20%D8%A7%D9%84%D8%A8%D8%A7%D8%A6%D8%B9/ui/controllers/retail_cart_controller.dart';
-import 'package:codora/%D8%A7%D9%84%D9%83%D9%88%D8%AF%20%D8%A7%D9%84%D8%AE%D8%A7%D8%B5%20%D8%A8%D8%AA%D8%B7%D8%A8%D9%8A%D9%82%20%D8%A7%D9%84%D8%A8%D8%A7%D8%A6%D8%B9/seller_app_auth/controllers/seller_auth_bindings.dart';
 import 'package:codora/%D8%A7%D9%84%D9%83%D9%88%D8%AF%20%D8%A7%D9%84%D8%AE%D8%A7%D8%B5%20%D8%A8%D8%AA%D8%B7%D8%A8%D9%8A%D9%82%20%D8%A7%D9%84%D8%A8%D8%A7%D8%A6%D8%B9/seller_app_auth/ui/welcome1.dart';
+import 'package:codora/%D8%A7%D9%84%D9%83%D9%88%D8%AF%20%D8%A7%D9%84%D8%AE%D8%A7%D8%B5%20%D8%A8%D8%AA%D8%B7%D8%A8%D9%8A%D9%82%20%D8%A7%D9%84%D8%A8%D8%A7%D8%A6%D8%B9/ui/controllers/retail_cart_controller.dart';
 import 'package:codora/%D8%A7%D9%84%D9%83%D9%88%D8%AF%20%D8%A7%D9%84%D8%AE%D8%A7%D8%B5%20%D8%A8%D8%AA%D8%B7%D8%A8%D9%8A%D9%82%20%D8%A7%D9%84%D8%A8%D8%A7%D8%A6%D8%B9/ui/seller_main_screen.dart';
+import 'package:codora/%D8%A7%D9%84%D9%83%D9%88%D8%AF%20%D8%A7%D9%84%D8%AE%D8%A7%D8%B5%20%D8%A8%D8%AA%D8%B7%D8%A8%D9%8A%D9%82%20%D8%A7%D9%84%D8%B9%D9%85%D9%8A%D9%84%20/chat/google/InitialBindings.dart';
 import 'routes/app_pages.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -14,6 +14,8 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'dart:io';
 
 import 'الكود الخاص بتطبيق العميل /controler/local-notification-onroller.dart';
+import 'الكود الخاص بتطبيق العميل /services/phone_auth_service.dart';
+import 'الكود الخاص بتطبيق البائع/seller_app_auth/controllers/seller_auth_controller.dart';
 import 'firebase_options.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -22,8 +24,93 @@ late FirebaseMessaging messaging;
 class InitialBindings extends Bindings {
   @override
   void dependencies() {
-    Get.put(SellerAuthBindings());
-    Get.put(RetailCartController(), permanent: true);
+    // تهيئة PhoneAuthService مع ضمان التسجيل الصحيح
+    try {
+      // التحقق من وجود الخدمة أولاً وإزالتها إن وجدت
+      if (Get.isRegistered<PhoneAuthService>()) {
+        Get.delete<PhoneAuthService>();
+        debugPrint("🔄 تم حذف PhoneAuthService السابق");
+      }
+
+      // إنشاء وتسجيل الخدمة الجديدة
+      final phoneAuthService = PhoneAuthService();
+      Get.put(phoneAuthService, permanent: true);
+      debugPrint("✅ تم تسجيل PhoneAuthService بنجاح في InitialBindings");
+
+      // انتظار تهيئة كاملة للخدمة
+      Future.delayed(Duration(seconds: 2), () {
+        try {
+          final service = Get.find<PhoneAuthService>();
+          service.testService();
+          final report = service.getServiceReport();
+          debugPrint("📊 تقرير خدمة المصادقة: ${report['status']}");
+
+          // اختبار أساسي للتأكد من جاهزية الخدمة
+          debugPrint("🔍 اختبار جاهزية الخدمة...");
+          if (service.canMakeRequest) {
+            debugPrint("✅ الخدمة جاهزة لاستقبال الطلبات");
+          } else {
+            debugPrint("⚠️ الخدمة غير جاهزة لاستقبال الطلبات");
+          }
+        } catch (e) {
+          debugPrint("❌ خطأ في اختبار PhoneAuthService: $e");
+          // محاولة إعادة تسجيل الخدمة
+          try {
+            Get.delete<PhoneAuthService>();
+            Get.put(PhoneAuthService(), permanent: true);
+            debugPrint("🔄 تم إعادة تسجيل PhoneAuthService");
+          } catch (retryError) {
+            debugPrint("❌ فشل في إعادة تسجيل PhoneAuthService: $retryError");
+          }
+        }
+      });
+    } catch (e) {
+      debugPrint("❌ فشل في تسجيل PhoneAuthService: $e");
+      // محاولة تسجيل بديلة
+      try {
+        debugPrint("🔄 محاولة تسجيل بديلة...");
+        Get.lazyPut(() => PhoneAuthService(), fenix: true);
+        debugPrint("✅ تم التسجيل البديل لـ PhoneAuthService");
+      } catch (fallbackError) {
+        debugPrint("❌ فشل في التسجيل البديل: $fallbackError");
+      }
+    }
+
+    // ✅ تهيئة SellerAuthController للبائعين
+    try {
+      // التحقق من وجود الكنترولر أولاً وإزالته إن وجد
+      if (Get.isRegistered<SellerAuthController>()) {
+        Get.delete<SellerAuthController>();
+        debugPrint("🔄 تم حذف SellerAuthController السابق");
+      }
+
+      // إنشاء وتسجيل الكنترولر الجديد
+      final sellerAuthController = SellerAuthController();
+      Get.lazyPut(() => RetailCartController());
+      Get.put(sellerAuthController, permanent: true);
+      debugPrint("✅ تم تسجيل SellerAuthController بنجاح في InitialBindings");
+    } catch (e) {
+      debugPrint("❌ فشل في تسجيل SellerAuthController: $e");
+      // محاولة تسجيل بديلة
+      try {
+        debugPrint("🔄 محاولة تسجيل بديلة لـ SellerAuthController...");
+        Get.lazyPut(() => SellerAuthController(), fenix: true);
+        debugPrint("✅ تم التسجيل البديل لـ SellerAuthController");
+      } catch (fallbackError) {
+        debugPrint(
+          "❌ فشل في التسجيل البديل لـ SellerAuthController: $fallbackError",
+        );
+      }
+    }
+
+    // استدعاء InitialBindings1 للحصول على جميع الخدمات الإضافية
+    try {
+      final initialBindings1 = InitialBindings1();
+      initialBindings1.dependencies();
+      debugPrint("✅ تم استدعاء InitialBindings1 بنجاح");
+    } catch (e) {
+      debugPrint("❌ فشل في استدعاء InitialBindings1: $e");
+    }
   }
 }
 
@@ -33,13 +120,24 @@ void main() async {
   // Initialize Firebase properly with iOS-specific handling
   try {
     print("🔧 Starting Firebase initialization...");
-    
+
     // Always try to initialize from Dart to ensure proper configuration
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
     print("✅ Firebase initialized successfully from Dart");
-    
+
+    // اختبار Firebase Auth بعد التهيئة
+    try {
+      final auth = FirebaseAuth.instance;
+      print("🔐 Firebase Auth instance created: ${auth.app.name}");
+      print("📱 Current user: ${auth.currentUser?.uid ?? 'No user'}");
+      print("🌍 App ID: ${auth.app.options.appId}");
+      print("🏗️ Project ID: ${auth.app.options.projectId}");
+    } catch (authError) {
+      print("❌ Firebase Auth test failed: $authError");
+    }
+
     // Wait longer for iOS to ensure everything is ready
     if (Platform.isIOS) {
       await Future.delayed(Duration(milliseconds: 5000));
@@ -48,20 +146,18 @@ void main() async {
       await Future.delayed(Duration(milliseconds: 2000));
       print("✅ Android Firebase initialization delay completed");
     }
-    
+
     // Initialize Firebase Messaging safely
     try {
       messaging = FirebaseMessaging.instance;
       print("✅ Firebase Messaging initialized");
-      
     } catch (messagingError) {
       print("⚠️ Firebase Messaging initialization error: $messagingError");
       // Continue without messaging features
     }
-    
   } catch (e) {
     print("⚠️ Firebase initialization error: $e");
-    
+
     // If initialization fails, try to use existing app (for iOS)
     if (Platform.isIOS && Firebase.apps.isNotEmpty) {
       print("🔄 Using existing Firebase app on iOS");
@@ -87,14 +183,15 @@ void main() async {
       provisional: false,
       sound: true,
     );
-    
+
     // Configure foreground notifications
-    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
-    
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
+
     print("✅ Firebase Messaging permissions configured");
   } catch (e) {
     print("⚠️ Firebase Messaging configuration error: $e");
@@ -146,7 +243,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
       options: DefaultFirebaseOptions.currentPlatform,
     );
   }
-  
+
   print("✅ Background handler called - handling notification");
 
   try {
@@ -218,7 +315,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 class MyApp extends StatelessWidget {
-   const MyApp({super.key, this.isLoggedIn});
+  const MyApp({super.key, this.isLoggedIn});
   final bool? isLoggedIn;
 
   @override
@@ -227,25 +324,20 @@ class MyApp extends StatelessWidget {
       initialBinding: InitialBindings(),
       getPages: AppPages.routes,
       debugShowCheckedModeBanner: false,
-        theme: ThemeData(
+      theme: ThemeData(
         scaffoldBackgroundColor: Colors.white,
         appBarTheme: const AppBarTheme(
-
-        elevation: 0,
-        titleTextStyle: TextStyle(
-        color: Colors.white,
-        fontSize: 20,
-        fontWeight: FontWeight.bold, ),
-             ),
-             ),
+          elevation: 0,
+          titleTextStyle: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
 
       // You can use the library anywhere in the app even in theme
-
-      home:isLoggedIn!
-          ? SellerMainScreen()
-          : WelcomePage1(),
+      home: isLoggedIn! ? SellerMainScreen() : WelcomePage1(),
     );
   }
 }
-
-

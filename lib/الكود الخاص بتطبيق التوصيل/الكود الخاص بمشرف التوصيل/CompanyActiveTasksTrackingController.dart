@@ -8,7 +8,7 @@ import 'package:intl/intl.dart';
 import '../../XXX/xxx_firebase.dart';
 import '../الكود الخاص بعامل/DeliveryDriverModel.dart';
 import 'DeliveryTaskDetailsForAdminScreen.dart';
-import 'DeliveryTaskModel.dart';
+import '../../Model/DeliveryTaskModel.dart';
 
 // استورد نماذجك وثوابتك
 // import 'path_to_models/DeliveryTaskModel.dart';

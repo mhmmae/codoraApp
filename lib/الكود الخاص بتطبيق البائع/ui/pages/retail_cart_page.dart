@@ -16,31 +16,29 @@ class RetailCartPage extends StatelessWidget {
       backgroundColor: const Color(0XFFF8FAFC),
       body: SafeArea(
         child: GetBuilder<RetailCartController>(
-        builder: (controller) {
-          // التحقق من وجود أي متاجر تحتوي على منتجات
-          if (controller.totalStoresCount == 0) {
-            return _buildEmptyCart(controller);
-          }
-          
-          return Column(
-            children: [
-              _buildAppBar(controller),
-              // إضافة قائمة المتاجر إذا كان هناك أكثر من متجر
-              if (controller.totalStoresCount > 1)
-                _buildStoreSelector(controller),
-              _buildStoreInfo(controller),
-              Expanded(
-                child: _buildCartItems(controller),
-              ),
-              _buildBottomSection(controller),
-            ],
-          );
-        },
+          builder: (controller) {
+            // التحقق من وجود أي متاجر تحتوي على منتجات
+            if (controller.totalStoresCount == 0) {
+              return _buildEmptyCart(controller);
+            }
+
+            return Column(
+              children: [
+                _buildAppBar(controller),
+                // إضافة قائمة المتاجر إذا كان هناك أكثر من متجر
+                if (controller.totalStoresCount > 1)
+                  _buildStoreSelector(controller),
+                _buildStoreInfo(controller),
+                Expanded(child: _buildCartItems(controller)),
+                _buildBottomSection(controller),
+              ],
+            );
+          },
         ),
       ),
     );
   }
-  
+
   Widget _buildAppBar(RetailCartController controller) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
@@ -100,7 +98,10 @@ class RetailCartPage extends StatelessWidget {
                     if (controller.totalStoresCount > 1) ...[
                       SizedBox(width: 8.w),
                       Container(
-                        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 2.h),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8.w,
+                          vertical: 2.h,
+                        ),
                         decoration: BoxDecoration(
                           color: const Color(0xFF6366F1).withOpacity(0.1),
                           borderRadius: BorderRadius.circular(6.r),
@@ -117,15 +118,17 @@ class RetailCartPage extends StatelessWidget {
                     ],
                   ],
                 ),
-                Obx(() => Text(
-                  controller.totalStoresCount > 1 
-                    ? '${controller.totalItemsCount} منتج في ${controller.totalStoresCount} متاجر'
-                    : '${controller.itemCount} منتج',
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: const Color(0xFF6B7280),
+                Obx(
+                  () => Text(
+                    controller.totalStoresCount > 1
+                        ? '${controller.totalItemsCount} منتج في ${controller.totalStoresCount} متاجر'
+                        : '${controller.itemCount} منتج',
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: const Color(0xFF6B7280),
+                    ),
                   ),
-                )),
+                ),
               ],
             ),
           ),
@@ -144,7 +147,10 @@ class RetailCartPage extends StatelessWidget {
                     highlightColor: const Color(0xFF6366F1).withOpacity(0.1),
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 150),
-                      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12.w,
+                        vertical: 8.h,
+                      ),
                       decoration: BoxDecoration(
                         color: const Color(0xFF6366F1).withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8.r),
@@ -185,13 +191,18 @@ class RetailCartPage extends StatelessWidget {
                     highlightColor: Colors.red.withOpacity(0.1),
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 150),
-                      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 12.w,
+                        vertical: 8.h,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.red.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8.r),
                       ),
                       child: Text(
-                        controller.totalStoresCount > 1 ? 'مسح المتجر' : 'مسح الكل',
+                        controller.totalStoresCount > 1
+                            ? 'مسح المتجر'
+                            : 'مسح الكل',
                         style: TextStyle(
                           color: Colors.red,
                           fontSize: 12.sp,
@@ -207,7 +218,7 @@ class RetailCartPage extends StatelessWidget {
       ),
     );
   }
-  
+
   /// بناء قائمة اختيار المتجر النشط
   Widget _buildStoreSelector(RetailCartController controller) {
     return Container(
@@ -244,67 +255,85 @@ class RetailCartPage extends StatelessWidget {
                 final itemCount = controller.getStoreItemCount(store.uid);
                 final totalAmount = controller.getStoreTotalAmount(store.uid);
                 final formatter = NumberFormat('#,###', 'ar');
-                
+
                 return Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    onTap: () {
-                      HapticFeedback.selectionClick();
-                      controller.setActiveStore(store.uid);
-                    },
-                    borderRadius: BorderRadius.circular(8.r),
-                    splashColor: isActive 
-                        ? Colors.white.withOpacity(0.3)
-                        : const Color(0xFF6366F1).withOpacity(0.2),
-                    highlightColor: isActive 
-                        ? Colors.white.withOpacity(0.1)
-                        : const Color(0xFF6366F1).withOpacity(0.1),
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      margin: EdgeInsets.only(left: 8.w),
-                      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
-                      decoration: BoxDecoration(
-                        gradient: isActive ? LinearGradient(
-                          colors: [
-                            const Color(0xFF6366F1),
-                            const Color(0xFF8B5CF6),
-                          ],
-                        ) : null,
-                        color: isActive ? null : const Color(0xFFF8FAFC),
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () {
+                          HapticFeedback.selectionClick();
+                          controller.setActiveStore(store.uid);
+                        },
                         borderRadius: BorderRadius.circular(8.r),
-                        border: Border.all(
-                          color: isActive 
-                            ? const Color(0xFF6366F1) 
-                            : const Color(0xFFE5E7EB),
-                          width: 1,
+                        splashColor:
+                            isActive
+                                ? Colors.white.withOpacity(0.3)
+                                : const Color(0xFF6366F1).withOpacity(0.2),
+                        highlightColor:
+                            isActive
+                                ? Colors.white.withOpacity(0.1)
+                                : const Color(0xFF6366F1).withOpacity(0.1),
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 200),
+                          margin: EdgeInsets.only(left: 8.w),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12.w,
+                            vertical: 8.h,
+                          ),
+                          decoration: BoxDecoration(
+                            gradient:
+                                isActive
+                                    ? LinearGradient(
+                                      colors: [
+                                        const Color(0xFF6366F1),
+                                        const Color(0xFF8B5CF6),
+                                      ],
+                                    )
+                                    : null,
+                            color: isActive ? null : const Color(0xFFF8FAFC),
+                            borderRadius: BorderRadius.circular(8.r),
+                            border: Border.all(
+                              color:
+                                  isActive
+                                      ? const Color(0xFF6366F1)
+                                      : const Color(0xFFE5E7EB),
+                              width: 1,
+                            ),
+                          ),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                store.shopName.length > 10
+                                    ? '${store.shopName.substring(0, 10)}...'
+                                    : store.shopName,
+                                style: TextStyle(
+                                  fontSize: 12.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color:
+                                      isActive
+                                          ? Colors.white
+                                          : const Color(0xFF1F2937),
+                                ),
+                              ),
+                              SizedBox(height: 2.h),
+                              Text(
+                                '$itemCount منتج - ${formatter.format(totalAmount.toInt())} د.ع',
+                                style: TextStyle(
+                                  fontSize: 9.sp,
+                                  color:
+                                      isActive
+                                          ? Colors.white.withOpacity(0.8)
+                                          : const Color(0xFF6B7280),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            store.shopName.length > 10 
-                              ? '${store.shopName.substring(0, 10)}...'
-                              : store.shopName,
-                            style: TextStyle(
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w600,
-                              color: isActive ? Colors.white : const Color(0xFF1F2937),
-                            ),
-                          ),
-                          SizedBox(height: 2.h),
-                          Text(
-                            '$itemCount منتج - ${formatter.format(totalAmount.toInt())} د.ع',
-                            style: TextStyle(
-                              fontSize: 9.sp,
-                              color: isActive ? Colors.white.withOpacity(0.8) : const Color(0xFF6B7280),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ).animate(delay: (index * 100).ms).fadeIn().slideX(begin: 0.3, end: 0);
+                    )
+                    .animate(delay: (index * 100).ms)
+                    .fadeIn()
+                    .slideX(begin: 0.3, end: 0);
               },
             ),
           ),
@@ -312,11 +341,11 @@ class RetailCartPage extends StatelessWidget {
       ),
     ).animate().fadeIn(duration: 400.ms).slideY(begin: -0.2, end: 0);
   }
-  
+
   /// عرض حوار جميع المتاجر
   void _showAllStoresDialog(RetailCartController controller) {
     final formatter = NumberFormat('#,###', 'ar');
-    
+
     Get.dialog(
       AlertDialog(
         shape: RoundedRectangleBorder(
@@ -350,7 +379,7 @@ class RetailCartPage extends StatelessWidget {
               final itemCount = controller.getStoreItemCount(store.uid);
               final totalAmount = controller.getStoreTotalAmount(store.uid);
               final isActive = controller.activeStoreId.value == store.uid;
-              
+
               return Material(
                 color: Colors.transparent,
                 child: InkWell(
@@ -360,19 +389,26 @@ class RetailCartPage extends StatelessWidget {
                     Get.back();
                   },
                   borderRadius: BorderRadius.circular(8.r),
-                  splashColor: isActive 
-                      ? const Color(0xFF6366F1).withOpacity(0.2)
-                      : const Color(0xFF6366F1).withOpacity(0.1),
+                  splashColor:
+                      isActive
+                          ? const Color(0xFF6366F1).withOpacity(0.2)
+                          : const Color(0xFF6366F1).withOpacity(0.1),
                   highlightColor: const Color(0xFF6366F1).withOpacity(0.05),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     margin: EdgeInsets.only(bottom: 8.h),
                     padding: EdgeInsets.all(12.w),
                     decoration: BoxDecoration(
-                      color: isActive ? const Color(0xFF6366F1).withOpacity(0.1) : const Color(0xFFF8FAFC),
+                      color:
+                          isActive
+                              ? const Color(0xFF6366F1).withOpacity(0.1)
+                              : const Color(0xFFF8FAFC),
                       borderRadius: BorderRadius.circular(8.r),
                       border: Border.all(
-                        color: isActive ? const Color(0xFF6366F1) : const Color(0xFFE5E7EB),
+                        color:
+                            isActive
+                                ? const Color(0xFF6366F1)
+                                : const Color(0xFFE5E7EB),
                         width: 1,
                       ),
                     ),
@@ -390,27 +426,33 @@ class RetailCartPage extends StatelessWidget {
                           ),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(7.r),
-                            child: store.shopFrontImageUrl != null
-                                ? CachedNetworkImage(
-                                    imageUrl: store.shopFrontImageUrl!,
-                                    fit: BoxFit.cover,
-                                    errorWidget: (context, url, error) => Container(
-                                      color: const Color(0xFF6366F1).withOpacity(0.1),
+                            child:
+                                store.shopFrontImageUrl != null
+                                    ? CachedNetworkImage(
+                                      imageUrl: store.shopFrontImageUrl!,
+                                      fit: BoxFit.cover,
+                                      errorWidget:
+                                          (context, url, error) => Container(
+                                            color: const Color(
+                                              0xFF6366F1,
+                                            ).withOpacity(0.1),
+                                            child: Icon(
+                                              Icons.store_rounded,
+                                              color: const Color(0xFF6366F1),
+                                              size: 20.sp,
+                                            ),
+                                          ),
+                                    )
+                                    : Container(
+                                      color: const Color(
+                                        0xFF6366F1,
+                                      ).withOpacity(0.1),
                                       child: Icon(
                                         Icons.store_rounded,
                                         color: const Color(0xFF6366F1),
                                         size: 20.sp,
                                       ),
                                     ),
-                                  )
-                                : Container(
-                                    color: const Color(0xFF6366F1).withOpacity(0.1),
-                                    child: Icon(
-                                      Icons.store_rounded,
-                                      color: const Color(0xFF6366F1),
-                                      size: 20.sp,
-                                    ),
-                                  ),
                           ),
                         ),
                         SizedBox(width: 12.w),
@@ -451,7 +493,10 @@ class RetailCartPage extends StatelessWidget {
                             if (isActive)
                               Container(
                                 margin: EdgeInsets.only(top: 4.h),
-                                padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.h),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 6.w,
+                                  vertical: 2.h,
+                                ),
                                 decoration: BoxDecoration(
                                   color: const Color(0xFF6366F1),
                                   borderRadius: BorderRadius.circular(4.r),
@@ -476,18 +521,26 @@ class RetailCartPage extends StatelessWidget {
                               _showClearStoreDialog(controller, store);
                             }
                           },
-                          itemBuilder: (context) => [
-                            PopupMenuItem(
-                              value: 'clear',
-                              child: Row(
-                                children: [
-                                  Icon(Icons.delete_outline, color: Colors.red, size: 16.sp),
-                                  SizedBox(width: 8.w),
-                                  Text('مسح سلة المتجر', style: TextStyle(color: Colors.red)),
-                                ],
-                              ),
-                            ),
-                          ],
+                          itemBuilder:
+                              (context) => [
+                                PopupMenuItem(
+                                  value: 'clear',
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.delete_outline,
+                                        color: Colors.red,
+                                        size: 16.sp,
+                                      ),
+                                      SizedBox(width: 8.w),
+                                      Text(
+                                        'مسح سلة المتجر',
+                                        style: TextStyle(color: Colors.red),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                           child: Icon(
                             Icons.more_vert,
                             color: const Color(0xFF6B7280),
@@ -507,10 +560,7 @@ class RetailCartPage extends StatelessWidget {
             onPressed: () => Get.back(),
             child: Text(
               'إغلاق',
-              style: TextStyle(
-                fontSize: 14.sp,
-                color: const Color(0xFF6B7280),
-              ),
+              style: TextStyle(fontSize: 14.sp, color: const Color(0xFF6B7280)),
             ),
           ),
           if (controller.totalStoresCount > 1)
@@ -526,7 +576,10 @@ class RetailCartPage extends StatelessWidget {
                 splashColor: Colors.red.withOpacity(0.3),
                 highlightColor: Colors.red.withOpacity(0.1),
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 12.h,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.red,
                     borderRadius: BorderRadius.circular(8.r),
@@ -546,7 +599,7 @@ class RetailCartPage extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildEmptyCart(RetailCartController controller) {
     return Column(
       children: [
@@ -557,18 +610,18 @@ class RetailCartPage extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  width: 120.w,
-                  height: 120.w,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF6366F1).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(60.r),
-                  ),
-                  child: Icon(
-                    Icons.shopping_cart_outlined,
-                    size: 60.sp,
-                    color: const Color(0xFF6366F1),
-                  ),
-                )
+                      width: 120.w,
+                      height: 120.w,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF6366F1).withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(60.r),
+                      ),
+                      child: Icon(
+                        Icons.shopping_cart_outlined,
+                        size: 60.sp,
+                        color: const Color(0xFF6366F1),
+                      ),
+                    )
                     .animate()
                     .scale(duration: 600.ms, curve: Curves.elasticOut)
                     .fadeIn(duration: 400.ms),
@@ -592,46 +645,52 @@ class RetailCartPage extends StatelessWidget {
                 ).animate().fadeIn(delay: 300.ms, duration: 400.ms),
                 SizedBox(height: 32.h),
                 Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        const Color(0xFF6366F1),
-                        const Color(0xFF8B5CF6),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(25.r),
-                    boxShadow: [
-                      BoxShadow(
-                        color: const Color(0xFF6366F1).withOpacity(0.3),
-                        blurRadius: 10.r,
-                        offset: Offset(0, 4.h),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            const Color(0xFF6366F1),
+                            const Color(0xFF8B5CF6),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(25.r),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF6366F1).withOpacity(0.3),
+                            blurRadius: 10.r,
+                            offset: Offset(0, 4.h),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      onTap: () {
-                        HapticFeedback.mediumImpact();
-                        Get.back();
-                      },
-                      borderRadius: BorderRadius.circular(25.r),
-                      splashColor: Colors.white.withOpacity(0.3),
-                      highlightColor: Colors.white.withOpacity(0.1),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 16.h),
-                        child: Text(
-                          'تصفح المنتجات',
-                          style: TextStyle(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: () {
+                            HapticFeedback.mediumImpact();
+                            Get.back();
+                          },
+                          borderRadius: BorderRadius.circular(25.r),
+                          splashColor: Colors.white.withOpacity(0.3),
+                          highlightColor: Colors.white.withOpacity(0.1),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 32.w,
+                              vertical: 16.h,
+                            ),
+                            child: Text(
+                              'تصفح المنتجات',
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                ).animate().fadeIn(delay: 400.ms, duration: 400.ms).slideY(begin: 0.2, end: 0),
+                    )
+                    .animate()
+                    .fadeIn(delay: 400.ms, duration: 400.ms)
+                    .slideY(begin: 0.2, end: 0),
               ],
             ),
           ),
@@ -639,10 +698,10 @@ class RetailCartPage extends StatelessWidget {
       ],
     );
   }
-  
+
   Widget _buildStoreInfo(RetailCartController controller) {
     if (controller.currentStore == null) return const SizedBox.shrink();
-    
+
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
       padding: EdgeInsets.all(16.w),
@@ -659,7 +718,7 @@ class RetailCartPage extends StatelessWidget {
         border: Border.all(
           color: const Color(0xFF6366F1).withOpacity(0.2),
           width: 1,
-          ),
+        ),
       ),
       child: Row(
         children: [
@@ -675,11 +734,31 @@ class RetailCartPage extends StatelessWidget {
             ),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(10.r),
-              child: controller.currentStore!.shopFrontImageUrl != null
-                  ? CachedNetworkImage(
-                      imageUrl: controller.currentStore!.shopFrontImageUrl!,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(
+              child:
+                  controller.currentStore!.shopFrontImageUrl != null
+                      ? CachedNetworkImage(
+                        imageUrl: controller.currentStore!.shopFrontImageUrl!,
+                        fit: BoxFit.cover,
+                        placeholder:
+                            (context, url) => Container(
+                              color: const Color(0xFF6366F1).withOpacity(0.1),
+                              child: Icon(
+                                Icons.store_rounded,
+                                color: const Color(0xFF6366F1),
+                                size: 25.sp,
+                              ),
+                            ),
+                        errorWidget:
+                            (context, url, error) => Container(
+                              color: const Color(0xFF6366F1).withOpacity(0.1),
+                              child: Icon(
+                                Icons.store_rounded,
+                                color: const Color(0xFF6366F1),
+                                size: 25.sp,
+                              ),
+                            ),
+                      )
+                      : Container(
                         color: const Color(0xFF6366F1).withOpacity(0.1),
                         child: Icon(
                           Icons.store_rounded,
@@ -687,23 +766,6 @@ class RetailCartPage extends StatelessWidget {
                           size: 25.sp,
                         ),
                       ),
-                      errorWidget: (context, url, error) => Container(
-                        color: const Color(0xFF6366F1).withOpacity(0.1),
-                        child: Icon(
-                          Icons.store_rounded,
-                          color: const Color(0xFF6366F1),
-                          size: 25.sp,
-                        ),
-                      ),
-                    )
-                  : Container(
-                      color: const Color(0xFF6366F1).withOpacity(0.1),
-                      child: Icon(
-                        Icons.store_rounded,
-                        color: const Color(0xFF6366F1),
-                        size: 25.sp,
-                      ),
-                    ),
             ),
           ),
           SizedBox(width: 12.w),
@@ -730,11 +792,11 @@ class RetailCartPage extends StatelessWidget {
                     SizedBox(width: 4.w),
                     Expanded(
                       child: Text(
-                  controller.currentStore!.shopCategory,
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: const Color(0xFF6B7280),
-                  ),
+                        controller.currentStore!.shopCategories.join(', '),
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          color: const Color(0xFF6B7280),
+                        ),
                       ),
                     ),
                   ],
@@ -761,7 +823,7 @@ class RetailCartPage extends StatelessWidget {
       ),
     ).animate().fadeIn(duration: 400.ms).slideX(begin: -0.2, end: 0);
   }
-  
+
   Widget _buildCartItems(RetailCartController controller) {
     return ListView.builder(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -772,89 +834,94 @@ class RetailCartPage extends StatelessWidget {
       },
     );
   }
-  
-  Widget _buildCartItem(CartItem item, RetailCartController controller, int index) {
+
+  Widget _buildCartItem(
+    CartItem item,
+    RetailCartController controller,
+    int index,
+  ) {
     return Container(
-      margin: EdgeInsets.only(bottom: 12.h),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.04),
-            spreadRadius: 0,
-            blurRadius: 15.r,
-            offset: Offset(0, 4.h),
+          margin: EdgeInsets.only(bottom: 12.h),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16.r),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.04),
+                spreadRadius: 0,
+                blurRadius: 15.r,
+                offset: Offset(0, 4.h),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(16.w),
-      child: Row(
-        children: [
-            // صورة المنتج مع تحسينات
-            _buildProductImage(item),
-            SizedBox(width: 16.w),
-          
-          // معلومات المنتج
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          child: Padding(
+            padding: EdgeInsets.all(16.w),
+            child: Row(
               children: [
-                  // اسم المنتج
-                Text(
-                  item.productName,
-                  style: TextStyle(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF1F2937),
-                      height: 1.3,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                SizedBox(height: 8.h),
-                  
-                  // السعر الفردي مع تصميم مميز
-                  _buildPriceDisplay(item.productPrice),
-                SizedBox(height: 6.h),
-                  
-                  // عرض الكمية المتوفرة والكمية المطلوبة
-                  _buildQuantityInfo(item),
-                SizedBox(height: 8.h),
-                
-                  // معلومات الكارتونة وزر سريع (للمنتجات من بائع جملة)
-                  _buildCartonInfo(item, controller),
-                  SizedBox(height: 12.h),
-                  
-                  // التحكم في الكمية والسعر الإجمالي - مُحسن لتجنب overflow
-                  Column(
+                // صورة المنتج مع تحسينات
+                _buildProductImage(item),
+                SizedBox(width: 16.w),
+
+                // معلومات المنتج
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                Row(
-                  children: [
-                          _buildQuantityControls(item, controller),
-                          const Spacer(),
-                          _buildDeleteButton(item, controller),
-                        ],
+                      // اسم المنتج
+                      Text(
+                        item.productName,
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFF1F2937),
+                          height: 1.3,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                       SizedBox(height: 8.h),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
+
+                      // السعر الفردي مع تصميم مميز
+                      _buildPriceDisplay(item.productPrice),
+                      SizedBox(height: 6.h),
+
+                      // عرض الكمية المتوفرة والكمية المطلوبة
+                      _buildQuantityInfo(item),
+                      SizedBox(height: 8.h),
+
+                      // معلومات الكارتونة وزر سريع (للمنتجات من بائع جملة)
+                      _buildCartonInfo(item, controller),
+                      SizedBox(height: 12.h),
+
+                      // التحكم في الكمية والسعر الإجمالي - مُحسن لتجنب overflow
+                      Column(
                         children: [
-                          _buildTotalPrice(item),
+                          Row(
+                            children: [
+                              _buildQuantityControls(item, controller),
+                              const Spacer(),
+                              _buildDeleteButton(item, controller),
+                            ],
+                          ),
+                          SizedBox(height: 8.h),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [_buildTotalPrice(item)],
+                          ),
                         ],
                       ),
                     ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-    ).animate(delay: (index * 100).ms).fadeIn(duration: 400.ms).slideX(begin: 0.2, end: 0);
+          ),
+        )
+        .animate(delay: (index * 100).ms)
+        .fadeIn(duration: 400.ms)
+        .slideX(begin: 0.2, end: 0);
   }
-  
+
   Widget _buildProductImage(CartItem item) {
     return Container(
       width: 90.w,
@@ -865,7 +932,7 @@ class RetailCartPage extends StatelessWidget {
           color: const Color(0xFF6366F1).withOpacity(0.1),
           width: 1,
         ),
-                            ),
+      ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(11.r),
         child: Stack(
@@ -877,38 +944,39 @@ class RetailCartPage extends StatelessWidget {
                 width: double.infinity,
                 height: double.infinity,
                 fit: BoxFit.cover,
-                placeholder: (context, url) => Container(
-                  color: const Color(0xFFF8FAFC),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        width: 20.w,
-                        height: 20.w,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: const Color(0xFF6366F1),
-                        ),
-                      ),
-                      SizedBox(height: 8.h),
-                      Text(
-                        'جاري التحميل...',
-                              style: TextStyle(
-                          fontSize: 8.sp,
-                          color: const Color(0xFF9CA3AF),
-                              ),
+                placeholder:
+                    (context, url) => Container(
+                      color: const Color(0xFFF8FAFC),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          SizedBox(
+                            width: 20.w,
+                            height: 20.w,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: const Color(0xFF6366F1),
                             ),
-                    ],
-                  ),
-                ),
+                          ),
+                          SizedBox(height: 8.h),
+                          Text(
+                            'جاري التحميل...',
+                            style: TextStyle(
+                              fontSize: 8.sp,
+                              color: const Color(0xFF9CA3AF),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                 errorWidget: (context, url, error) {
                   debugPrint('خطأ في تحميل الصورة: $url, Error: $error');
                   return _buildImagePlaceholder();
-                            },
+                },
               )
             else
               _buildImagePlaceholder(),
-            
+
             // تأثير التدرج
             Positioned(
               bottom: 0,
@@ -920,20 +988,17 @@ class RetailCartPage extends StatelessWidget {
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withOpacity(0.1),
-                    ],
+                    colors: [Colors.transparent, Colors.black.withOpacity(0.1)],
                   ),
                 ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
-  
+
   Widget _buildImagePlaceholder() {
     return Container(
       color: const Color(0xFFF8FAFC),
@@ -946,36 +1011,35 @@ class RetailCartPage extends StatelessWidget {
             size: 28.sp,
           ),
           SizedBox(height: 4.h),
-                    Text(
+          Text(
             'خطأ في التحميل',
-                      style: TextStyle(
-              fontSize: 8.sp,
-              color: const Color(0xFF9CA3AF),
-                      ),
-                    ),
-                  ],
-                ),
+            style: TextStyle(fontSize: 8.sp, color: const Color(0xFF9CA3AF)),
+          ),
+        ],
+      ),
     );
   }
-  
+
   Widget _buildQuantityInfo(CartItem item) {
     // استخراج الكمية الإجمالية من بيانات المنتج
     final int originalQuantity = (item.productData['quantity'] as int?) ?? 0;
     final int availableQuantity = originalQuantity - item.quantity;
-    
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
       decoration: BoxDecoration(
-        color: availableQuantity <= 0 
-            ? Colors.red.withOpacity(0.1)
-            : availableQuantity <= 5 
+        color:
+            availableQuantity <= 0
+                ? Colors.red.withOpacity(0.1)
+                : availableQuantity <= 5
                 ? Colors.orange.withOpacity(0.1)
                 : Colors.green.withOpacity(0.1),
         borderRadius: BorderRadius.circular(6.r),
         border: Border.all(
-          color: availableQuantity <= 0 
-              ? Colors.red.withOpacity(0.3)
-              : availableQuantity <= 5 
+          color:
+              availableQuantity <= 0
+                  ? Colors.red.withOpacity(0.3)
+                  : availableQuantity <= 5
                   ? Colors.orange.withOpacity(0.3)
                   : Colors.green.withOpacity(0.3),
           width: 1,
@@ -984,13 +1048,14 @@ class RetailCartPage extends StatelessWidget {
       child: Row(
         children: [
           Icon(
-            availableQuantity <= 0 
+            availableQuantity <= 0
                 ? Icons.inventory_2_outlined
                 : Icons.inventory_2,
             size: 14.sp,
-            color: availableQuantity <= 0 
-                ? Colors.red
-                : availableQuantity <= 5 
+            color:
+                availableQuantity <= 0
+                    ? Colors.red
+                    : availableQuantity <= 5
                     ? Colors.orange
                     : Colors.green,
           ),
@@ -1000,9 +1065,10 @@ class RetailCartPage extends StatelessWidget {
               'متوفر: $availableQuantity قطعة | في السلة: ${item.quantity}',
               style: TextStyle(
                 fontSize: 11.sp,
-                color: availableQuantity <= 0 
-                    ? Colors.red
-                    : availableQuantity <= 5 
+                color:
+                    availableQuantity <= 0
+                        ? Colors.red
+                        : availableQuantity <= 5
                         ? Colors.orange
                         : Colors.green,
                 fontWeight: FontWeight.w600,
@@ -1045,34 +1111,36 @@ class RetailCartPage extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildCartonInfo(CartItem item, RetailCartController controller) {
     // التحقق من وجود معلومات الكارتونة
     final productData = item.productData;
-    if (productData['addedBySellerType'] != 'wholesale' || 
-        productData['quantityPerCarton'] == null || 
+    if (productData['addedBySellerType'] != 'wholesale' ||
+        productData['quantityPerCarton'] == null ||
         productData['quantityPerCarton'] <= 0) {
       return const SizedBox.shrink();
     }
-    
+
     final cartonQuantity = productData['quantityPerCarton'] as int;
     final int originalQuantity = (productData['quantity'] as int?) ?? 0;
     final int availableQuantity = originalQuantity - item.quantity;
-    
+
     // التحقق من توفر كمية كافية للكارتونة
     final bool canAddCarton = availableQuantity >= cartonQuantity;
-    
+
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
       decoration: BoxDecoration(
-        color: canAddCarton 
-            ? const Color(0xFF059669).withOpacity(0.1)
-            : Colors.grey.withOpacity(0.1),
+        color:
+            canAddCarton
+                ? const Color(0xFF059669).withOpacity(0.1)
+                : Colors.grey.withOpacity(0.1),
         borderRadius: BorderRadius.circular(6.r),
         border: Border.all(
-          color: canAddCarton 
-              ? const Color(0xFF059669).withOpacity(0.2)
-              : Colors.grey.withOpacity(0.3),
+          color:
+              canAddCarton
+                  ? const Color(0xFF059669).withOpacity(0.2)
+                  : Colors.grey.withOpacity(0.3),
           width: 1,
         ),
       ),
@@ -1081,9 +1149,7 @@ class RetailCartPage extends StatelessWidget {
           Icon(
             Icons.inventory_2,
             size: 12.sp,
-            color: canAddCarton 
-                ? const Color(0xFF059669)
-                : Colors.grey,
+            color: canAddCarton ? const Color(0xFF059669) : Colors.grey,
           ),
           SizedBox(width: 4.w),
           Expanded(
@@ -1094,9 +1160,7 @@ class RetailCartPage extends StatelessWidget {
                   'كارتونة: $cartonQuantity قطعة',
                   style: TextStyle(
                     fontSize: 10.sp,
-                    color: canAddCarton 
-                        ? const Color(0xFF059669)
-                        : Colors.grey,
+                    color: canAddCarton ? const Color(0xFF059669) : Colors.grey,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -1120,7 +1184,10 @@ class RetailCartPage extends StatelessWidget {
                 onTap: () {
                   HapticFeedback.lightImpact();
                   // إضافة كارتونة كاملة
-                  controller.updateQuantity(item.productId, item.quantity + cartonQuantity);
+                  controller.updateQuantity(
+                    item.productId,
+                    item.quantity + cartonQuantity,
+                  );
                 },
                 borderRadius: BorderRadius.circular(4.r),
                 splashColor: const Color(0xFF059669).withOpacity(0.3),
@@ -1203,20 +1270,20 @@ class RetailCartPage extends StatelessWidget {
       ),
     );
   }
-  
-  Widget _buildQuantityControls(CartItem item, RetailCartController controller) {
+
+  Widget _buildQuantityControls(
+    CartItem item,
+    RetailCartController controller,
+  ) {
     // حساب الكمية المتوفرة
     final int originalQuantity = (item.productData['quantity'] as int?) ?? 0;
     final int availableQuantity = originalQuantity - item.quantity;
-    
+
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xFFF8FAFC),
         borderRadius: BorderRadius.circular(10.r),
-        border: Border.all(
-          color: const Color(0xFFE5E7EB),
-          width: 1,
-        ),
+        border: Border.all(color: const Color(0xFFE5E7EB), width: 1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -1254,7 +1321,7 @@ class RetailCartPage extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildQuantityButton({
     required IconData icon,
     required VoidCallback onPressed,
@@ -1263,25 +1330,29 @@ class RetailCartPage extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        onTap: isEnabled ? () {
-          HapticFeedback.lightImpact();
-          onPressed();
-        } : null,
+        onTap:
+            isEnabled
+                ? () {
+                  HapticFeedback.lightImpact();
+                  onPressed();
+                }
+                : null,
         borderRadius: BorderRadius.circular(8.r),
-        splashColor: isEnabled 
-            ? const Color(0xFF6366F1).withOpacity(0.3)
-            : Colors.transparent,
-        highlightColor: isEnabled 
-            ? const Color(0xFF6366F1).withOpacity(0.1)
-            : Colors.transparent,
+        splashColor:
+            isEnabled
+                ? const Color(0xFF6366F1).withOpacity(0.3)
+                : Colors.transparent,
+        highlightColor:
+            isEnabled
+                ? const Color(0xFF6366F1).withOpacity(0.1)
+                : Colors.transparent,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
           width: 32.w,
           height: 32.w,
           decoration: BoxDecoration(
-            color: isEnabled 
-                ? const Color(0xFF6366F1) 
-                : const Color(0xFFE5E7EB),
+            color:
+                isEnabled ? const Color(0xFF6366F1) : const Color(0xFFE5E7EB),
             borderRadius: BorderRadius.circular(8.r),
           ),
           child: Icon(
@@ -1293,17 +1364,14 @@ class RetailCartPage extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildTotalPrice(CartItem item) {
     final formatter = NumberFormat('#,###', 'ar');
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
       decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            const Color(0xFF10B981),
-            const Color(0xFF059669),
-          ],
+          colors: [const Color(0xFF10B981), const Color(0xFF059669)],
         ),
         borderRadius: BorderRadius.circular(10.r),
         boxShadow: [
@@ -1324,7 +1392,7 @@ class RetailCartPage extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildDeleteButton(CartItem item, RetailCartController controller) {
     return Material(
       color: Colors.transparent,
@@ -1343,10 +1411,7 @@ class RetailCartPage extends StatelessWidget {
           decoration: BoxDecoration(
             color: Colors.red.withOpacity(0.1),
             borderRadius: BorderRadius.circular(8.r),
-            border: Border.all(
-              color: Colors.red.withOpacity(0.2),
-              width: 1,
-            ),
+            border: Border.all(color: Colors.red.withOpacity(0.2), width: 1),
           ),
           child: Icon(
             Icons.delete_outline_rounded,
@@ -1357,10 +1422,10 @@ class RetailCartPage extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildBottomSection(RetailCartController controller) {
     final formatter = NumberFormat('#,###', 'ar');
-    
+
     return Container(
       padding: EdgeInsets.fromLTRB(20.w, 16.h, 20.w, 20.h),
       decoration: BoxDecoration(
@@ -1379,23 +1444,31 @@ class RetailCartPage extends StatelessWidget {
         ],
       ),
       child: SafeArea(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
             // تفاصيل الحساب المُحسنة - مُقلصة الحجم
             _buildCompactPriceBreakdown(controller, formatter),
-            
+
             SizedBox(height: 16.h),
-            
+
             // زر إتمام الشراء
             _buildCheckoutButton(controller),
           ],
         ),
       ),
-    ).animate().slideY(begin: 1, end: 0, duration: 500.ms, curve: Curves.easeOutBack);
+    ).animate().slideY(
+      begin: 1,
+      end: 0,
+      duration: 500.ms,
+      curve: Curves.easeOutBack,
+    );
   }
-  
-  Widget _buildCompactPriceBreakdown(RetailCartController controller, NumberFormat formatter) {
+
+  Widget _buildCompactPriceBreakdown(
+    RetailCartController controller,
+    NumberFormat formatter,
+  ) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       decoration: BoxDecoration(
@@ -1427,112 +1500,118 @@ class RetailCartPage extends StatelessWidget {
                   color: const Color(0xFF1F2937),
                 ),
               ),
-              Obx(() => Text(
-                '${controller.itemCount} منتج',
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: const Color(0xFF6B7280),
+              Obx(
+                () => Text(
+                  '${controller.itemCount} منتج',
+                  style: TextStyle(
+                    fontSize: 12.sp,
+                    color: const Color(0xFF6B7280),
+                  ),
                 ),
-              )),
+              ),
             ],
           ),
-          Obx(() => Container(
-            padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  const Color(0xFF10B981),
-                  const Color(0xFF059669),
-                ],
+          Obx(
+            () => Container(
+              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [const Color(0xFF10B981), const Color(0xFF059669)],
+                ),
+                borderRadius: BorderRadius.circular(8.r),
               ),
-              borderRadius: BorderRadius.circular(8.r),
+              child: Text(
+                    '${formatter.format(controller.totalAmount.value.toInt())} د.ع',
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  )
+                  .animate(key: ValueKey(controller.totalAmount.value))
+                  .scale(duration: 300.ms, curve: Curves.elasticOut)
+                  .then()
+                  .shimmer(
+                    duration: 500.ms,
+                    color: Colors.white.withOpacity(0.3),
+                  ),
             ),
-            child: Text(
-              '${formatter.format(controller.totalAmount.value.toInt())} د.ع',
-              style: TextStyle(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ).animate(key: ValueKey(controller.totalAmount.value))
-                .scale(duration: 300.ms, curve: Curves.elasticOut)
-                .then()
-                .shimmer(duration: 500.ms, color: Colors.white.withOpacity(0.3)),
-          )),
+          ),
         ],
       ),
     );
   }
-  
+
   Widget _buildCheckoutButton(RetailCartController controller) {
     return Container(
-            width: double.infinity,
-            height: 50.h,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
-          colors: [
-            const Color(0xFF6366F1),
-            const Color(0xFF8B5CF6),
-            const Color(0xFF6366F1),
-          ],
-        ),
-        borderRadius: BorderRadius.circular(16.r),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF6366F1).withOpacity(0.4),
-            blurRadius: 15.r,
-            offset: Offset(0, 8.h),
+          width: double.infinity,
+          height: 50.h,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: [
+                const Color(0xFF6366F1),
+                const Color(0xFF8B5CF6),
+                const Color(0xFF6366F1),
+              ],
+            ),
+            borderRadius: BorderRadius.circular(16.r),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF6366F1).withOpacity(0.4),
+                blurRadius: 15.r,
+                offset: Offset(0, 8.h),
+              ),
+            ],
           ),
-        ],
-      ),
-            child: Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: () {
-                  if (controller.cartItems.isNotEmpty) {
-                    HapticFeedback.mediumImpact();
-                    Get.toNamed('/location-picker');
-                  }
-                },
-                borderRadius: BorderRadius.circular(16.r),
-                splashColor: Colors.white.withOpacity(0.3),
-                highlightColor: Colors.white.withOpacity(0.1),
-                child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 16.h),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.shopping_bag_outlined,
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () {
+                if (controller.cartItems.isNotEmpty) {
+                  HapticFeedback.mediumImpact();
+                  Get.toNamed('/location-picker');
+                }
+              },
+              borderRadius: BorderRadius.circular(16.r),
+              splashColor: Colors.white.withOpacity(0.3),
+              highlightColor: Colors.white.withOpacity(0.1),
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 16.h),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.shopping_bag_outlined,
+                      color: Colors.white,
+                      size: 20.sp,
+                    ),
+                    SizedBox(width: 12.w),
+                    Text(
+                      'إتمام عملية الشراء',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
                         color: Colors.white,
-                        size: 20.sp,
                       ),
-                      SizedBox(width: 12.w),
-                      Text(
-                        'إتمام عملية الشراء',
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
-    ).animate()
+          ),
+        )
+        .animate()
         .scale(duration: 200.ms, curve: Curves.easeOut)
         .then()
         .shimmer(duration: 2000.ms, color: Colors.white.withOpacity(0.2));
   }
-  
+
   void _showClearCartDialog(RetailCartController controller) {
     final isMultipleStores = controller.totalStoresCount > 1;
     final currentStoreName = controller.currentStore?.shopName ?? 'المتجر';
-    
+
     Get.dialog(
       AlertDialog(
         shape: RoundedRectangleBorder(
@@ -1557,13 +1636,10 @@ class RetailCartPage extends StatelessWidget {
           ],
         ),
         content: Text(
-          isMultipleStores 
-            ? 'هل أنت متأكد من مسح جميع العناصر من سلة "$currentStoreName"؟'
-            : 'هل أنت متأكد من مسح جميع العناصر من السلة؟',
-          style: TextStyle(
-            fontSize: 14.sp,
-            color: const Color(0xFF6B7280),
-          ),
+          isMultipleStores
+              ? 'هل أنت متأكد من مسح جميع العناصر من سلة "$currentStoreName"؟'
+              : 'هل أنت متأكد من مسح جميع العناصر من السلة؟',
+          style: TextStyle(fontSize: 14.sp, color: const Color(0xFF6B7280)),
         ),
         actions: [
           TextButton(
@@ -1573,10 +1649,7 @@ class RetailCartPage extends StatelessWidget {
             },
             child: Text(
               'إلغاء',
-              style: TextStyle(
-                fontSize: 14.sp,
-                color: const Color(0xFF6B7280),
-              ),
+              style: TextStyle(fontSize: 14.sp, color: const Color(0xFF6B7280)),
             ),
           ),
           Material(
@@ -1611,7 +1684,7 @@ class RetailCartPage extends StatelessWidget {
       ),
     );
   }
-  
+
   /// حوار مسح سلة متجر معين
   void _showClearStoreDialog(RetailCartController controller, store) {
     Get.dialog(
@@ -1621,11 +1694,7 @@ class RetailCartPage extends StatelessWidget {
         ),
         title: Row(
           children: [
-            Icon(
-              Icons.warning_amber_rounded,
-              color: Colors.red,
-              size: 24.sp,
-            ),
+            Icon(Icons.warning_amber_rounded, color: Colors.red, size: 24.sp),
             SizedBox(width: 8.w),
             Text(
               'مسح سلة المتجر',
@@ -1639,10 +1708,7 @@ class RetailCartPage extends StatelessWidget {
         ),
         content: Text(
           'هل أنت متأكد من مسح جميع العناصر من سلة "${store.shopName}"؟',
-          style: TextStyle(
-            fontSize: 14.sp,
-            color: const Color(0xFF6B7280),
-          ),
+          style: TextStyle(fontSize: 14.sp, color: const Color(0xFF6B7280)),
         ),
         actions: [
           TextButton(
@@ -1652,10 +1718,7 @@ class RetailCartPage extends StatelessWidget {
             },
             child: Text(
               'إلغاء',
-              style: TextStyle(
-                fontSize: 14.sp,
-                color: const Color(0xFF6B7280),
-              ),
+              style: TextStyle(fontSize: 14.sp, color: const Color(0xFF6B7280)),
             ),
           ),
           Material(
@@ -1690,7 +1753,7 @@ class RetailCartPage extends StatelessWidget {
       ),
     );
   }
-  
+
   /// حوار مسح جميع السلال
   void _showClearAllStoresDialog(RetailCartController controller) {
     Get.dialog(
@@ -1700,11 +1763,7 @@ class RetailCartPage extends StatelessWidget {
         ),
         title: Row(
           children: [
-            Icon(
-              Icons.warning_amber_rounded,
-              color: Colors.red,
-              size: 24.sp,
-            ),
+            Icon(Icons.warning_amber_rounded, color: Colors.red, size: 24.sp),
             SizedBox(width: 8.w),
             Text(
               'مسح جميع السلال',
@@ -1718,10 +1777,7 @@ class RetailCartPage extends StatelessWidget {
         ),
         content: Text(
           'هل أنت متأكد من مسح جميع العناصر من كل المتاجر؟ لا يمكن التراجع عن هذا الإجراء.',
-          style: TextStyle(
-            fontSize: 14.sp,
-            color: const Color(0xFF6B7280),
-          ),
+          style: TextStyle(fontSize: 14.sp, color: const Color(0xFF6B7280)),
         ),
         actions: [
           TextButton(
@@ -1731,10 +1787,7 @@ class RetailCartPage extends StatelessWidget {
             },
             child: Text(
               'إلغاء',
-              style: TextStyle(
-                fontSize: 14.sp,
-                color: const Color(0xFF6B7280),
-              ),
+              style: TextStyle(fontSize: 14.sp, color: const Color(0xFF6B7280)),
             ),
           ),
           Material(
@@ -1769,7 +1822,7 @@ class RetailCartPage extends StatelessWidget {
       ),
     );
   }
-  
+
   void _showDeleteConfirmation(CartItem item, RetailCartController controller) {
     Get.dialog(
       AlertDialog(
@@ -1786,10 +1839,7 @@ class RetailCartPage extends StatelessWidget {
         ),
         content: Text(
           'هل تريد حذف "${item.productName}" من السلة؟',
-          style: TextStyle(
-            fontSize: 14.sp,
-            color: const Color(0xFF6B7280),
-          ),
+          style: TextStyle(fontSize: 14.sp, color: const Color(0xFF6B7280)),
         ),
         actions: [
           TextButton(
@@ -1799,10 +1849,7 @@ class RetailCartPage extends StatelessWidget {
             },
             child: Text(
               'إلغاء',
-              style: TextStyle(
-                fontSize: 14.sp,
-                color: const Color(0xFF6B7280),
-              ),
+              style: TextStyle(fontSize: 14.sp, color: const Color(0xFF6B7280)),
             ),
           ),
           Material(
@@ -1837,4 +1884,4 @@ class RetailCartPage extends StatelessWidget {
       ),
     );
   }
-} 
+}

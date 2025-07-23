@@ -1,6 +1,3 @@
-
-
-
 import 'dart:async';
 import 'dart:math'; // For Random
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../Model/model_order.dart';
-import '../../../Model/model_the_order_list.dart';
 import '../../../XXX/xxx_firebase.dart';
+import '../../../Model/model_the_order_list.dart';
 import '../../bottonBar/botonBar.dart'; // For navigation
 import '../../controler/local-notification-onroller.dart'; // Your LocalNotification class
 import '../../theـchosen/GetXController/GetAddAndRemove.dart'; // To get cart summary
@@ -23,7 +20,8 @@ class GetxAreYouSureMapOrder extends GetxController {
 
   // Rx Variables for reactive UI updates
   var isLoading = false.obs; // For overall loading state
-  final _confirmationDialogIsLoading = false.obs; // Specific for loading within the confirmation dialog
+  final _confirmationDialogIsLoading =
+      false.obs; // Specific for loading within the confirmation dialog
 
   // --- Firebase Instances ---
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -47,7 +45,9 @@ class GetxAreYouSureMapOrder extends GetxController {
     try {
       _cartController = Get.find<GetAddAndRemove>();
     } catch (e) {
-      debugPrint("GetxAreYouSureMapOrder: GetAddAndRemove controller not found. Cart summary will not be available.");
+      debugPrint(
+        "GetxAreYouSureMapOrder: GetAddAndRemove controller not found. Cart summary will not be available.",
+      );
       // Initialize with a dummy if needed, or handle this case gracefully
       // For now, if not found, methods requiring it might fail or show defaults.
     }
@@ -72,11 +72,12 @@ class GetxAreYouSureMapOrder extends GetxController {
       if (!_cartController.initialized) {
         await _cartController.calculateTotals(); // Ensure totals are calculated
       }
-      itemCount =_cartController.getTotalItemCountInCart(); // Implement this in GetAddAndRemove
+      itemCount =
+          _cartController
+              .getTotalItemCountInCart(); // Implement this in GetAddAndRemove
       totalItemsStr = itemCount.toString();
       totalPriceStr = "${_cartController.total.value} ${FirebaseX.currency}";
     }
-
 
     // Check if cart is empty
     if (itemCount == 0 && Get.isRegistered<GetAddAndRemove>()) {
@@ -90,123 +91,187 @@ class GetxAreYouSureMapOrder extends GetxController {
       return;
     }
 
-
     return Get.dialog(
-      Obx(() => AlertDialog.adaptive( // Using adaptive for better platform feel
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        backgroundColor: Colors.white,
-        titlePadding: const EdgeInsets.only(top: 24, bottom: 0, left: 24, right: 24),
-        title: _confirmationDialogIsLoading.value
-            ? Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const CircularProgressIndicator(color: Colors.blueAccent),
-            const SizedBox(height: 20),
-            Text(
-              'جاري إرسال الطلب...',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: Get.width / 24, // Responsive font size
-                color: Colors.blueGrey,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
-        )
-            : Row(
-          children: [
-            Icon(Icons.shopping_cart_checkout, color: Colors.blueAccent, size: Get.width / 12),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Text(
-                'تأكيد إرسال الطلب؟',
-                style: TextStyle(
-                  fontSize: Get.width / 22,
-                  color: Colors.black87,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ),
-          ],
-        ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-        content: _confirmationDialogIsLoading.value
-            ? const SizedBox.shrink() // Don't show content if loading title is shown
-            : Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              'سيتم تحديد موقعك الحالي لإتمام عملية التوصيل.',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: Get.width / 28, color: Colors.grey.shade700),
-            ),
-            const SizedBox(height: 15),
-            if (Get.isRegistered<GetAddAndRemove>()) ...[
-              Text(
-                "ملخص الطلب:",
-                style: TextStyle(fontSize: Get.width / 26, fontWeight: FontWeight.bold, color: Colors.black54),
-              ),
-              const SizedBox(height: 5),
-              Text("إجمالي المنتجات: $totalItemsStr", style: TextStyle(fontSize: Get.width/28)),
-              Text("السعر الإجمالي: $totalPriceStr", style: TextStyle(fontSize: Get.width/28, color: Theme.of(context).primaryColor, fontWeight: FontWeight.bold)),
-            ],
-            const SizedBox(height: 15),
-            Text(
-              'لا يمكن التراجع عن الطلب بعد التأكيد.',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: Get.width / 30, color: Colors.red.shade400),
-            ),
-          ],
-        ),
-        actionsAlignment: MainAxisAlignment.spaceEvenly,
-        actionsPadding: const EdgeInsets.only(bottom: 16, left: 16, right: 16, top:0),
-        actions: _confirmationDialogIsLoading.value
-            ? [] // No actions when loading in dialog
-            : [
-          TextButton(
-            style: TextButton.styleFrom(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            ),
-            onPressed: () => Get.back(), // Close dialog
-            child: Text(
-              'إلغاء',
-              style: TextStyle(fontSize: Get.width / 26, color: Colors.grey.shade700),
-            ),
+      Obx(
+        () => AlertDialog.adaptive(
+          // Using adaptive for better platform feel
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
           ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green.shade600,
-              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-            ),
-            onPressed: () async {
-              // Don't pop dialog here, _sendOrder will handle navigation or error.
-              // But start dialog specific loading.
-              _confirmationDialogIsLoading.value = true;
-              await _sendOrder(context);
-              _confirmationDialogIsLoading.value = false;
-              if (Get.isDialogOpen ?? false) { // Check if dialog is still open
-                Get.back(); // Close if processing finished and it's still up
-              }
-            },
-            child: Text(
-              'تأكيد وإرسال',
-              style: TextStyle(fontSize: Get.width / 26, color: Colors.white, fontWeight: FontWeight.bold),
-            ),
+          backgroundColor: Colors.white,
+          titlePadding: const EdgeInsets.only(
+            top: 24,
+            bottom: 0,
+            left: 24,
+            right: 24,
           ),
-        ],
-      )),
-      barrierDismissible: !_confirmationDialogIsLoading.value, // Prevent dismiss while processing
+          title:
+              _confirmationDialogIsLoading.value
+                  ? Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const CircularProgressIndicator(color: Colors.blueAccent),
+                      const SizedBox(height: 20),
+                      Text(
+                        'جاري إرسال الطلب...',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: Get.width / 24, // Responsive font size
+                          color: Colors.blueGrey,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  )
+                  : Row(
+                    children: [
+                      Icon(
+                        Icons.shopping_cart_checkout,
+                        color: Colors.blueAccent,
+                        size: Get.width / 12,
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text(
+                          'تأكيد إرسال الطلب؟',
+                          style: TextStyle(
+                            fontSize: Get.width / 22,
+                            color: Colors.black87,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ],
+                  ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 24,
+            vertical: 20,
+          ),
+          content:
+              _confirmationDialogIsLoading.value
+                  ? const SizedBox.shrink() // Don't show content if loading title is shown
+                  : Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        'سيتم تحديد موقعك الحالي لإتمام عملية التوصيل.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: Get.width / 28,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                      const SizedBox(height: 15),
+                      if (Get.isRegistered<GetAddAndRemove>()) ...[
+                        Text(
+                          "ملخص الطلب:",
+                          style: TextStyle(
+                            fontSize: Get.width / 26,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black54,
+                          ),
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          "إجمالي المنتجات: $totalItemsStr",
+                          style: TextStyle(fontSize: Get.width / 28),
+                        ),
+                        Text(
+                          "السعر الإجمالي: $totalPriceStr",
+                          style: TextStyle(
+                            fontSize: Get.width / 28,
+                            color: Theme.of(context).primaryColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: 15),
+                      Text(
+                        'لا يمكن التراجع عن الطلب بعد التأكيد.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: Get.width / 30,
+                          color: Colors.red.shade400,
+                        ),
+                      ),
+                    ],
+                  ),
+          actionsAlignment: MainAxisAlignment.spaceEvenly,
+          actionsPadding: const EdgeInsets.only(
+            bottom: 16,
+            left: 16,
+            right: 16,
+            top: 0,
+          ),
+          actions:
+              _confirmationDialogIsLoading.value
+                  ? [] // No actions when loading in dialog
+                  : [
+                    TextButton(
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 20,
+                          vertical: 10,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      onPressed: () => Get.back(), // Close dialog
+                      child: Text(
+                        'إلغاء',
+                        style: TextStyle(
+                          fontSize: Get.width / 26,
+                          color: Colors.grey.shade700,
+                        ),
+                      ),
+                    ),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green.shade600,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 30,
+                          vertical: 12,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      onPressed: () async {
+                        // Don't pop dialog here, _sendOrder will handle navigation or error.
+                        // But start dialog specific loading.
+                        _confirmationDialogIsLoading.value = true;
+                        await _sendOrder(context);
+                        _confirmationDialogIsLoading.value = false;
+                        if (Get.isDialogOpen ?? false) {
+                          // Check if dialog is still open
+                          Get.back(); // Close if processing finished and it's still up
+                        }
+                      },
+                      child: Text(
+                        'تأكيد وإرسال',
+                        style: TextStyle(
+                          fontSize: Get.width / 26,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+        ),
+      ),
+      barrierDismissible:
+          !_confirmationDialogIsLoading
+              .value, // Prevent dismiss while processing
     );
   }
 
-
   /// Main function to process and send the order.
   Future<void> _sendOrder(BuildContext context) async {
-    isLoading.value = true; // Overall loading state for the screen if needed outside dialog
+    isLoading.value =
+        true; // Overall loading state for the screen if needed outside dialog
     update(); // Update UI for screen-level indicators if any
 
     final String? currentUserId = _auth.currentUser?.uid;
@@ -221,7 +286,11 @@ class GetxAreYouSureMapOrder extends GetxController {
     String buyerName = 'مستخدم';
     String? buyerImageUrl;
     try {
-      DocumentSnapshot buyerDoc = await _firestore.collection(FirebaseX.collectionApp).doc(currentUserId).get();
+      DocumentSnapshot buyerDoc =
+          await _firestore
+              .collection(FirebaseX.collectionApp)
+              .doc(currentUserId)
+              .get();
       if (buyerDoc.exists) {
         buyerName = buyerDoc.get('name') ?? 'مستخدم';
         buyerImageUrl = buyerDoc.get('url');
@@ -231,14 +300,14 @@ class GetxAreYouSureMapOrder extends GetxController {
       // Continue, default buyerName is set.
     }
 
-
     QuerySnapshot cartSnapshot;
     try {
-      cartSnapshot = await _firestore
-          .collection('the-chosen')
-          .doc(currentUserId)
-          .collection(FirebaseX.appName)
-          .get();
+      cartSnapshot =
+          await _firestore
+              .collection('the-chosen')
+              .doc(currentUserId)
+              .collection(FirebaseX.appName)
+              .get();
 
       if (cartSnapshot.docs.isEmpty) {
         _showInfoSnackbar("سلة فارغة", "لا يوجد منتجات في السلة لإرسالها.");
@@ -257,7 +326,9 @@ class GetxAreYouSureMapOrder extends GetxController {
     Map<String, List<QueryDocumentSnapshot>> itemsBySeller = {};
     for (var doc in cartSnapshot.docs) {
       final data = doc.data() as Map<String, dynamic>;
-      String sellerUid = data['uidAdd'] as String? ?? 'unknown_seller_uid'; // Handle if uidAdd is missing
+      String sellerUid =
+          data['uidAdd'] as String? ??
+          'unknown_seller_uid'; // Handle if uidAdd is missing
       itemsBySeller.putIfAbsent(sellerUid, () => []).add(doc);
     }
 
@@ -273,12 +344,18 @@ class GetxAreYouSureMapOrder extends GetxController {
         continue;
       }
       List<QueryDocumentSnapshot> sellerItems = itemsBySeller[sellerUid]!;
-      String sellerOrderDisplayNumber = _generateOrderNumber(); // For display/notification
+      String sellerOrderDisplayNumber =
+          _generateOrderNumber(); // For display/notification
 
       try {
         // ---- Firestore Transaction per Seller ----
-        String? createdOrderId = await _firestore.runTransaction((transaction) async {
-          DocumentReference sellerOrderDocRef = _firestore.collection('orders').doc(); // Auto-ID for main order doc
+        String? createdOrderId = await _firestore.runTransaction((
+          transaction,
+        ) async {
+          DocumentReference sellerOrderDocRef =
+              _firestore
+                  .collection(FirebaseX.ordersCollection)
+                  .doc(); // Auto-ID for main order doc
 
           double totalPriceForThisSeller = 0.0;
           // Calculate total price for this seller's items
@@ -291,15 +368,33 @@ class GetxAreYouSureMapOrder extends GetxController {
             DocumentSnapshot productDetailsDoc;
             int itemPrice = 0;
 
-            String collectionName = isOfferItem ? FirebaseX.offersCollection : FirebaseX.itemsCollection;
+            String collectionName =
+                isOfferItem
+                    ? FirebaseX.offersCollection
+                    : FirebaseX.itemsCollection;
 
             // Use transaction.get() to read data within a transaction
-            productDetailsDoc = await transaction.get(_firestore.collection(collectionName).doc(uidItem));
+            productDetailsDoc = await transaction.get(
+              _firestore.collection(collectionName).doc(uidItem),
+            );
 
             if (productDetailsDoc.exists) {
-              itemPrice = (productDetailsDoc.get('priceOfItem') as num?)?.toInt() ?? 0;
+              // استخدام suggestedRetailPrice أولاً ثم priceOfItem كبديل
+              final dynamic suggestedPrice =
+                  productDetailsDoc.data() is Map<String, dynamic>
+                      ? (productDetailsDoc.data()
+                          as Map<String, dynamic>)['suggestedRetailPrice']
+                      : null;
+              final dynamic regularPrice = productDetailsDoc.get('priceOfItem');
+
+              itemPrice =
+                  suggestedPrice != null
+                      ? (suggestedPrice as num?)?.toInt() ?? 0
+                      : (regularPrice as num?)?.toInt() ?? 0;
             } else {
-              debugPrint("!!! تحذير: منتج ID: $uidItem (مجموعة: $collectionName) غير موجود. سيتم احتسابه بصفر.");
+              debugPrint(
+                "!!! تحذير: منتج ID: $uidItem (مجموعة: $collectionName) غير موجود. سيتم احتسابه بصفر.",
+              );
               // Throw an error to fail the transaction for this seller if a product is missing
               // This ensures order consistency for the seller.
               throw FirebaseException(
@@ -319,8 +414,11 @@ class GetxAreYouSureMapOrder extends GetxController {
             delivery: false,
             doneDelivery: false,
             requestAccept: false,
-            timeOrder: DateTime.now(), // Server timestamp is better, but DateTime.now() is okay
-            numberOfOrder: sellerOrderDocRef.id, // Using Firestore Auto-ID as the order number
+            timeOrder:
+                DateTime.now(), // Server timestamp is better, but DateTime.now() is okay
+            numberOfOrder:
+                sellerOrderDocRef
+                    .id, // Using Firestore Auto-ID as the order number
             totalPriceOfOrder: totalPriceForThisSeller.toInt(),
             uidAdd: sellerUid,
           );
@@ -339,26 +437,30 @@ class GetxAreYouSureMapOrder extends GetxController {
               appName: FirebaseX.appName,
             );
             transaction.set(
-                sellerOrderDocRef.collection('OrderItems').doc(itemDocInCart.id),
-                orderListItem.toMap()
+              sellerOrderDocRef.collection('OrderItems').doc(itemDocInCart.id),
+              orderListItem.toMap(),
             );
           }
 
           // Delete items from "the-chosen" for this seller
           for (var itemDocInCart in sellerItems) {
             transaction.delete(
-                _firestore.collection('the-chosen')
-                    .doc(currentUserId)
-                    .collection(FirebaseX.appName)
-                    .doc(itemDocInCart.id)
+              _firestore
+                  .collection('the-chosen')
+                  .doc(currentUserId)
+                  .collection(FirebaseX.appName)
+                  .doc(itemDocInCart.id),
             );
           }
-          return sellerOrderDocRef.id; // Return the ID of the created order for this seller
+          return sellerOrderDocRef
+              .id; // Return the ID of the created order for this seller
         }); // ---- End of Transaction ----
 
         if (createdOrderId != null) {
           anySellerProcessingSucceeded = true;
-          successfulSellerOrderDisplayIds.add(sellerOrderDisplayNumber); // Use generated for display if preferred
+          successfulSellerOrderDisplayIds.add(
+            sellerOrderDisplayNumber,
+          ); // Use generated for display if preferred
           // Send notification AFTER successful transaction
           await _sendNotificationToSeller(
             sellerUid,
@@ -371,9 +473,14 @@ class GetxAreYouSureMapOrder extends GetxController {
           failedSellerUids.add(sellerUid);
         }
       } catch (e) {
-        debugPrint("Transaction or notification for seller $sellerUid failed: $e");
+        debugPrint(
+          "Transaction or notification for seller $sellerUid failed: $e",
+        );
         failedSellerUids.add(sellerUid);
-        _showErrorSnackbar("خطأ في معالجة الطلب", "فشل معالجة طلب البائع $sellerUid: ${e.toString().substring(0,min(e.toString().length, 50))}");
+        _showErrorSnackbar(
+          "خطأ في معالجة الطلب",
+          "فشل معالجة طلب البائع $sellerUid: ${e.toString().substring(0, min(e.toString().length, 50))}",
+        );
       }
     } // End loop for sellerUids
 
@@ -383,24 +490,44 @@ class GetxAreYouSureMapOrder extends GetxController {
     // Final feedback to user
     if (failedSellerUids.isEmpty && anySellerProcessingSucceeded) {
       _showSuccessSnackbar("نجاح!", "تم إرسال طلبك بنجاح إلى جميع البائعين.");
-      Get.offAll(() => BottomBar(initialIndex: 0)); // Navigate to home or orders
+      Get.offAll(
+        () => BottomBar(initialIndex: 0),
+      ); // Navigate to home or orders
     } else if (anySellerProcessingSucceeded && failedSellerUids.isNotEmpty) {
-      _showWarningSnackbar("نجاح جزئي",
-          "تم إرسال الطلب لبعض البائعين. فشل للبائعين: ${failedSellerUids.join(', ')}. أرقام الطلبات الناجحة: ${successfulSellerOrderDisplayIds.join(', ')}");
-      Get.offAll(() => BottomBar(initialIndex: 0)); // Navigate, user might need to see their orders
-    } else if (failedSellerUids.isNotEmpty && !anySellerProcessingSucceeded){
-      _showErrorSnackbar("فشل", "لم يتم إرسال طلبك لأي بائع. يرجى المحاولة مرة أخرى.");
+      _showWarningSnackbar(
+        "نجاح جزئي",
+        "تم إرسال الطلب لبعض البائعين. فشل للبائعين: ${failedSellerUids.join(', ')}. أرقام الطلبات الناجحة: ${successfulSellerOrderDisplayIds.join(', ')}",
+      );
+      Get.offAll(
+        () => BottomBar(initialIndex: 0),
+      ); // Navigate, user might need to see their orders
+    } else if (failedSellerUids.isNotEmpty && !anySellerProcessingSucceeded) {
+      _showErrorSnackbar(
+        "فشل",
+        "لم يتم إرسال طلبك لأي بائع. يرجى المحاولة مرة أخرى.",
+      );
       // Stay on the map screen, or offer retry in dialog (complex to implement full retry)
     } else if (!anySellerProcessingSucceeded && cartSnapshot.docs.isNotEmpty) {
-      _showErrorSnackbar("فشل", "حدث خطأ غير متوقع ولم يتم إرسال الطلب. الرجاء المحاولة مرة أخرى.");
+      _showErrorSnackbar(
+        "فشل",
+        "حدث خطأ غير متوقع ولم يتم إرسال الطلب. الرجاء المحاولة مرة أخرى.",
+      );
     }
   }
 
   /// Sends notification to a specific seller.
   Future<void> _sendNotificationToSeller(
-      String sellerUid, String orderIdentifier, String buyerName, String? buyerImageUrl) async {
+    String sellerUid,
+    String orderIdentifier,
+    String buyerName,
+    String? buyerImageUrl,
+  ) async {
     try {
-      DocumentSnapshot sellerDoc = await _firestore.collection(FirebaseX.collectionApp).doc(sellerUid).get();
+      DocumentSnapshot sellerDoc =
+          await _firestore
+              .collection(FirebaseX.collectionApp)
+              .doc(sellerUid)
+              .get();
       if (sellerDoc.exists && sellerDoc.data() != null) {
         final sellerData = sellerDoc.data() as Map<String, dynamic>;
         String? sellerToken = sellerData['token'] as String?;
@@ -409,17 +536,22 @@ class GetxAreYouSureMapOrder extends GetxController {
           await LocalNotification.sendNotificationMessageToUser(
             to: sellerToken,
             title: 'طلب جديد من $buyerName!',
-            body: 'لديك طلب جديد برقم مرجعي: $orderIdentifier.', // Use the actual order ID or a generated one
+            body:
+                'لديك طلب جديد برقم مرجعي: $orderIdentifier.', // Use the actual order ID or a generated one
             uid: _auth.currentUser!.uid, // Buyer's UID
             type: 'new_order_for_seller',
             image: buyerImageUrl, // Buyer's image
           );
         } else {
-          debugPrint("FCM token not found for seller UID: $sellerUid. Cannot send notification.");
+          debugPrint(
+            "FCM token not found for seller UID: $sellerUid. Cannot send notification.",
+          );
           // Optionally inform admin or log this missing token.
         }
       } else {
-        debugPrint("Seller document not found for UID: $sellerUid. Cannot send notification.");
+        debugPrint(
+          "Seller document not found for UID: $sellerUid. Cannot send notification.",
+        );
       }
     } catch (e) {
       debugPrint("Error sending notification to seller $sellerUid: $e");
@@ -442,6 +574,7 @@ class GetxAreYouSureMapOrder extends GetxController {
       borderRadius: 8,
     );
   }
+
   void _showSuccessSnackbar(String title, String message) {
     Get.snackbar(
       title,
@@ -454,6 +587,7 @@ class GetxAreYouSureMapOrder extends GetxController {
       borderRadius: 8,
     );
   }
+
   void _showWarningSnackbar(String title, String message) {
     Get.snackbar(
       title,
@@ -466,6 +600,7 @@ class GetxAreYouSureMapOrder extends GetxController {
       borderRadius: 8,
     );
   }
+
   void _showInfoSnackbar(String title, String message) {
     Get.snackbar(
       title,
@@ -478,7 +613,6 @@ class GetxAreYouSureMapOrder extends GetxController {
       borderRadius: 8,
     );
   }
-
 
   // Call this method from your UI to update controller's lat/lng
   void updateLocation(double lat, double lng) {
@@ -508,10 +642,3 @@ class GetxAreYouSureMapOrder extends GetxController {
   // Ensure onInit calls calculateTotals and it fully populates _itemQuantities.
   // And that any add/remove operation keeps _itemQuantities consistent.
 */
-
-
-
-
-
-
-

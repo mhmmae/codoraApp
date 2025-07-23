@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import '../../addItem/addItem.dart'; // <-- استيراد شاشة إضافة المنتج
 import '../../controllers/orders_controller.dart';
 import '../../controllers/seller_main_controller.dart';
+import '../../controllers/sales_analytics_controller.dart';
+import 'sales_details_page.dart';
 
 class SellerDashboardPage extends StatelessWidget {
   const SellerDashboardPage({super.key});
@@ -12,7 +14,11 @@ class SellerDashboardPage extends StatelessWidget {
   Widget build(BuildContext context) {
     // الحصول على متحكم الطلبات
     final OrdersController ordersController = Get.find<OrdersController>();
-    
+    // إنشاء متحكم المبيعات
+    final SalesAnalyticsController salesController = Get.put(
+      SalesAnalyticsController(),
+    );
+
     // مثال مبدئي لمحتوى لوحة التحكم
     // سنستخدم GridView لترتيب البطاقات بشكل متجاوب
     return Padding(
@@ -32,27 +38,34 @@ class SellerDashboardPage extends StatelessWidget {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const AddItem()), // الانتقال إلى شاشة AddItem
+                MaterialPageRoute(
+                  builder: (context) => const AddItem(),
+                ), // الانتقال إلى شاشة AddItem
               );
             },
           ),
           // بطاقة الطلبات الجديدة مع Badge
-          Obx(() => _buildDashboardCard(
-            context: context,
-            icon: Icons.shopping_cart_checkout,
-            title: 'الطلبات الجديدة',
-            value: ordersController.newOrdersCount.value.toString(), // العدد الفعلي من المتحكم
-            color: ordersController.newOrdersCount.value > 0 ? Colors.orange : Colors.grey,
-            onTap: () {
-              // الانتقال إلى تبويب الطلبات
-              final mainController = Get.find<SellerMainController>();
-              mainController.changePageIndex(2);
-            },
-            showBadge: ordersController.newOrdersCount.value > 0,
-            badgeCount: ordersController.newOrdersCount.value,
-          )),
-
-
+          Obx(
+            () => _buildDashboardCard(
+              context: context,
+              icon: Icons.shopping_cart_checkout,
+              title: 'الطلبات الجديدة',
+              value:
+                  ordersController.newOrdersCount.value
+                      .toString(), // العدد الفعلي من المتحكم
+              color:
+                  ordersController.newOrdersCount.value > 0
+                      ? Colors.orange
+                      : Colors.grey,
+              onTap: () {
+                // الانتقال إلى تبويب الطلبات
+                final mainController = Get.find<SellerMainController>();
+                mainController.changePageIndex(2);
+              },
+              showBadge: ordersController.newOrdersCount.value > 0,
+              badgeCount: ordersController.newOrdersCount.value,
+            ),
+          ),
 
           _buildDashboardCard(
             context: context,
@@ -67,13 +80,21 @@ class SellerDashboardPage extends StatelessWidget {
             },
           ),
 
-
-          _buildDashboardCard(
-            context: context,
-            icon: Icons.attach_money,
-            title: 'إجمالي المبيعات (اليوم)',
-            value: '1,250 د.ع', // قيمة وهمية
-            color: Colors.green,
+          // بطاقة المبيعات التفاعلية
+          Obx(
+            () => _buildDashboardCard(
+              context: context,
+              icon: Icons.attach_money,
+              title: 'إجمالي المبيعات (اليوم)',
+              value:
+                  salesController.isLoading.value
+                      ? 'جارٍ التحميل...'
+                      : '${salesController.totalDailyRevenue.value.toStringAsFixed(0)} د.ع',
+              color: Colors.green,
+              onTap: () {
+                Get.to(() => const SalesDetailsPage());
+              },
+            ),
           ),
           _buildDashboardCard(
             context: context,
@@ -96,8 +117,8 @@ class SellerDashboardPage extends StatelessWidget {
             value: '4.8', // قيمة وهمية
             color: Colors.amber,
           ),
-          // بطاقة السوق الجديدة
 
+          // بطاقة السوق الجديدة
         ],
       ),
     );
@@ -143,20 +164,21 @@ class SellerDashboardPage extends StatelessWidget {
             children: <Widget>[
               // أيقونة مع Badge اختياري
               Flexible(
-                child: showBadge && badgeCount > 0
-                    ? Badge(
-                        label: Text(
-                          badgeCount.toString(),
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 8.sp,
-                            fontWeight: FontWeight.bold,
+                child:
+                    showBadge && badgeCount > 0
+                        ? Badge(
+                          label: Text(
+                            badgeCount.toString(),
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 8.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
-                        ),
-                        backgroundColor: Colors.red,
-                        child: Icon(icon, size: 32.sp, color: color),
-                      )
-                    : Icon(icon, size: 32.sp, color: color),
+                          backgroundColor: Colors.red,
+                          child: Icon(icon, size: 32.sp, color: color),
+                        )
+                        : Icon(icon, size: 32.sp, color: color),
               ),
               SizedBox(height: 8.h),
               Flexible(
@@ -176,10 +198,7 @@ class SellerDashboardPage extends StatelessWidget {
               Flexible(
                 child: Text(
                   title,
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: Colors.grey[700],
-                  ),
+                  style: TextStyle(fontSize: 12.sp, color: Colors.grey[700]),
                   textAlign: TextAlign.center,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -191,4 +210,4 @@ class SellerDashboardPage extends StatelessWidget {
       ),
     );
   }
-} 
+}

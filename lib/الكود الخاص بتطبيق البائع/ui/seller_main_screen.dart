@@ -56,7 +56,7 @@ class SellerMainScreen extends StatelessWidget {
       padding: EdgeInsets.zero,
       children: <Widget>[
         Container(
-          height: 140.h, // تقليل الارتفاع
+          height: 200.h, // تقليل الارتفاع
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,

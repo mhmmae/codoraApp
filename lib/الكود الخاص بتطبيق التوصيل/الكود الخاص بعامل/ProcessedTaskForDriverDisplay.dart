@@ -1,4 +1,4 @@
-import '../الكود الخاص بمشرف التوصيل/DeliveryTaskModel.dart';
+import '../../Model/DeliveryTaskModel.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 class ProcessedTaskForDriverDisplay {
   final DeliveryTaskModel task;

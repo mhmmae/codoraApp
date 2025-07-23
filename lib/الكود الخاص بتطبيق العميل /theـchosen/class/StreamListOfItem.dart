@@ -24,11 +24,12 @@ class _StreamListOfItemState extends State<StreamListOfItem>
   final List<AnimationController> _itemControllers = [];
 
   // Stream لجلب بيانات المنتجات الموجودة في السلة (the-chosen).
-  final Stream<QuerySnapshot> cardItemStream = FirebaseFirestore.instance
-      .collection('the-chosen')
-      .doc(FirebaseAuth.instance.currentUser!.uid)
-      .collection(FirebaseX.appName)
-      .snapshots();
+  final Stream<QuerySnapshot> cardItemStream =
+      FirebaseFirestore.instance
+          .collection('the-chosen')
+          .doc(FirebaseAuth.instance.currentUser!.uid)
+          .collection(FirebaseX.appName)
+          .snapshots();
 
   @override
   void initState() {
@@ -51,12 +52,18 @@ class _StreamListOfItemState extends State<StreamListOfItem>
 
   /// دالة لاسترجاع بيانات المنتج من مجموعة "Item" باستخدام معرف المنتج.
   Future<DocumentSnapshot> fetchItem(String itemUid) {
-    return FirebaseFirestore.instance.collection(FirebaseX.itemsCollection).doc(itemUid).get();
+    return FirebaseFirestore.instance
+        .collection(FirebaseX.itemsCollection)
+        .doc(itemUid)
+        .get();
   }
 
   /// دالة لاسترجاع بيانات المنتج من مجموعة "Itemoffer" باستخدام معرف المنتج.
   Future<DocumentSnapshot> fetchItemOffer(String itemUid) {
-    return FirebaseFirestore.instance.collection(FirebaseX.offersCollection).doc(itemUid).get();
+    return FirebaseFirestore.instance
+        .collection(FirebaseX.offersCollection)
+        .doc(itemUid)
+        .get();
   }
 
   /// دالة لحذف عنصر من السلة باستخدام معرف المستند.
@@ -116,9 +123,9 @@ class _StreamListOfItemState extends State<StreamListOfItem>
             return ListView.separated(
               padding: const EdgeInsets.all(12),
               itemCount: snapshot.data!.docs.length,
-              separatorBuilder: (context, index) => SizedBox(
-                height: 12 * _listAnimationController.value,
-              ),
+              separatorBuilder:
+                  (context, index) =>
+                      SizedBox(height: 12 * _listAnimationController.value),
               itemBuilder: (context, index) {
                 final document = snapshot.data!.docs[index];
                 return _buildAnimatedCartItem(document, hi, wi, index);
@@ -131,11 +138,16 @@ class _StreamListOfItemState extends State<StreamListOfItem>
   }
 
   /// بناء عنصر السلة مع أنيميشن
-  Widget _buildAnimatedCartItem(DocumentSnapshot document, double hi, double wi, int index) {
+  Widget _buildAnimatedCartItem(
+    DocumentSnapshot document,
+    double hi,
+    double wi,
+    int index,
+  ) {
     if (index >= _itemControllers.length) return const SizedBox();
-    
+
     final controller = _itemControllers[index];
-    
+
     return AnimatedBuilder(
       animation: controller,
       builder: (context, child) {
@@ -143,23 +155,24 @@ class _StreamListOfItemState extends State<StreamListOfItem>
           position: Tween<Offset>(
             begin: const Offset(0.3, 0),
             end: Offset.zero,
-          ).animate(CurvedAnimation(
-            parent: controller,
-            curve: Curves.easeOutBack,
-          )),
+          ).animate(
+            CurvedAnimation(parent: controller, curve: Curves.easeOutBack),
+          ),
           child: FadeTransition(
             opacity: CurvedAnimation(
               parent: controller,
               curve: Curves.easeInOut,
             ),
             child: Transform.scale(
-              scale: Tween<double>(
-                begin: 0.8,
-                end: 1.0,
-              ).animate(CurvedAnimation(
-                parent: controller,
-                curve: Curves.elasticOut,
-              )).value,
+              scale:
+                  Tween<double>(begin: 0.8, end: 1.0)
+                      .animate(
+                        CurvedAnimation(
+                          parent: controller,
+                          curve: Curves.elasticOut,
+                        ),
+                      )
+                      .value,
               child: _buildCartItem(document, hi, wi, index),
             ),
           ),
@@ -169,13 +182,18 @@ class _StreamListOfItemState extends State<StreamListOfItem>
   }
 
   /// بناء عنصر واحد في السلة بتصميم محسن
-  Widget _buildCartItem(DocumentSnapshot document, double hi, double wi, int index) {
+  Widget _buildCartItem(
+    DocumentSnapshot document,
+    double hi,
+    double wi,
+    int index,
+  ) {
     // تحويل بيانات المستند إلى خريطة مع التحقق من null-safety.
     final dataMap = document.data() as Map<String, dynamic>?;
     if (dataMap == null) {
       return const SizedBox();
     }
-    
+
     // استخراج الحقول الأساسية مع تحديد القيم الافتراضية.
     final bool isOffer = dataMap['isOfer'] as bool? ?? false;
     final String uidItem = dataMap['uidItem'] as String? ?? "";
@@ -189,7 +207,10 @@ class _StreamListOfItemState extends State<StreamListOfItem>
 
     return FutureBuilder<DocumentSnapshot>(
       future: productFuture,
-      builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> productSnapshot) {
+      builder: (
+        BuildContext context,
+        AsyncSnapshot<DocumentSnapshot> productSnapshot,
+      ) {
         if (productSnapshot.hasError) {
           return _buildProductErrorCard();
         }
@@ -201,17 +222,32 @@ class _StreamListOfItemState extends State<StreamListOfItem>
         }
 
         // استخراج بيانات المنتج مع التحقق من null.
-        final productData = productSnapshot.data!.data() as Map<String, dynamic>?;
+        final productData =
+            productSnapshot.data!.data() as Map<String, dynamic>?;
         if (productData == null) return const SizedBox();
 
         final String imageUrl = productData['url'] as String? ?? "";
         final String nameOfItem = productData['nameOfItem'] as String? ?? "";
+        // استخدام suggestedRetailPrice أولاً ثم priceOfItem كبديل
+        final dynamic suggestedPriceDynamic =
+            productData['suggestedRetailPrice'];
         final dynamic priceDynamic = productData['priceOfItem'];
-        final String priceOfItemStr = priceDynamic != null ? priceDynamic.toString() : "";
+        final String priceOfItemStr =
+            suggestedPriceDynamic != null
+                ? suggestedPriceDynamic.toString()
+                : (priceDynamic != null ? priceDynamic.toString() : "");
 
         return _buildModernCartItem(
-          imageUrl, nameOfItem, priceOfItemStr, number, 
-          uidItem, uidOfDoc, isOffer, hi, wi, uidAdd
+          imageUrl,
+          nameOfItem,
+          priceOfItemStr,
+          number,
+          uidItem,
+          uidOfDoc,
+          isOffer,
+          hi,
+          wi,
+          uidAdd,
         );
       },
     );
@@ -219,8 +255,16 @@ class _StreamListOfItemState extends State<StreamListOfItem>
 
   /// بناء عنصر السلة بتصميم حديث مع أنيميشن تفاعلي
   Widget _buildModernCartItem(
-    String imageUrl, String nameOfItem, String priceOfItemStr, int number,
-    String uidItem, String uidOfDoc, bool isOffer, double hi, double wi, String uidAdd
+    String imageUrl,
+    String nameOfItem,
+    String priceOfItemStr,
+    int number,
+    String uidItem,
+    String uidOfDoc,
+    bool isOffer,
+    double hi,
+    double wi,
+    String uidAdd,
   ) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
@@ -228,10 +272,7 @@ class _StreamListOfItemState extends State<StreamListOfItem>
         gradient: LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            Colors.white,
-            Colors.grey[50]!.withOpacity(0.8),
-          ],
+          colors: [Colors.white, Colors.grey[50]!.withOpacity(0.8)],
         ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
@@ -290,10 +331,16 @@ class _StreamListOfItemState extends State<StreamListOfItem>
                           child: Row(
                             children: [
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8,
+                                  vertical: 2,
+                                ),
                                 decoration: BoxDecoration(
                                   gradient: const LinearGradient(
-                                    colors: [Color(0xFF667EEA), Color(0xFF764BA2)],
+                                    colors: [
+                                      Color(0xFF667EEA),
+                                      Color(0xFF764BA2),
+                                    ],
                                   ),
                                   borderRadius: BorderRadius.circular(8),
                                 ),
@@ -324,7 +371,13 @@ class _StreamListOfItemState extends State<StreamListOfItem>
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             // أزرار الكمية
-                            _buildAnimatedQuantityControls(uidItem, uidOfDoc, isOffer, number, uidAdd),
+                            _buildAnimatedQuantityControls(
+                              uidItem,
+                              uidOfDoc,
+                              isOffer,
+                              number,
+                              uidAdd,
+                            ),
                             // زر الحذف
                             _buildAnimatedDeleteButton(uidOfDoc),
                           ],
@@ -342,7 +395,12 @@ class _StreamListOfItemState extends State<StreamListOfItem>
   }
 
   /// بناء صورة المنتج المحسنة مع أنيميشن
-  Widget _buildAnimatedProductImage(String imageUrl, double hi, double wi, bool isOffer) {
+  Widget _buildAnimatedProductImage(
+    String imageUrl,
+    double hi,
+    double wi,
+    bool isOffer,
+  ) {
     return SizedBox(
       width: wi / 4,
       height: hi / 9,
@@ -389,16 +447,17 @@ class _StreamListOfItemState extends State<StreamListOfItem>
   }
 
   /// بناء أزرار التحكم في الكمية مع أنيميشن
-  Widget _buildAnimatedQuantityControls(String uidItem, String uidOfDoc, bool isOffer, int number, String uidAdd) {
+  Widget _buildAnimatedQuantityControls(
+    String uidItem,
+    String uidOfDoc,
+    bool isOffer,
+    int number,
+    String uidAdd,
+  ) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            Colors.grey[100]!,
-            Colors.grey[50]!,
-          ],
-        ),
+        gradient: LinearGradient(colors: [Colors.grey[100]!, Colors.grey[50]!]),
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -485,11 +544,7 @@ class _StreamListOfItemState extends State<StreamListOfItem>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.error_outline,
-            size: 64,
-            color: Colors.red,
-          ),
+          const Icon(Icons.error_outline, size: 64, color: Colors.red),
           const SizedBox(height: 16),
           const Text(
             'حدث خطأ أثناء جلب البيانات',
@@ -551,10 +606,7 @@ class _StreamListOfItemState extends State<StreamListOfItem>
           const SizedBox(height: 8),
           Text(
             'ابدأ بإضافة منتجات لسلة التسوق',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[500],
-            ),
+            style: TextStyle(fontSize: 14, color: Colors.grey[500]),
           ),
         ],
       ),
@@ -585,9 +637,7 @@ class _StreamListOfItemState extends State<StreamListOfItem>
         color: Colors.grey[100],
         borderRadius: BorderRadius.circular(16),
       ),
-      child: const Center(
-        child: CircularProgressIndicator(),
-      ),
+      child: const Center(child: CircularProgressIndicator()),
     );
   }
 

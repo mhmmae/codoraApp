@@ -28,12 +28,8 @@ class GetChoseTheTypeOfItem extends GetxController {
 // متحكم لاختيار النوع الفرعي عند إضافة منتج جديد
 class AddItemSubtypeController extends GetxController {
   // بيانات ثابتة للأنواع الفرعية عند الإضافة
-  static const Map<String, String> _productSubtypes = {
-    'New Phone': 'هاتف جديد', 'Used phone': 'هاتف مستعمل', 'Phone charger': 'شاحن هاتف',
-    'Headphones': 'سماعات', 'Tablet': 'جهاز لوحي', /* ... أضف المزيد ... */
-  };
-  List<String> get availableSubtypesKeys => _productSubtypes.keys.toList();
-  String getArabicSubtypeText(String key) => _productSubtypes[key] ?? key;
+
+
 
   // الحالة: المفتاح المختار (يمكن أن يكون null)
   final RxnString selectedSubtypeKey = RxnString(null);

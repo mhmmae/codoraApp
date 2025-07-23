@@ -9,10 +9,11 @@ class SimpleMainCategoriesWidget extends StatefulWidget {
   const SimpleMainCategoriesWidget({super.key});
 
   @override
-  State<SimpleMainCategoriesWidget> createState() => _SimpleMainCategoriesWidgetState();
+  State<SimpleMainCategoriesWidget> createState() =>
+      _SimpleMainCategoriesWidgetState();
 }
 
-class _SimpleMainCategoriesWidgetState extends State<SimpleMainCategoriesWidget> 
+class _SimpleMainCategoriesWidgetState extends State<SimpleMainCategoriesWidget>
     with TickerProviderStateMixin {
   late AnimationController _animationController;
   late AnimationController _subCategoriesAnimationController;
@@ -31,21 +32,16 @@ class _SimpleMainCategoriesWidgetState extends State<SimpleMainCategoriesWidget>
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutQuart,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOutQuart),
+    );
 
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.3),
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutQuart,
-    ));
+    ).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeOutQuart),
+    );
 
     _animationController.forward();
   }
@@ -59,7 +55,9 @@ class _SimpleMainCategoriesWidgetState extends State<SimpleMainCategoriesWidget>
 
   @override
   Widget build(BuildContext context) {
-    final EnhancedCategoryFilterController controller = Get.put(EnhancedCategoryFilterController());
+    final EnhancedCategoryFilterController controller = Get.put(
+      EnhancedCategoryFilterController(),
+    );
     final theme = Theme.of(context);
 
     return Container(
@@ -72,20 +70,20 @@ class _SimpleMainCategoriesWidgetState extends State<SimpleMainCategoriesWidget>
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: [
-                Icon(
-                  Icons.category,
-                  color: theme.primaryColor,
-                  size: 20,
-                ),
+                Icon(Icons.category, color: theme.primaryColor, size: 20),
                 const SizedBox(width: 8),
-                Text(
-                  'الأقسام الرئيسية',
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: theme.primaryColor,
+                Flexible(
+                  child: Text(
+                    'الأقسام الرئيسية',
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: theme.primaryColor,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
                   ),
                 ),
-                const Spacer(),
+                const SizedBox(width: 8),
                 // زر إعادة التعيين
                 Obx(() {
                   if (!controller.hasAnyActiveFilter) {
@@ -104,19 +102,19 @@ class _SimpleMainCategoriesWidgetState extends State<SimpleMainCategoriesWidget>
               ],
             ),
           ),
-          
+
           const SizedBox(height: 12),
-          
+
           // قائمة الأقسام الأفقية
           _buildMainCategoriesList(controller, theme),
-          
+
           // الأقسام الفرعية
           Obx(() {
-            if (controller.selectedMainCategoryId.value.isNotEmpty && 
+            if (controller.selectedMainCategoryId.value.isNotEmpty &&
                 controller.subCategories.isNotEmpty) {
               // تشغيل انيميشن الأقسام الفرعية
               _subCategoriesAnimationController.forward();
-              
+
               return AnimatedContainer(
                 duration: const Duration(milliseconds: 400),
                 curve: Curves.easeInOut,
@@ -129,10 +127,12 @@ class _SimpleMainCategoriesWidgetState extends State<SimpleMainCategoriesWidget>
                     position: Tween<Offset>(
                       begin: const Offset(0, 0.2),
                       end: Offset.zero,
-                    ).animate(CurvedAnimation(
-                      parent: _subCategoriesAnimationController,
-                      curve: Curves.easeOut,
-                    )),
+                    ).animate(
+                      CurvedAnimation(
+                        parent: _subCategoriesAnimationController,
+                        curve: Curves.easeOut,
+                      ),
+                    ),
                     child: Column(
                       children: [
                         const SizedBox(height: 16),
@@ -153,14 +153,15 @@ class _SimpleMainCategoriesWidgetState extends State<SimpleMainCategoriesWidget>
     );
   }
 
-  Widget _buildMainCategoriesList(EnhancedCategoryFilterController controller, ThemeData theme) {
+  Widget _buildMainCategoriesList(
+    EnhancedCategoryFilterController controller,
+    ThemeData theme,
+  ) {
     return Obx(() {
       if (controller.isLoading.value) {
         return const SizedBox(
           height: 110,
-          child: Center(
-            child: CircularProgressIndicator(),
-          ),
+          child: Center(child: CircularProgressIndicator()),
         );
       }
 
@@ -190,56 +191,71 @@ class _SimpleMainCategoriesWidgetState extends State<SimpleMainCategoriesWidget>
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: controller.mainCategories.length + 1, // +1 للخيار "الكل"
+              itemCount:
+                  controller.mainCategories.length + 1, // +1 للخيار "الكل"
               itemBuilder: (context, index) {
                 // انيميشن منفصل لكل عنصر
                 return AnimationCard(
                   delay: Duration(milliseconds: index * 100),
-                  child: Builder(builder: (context) {
-            if (index == 0) {
-              // خيار "الكل"
-              return _buildCategoryCard(
-                context: context,
-                controller: controller,
-                categoryId: '',
-                categoryName: 'الكل',
-                iconName: 'all',
-                color: 'blue',
-                imageUrl: null,
-                subCategoriesCount: 0,
-                onTap: () => controller.selectMainCategory('', 'الكل'),
-                theme: theme,
-              );
-            }
+                  child: Builder(
+                    builder: (context) {
+                      if (index == 0) {
+                        // خيار "الكل"
+                        return _buildCategoryCard(
+                          context: context,
+                          controller: controller,
+                          categoryId: '',
+                          categoryName: 'الكل',
+                          iconName: 'all',
+                          color: 'blue',
+                          imageUrl: null,
+                          subCategoriesCount: 0,
+                          onTap:
+                              () => controller.selectMainCategory('', 'الكل'),
+                          theme: theme,
+                        );
+                      }
 
-            final category = controller.mainCategories[index - 1];
-            // حساب عدد الأقسام الفرعية لهذا القسم الرئيسي
-            final subCount = category.id.isEmpty ? 0 : 
-              controller.allCategories.where((cat) => cat.parentId == category.id).length;
-            
-            return _buildCategoryCard(
-              context: context,
-              controller: controller,
-              categoryId: category.id,
-              categoryName: category.nameAr,
-              iconName: category.iconName,
-              color: category.color,
-              imageUrl: category.imageUrl,
-              subCategoriesCount: subCount,
-              onTap: () => controller.selectMainCategory(category.id, category.nameAr),
-              theme: theme,
-            );
-                  }),
+                      final category = controller.mainCategories[index - 1];
+                      // حساب عدد الأقسام الفرعية لهذا القسم الرئيسي
+                      final subCount =
+                          category.id.isEmpty
+                              ? 0
+                              : controller.allCategories
+                                  .where((cat) => cat.parentId == category.id)
+                                  .length;
+
+                      return _buildCategoryCard(
+                        context: context,
+                        controller: controller,
+                        categoryId: category.id,
+                        categoryName: category.nameAr,
+                        iconName: category.iconName,
+                        color: category.color,
+                        imageUrl: category.imageUrl,
+                        subCategoriesCount: subCount,
+                        onTap:
+                            () => controller.selectMainCategory(
+                              category.id,
+                              category.nameAr,
+                            ),
+                        theme: theme,
+                      );
+                    },
+                  ),
                 );
-          },
-        ),
+              },
+            ),
           ),
         ),
       );
     });
   }
 
-  Widget _buildSubCategoriesSection(EnhancedCategoryFilterController controller, ThemeData theme) {
+  Widget _buildSubCategoriesSection(
+    EnhancedCategoryFilterController controller,
+    ThemeData theme,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -264,17 +280,15 @@ class _SimpleMainCategoriesWidgetState extends State<SimpleMainCategoriesWidget>
             ],
           ),
         ),
-        
+
         const SizedBox(height: 8),
-        
+
         // قائمة الأقسام الفرعية
         Obx(() {
           if (controller.isLoadingSubCategories.value) {
             return const SizedBox(
               height: 60,
-              child: Center(
-                child: CircularProgressIndicator(strokeWidth: 2),
-              ),
+              child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
             );
           }
 
@@ -283,7 +297,8 @@ class _SimpleMainCategoriesWidgetState extends State<SimpleMainCategoriesWidget>
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: controller.subCategories.length + 1, // +1 للخيار "الكل"
+              itemCount:
+                  controller.subCategories.length + 1, // +1 للخيار "الكل"
               itemBuilder: (context, index) {
                 if (index == 0) {
                   // خيار "الكل" للأقسام الفرعية
@@ -303,7 +318,11 @@ class _SimpleMainCategoriesWidgetState extends State<SimpleMainCategoriesWidget>
                   categoryId: subCategory.id,
                   categoryName: subCategory.nameAr,
                   imageUrl: subCategory.imageUrl,
-                  onTap: () => controller.selectSubCategory(subCategory.id, subCategory.nameAr),
+                  onTap:
+                      () => controller.selectSubCategory(
+                        subCategory.id,
+                        subCategory.nameAr,
+                      ),
                   theme: theme,
                 );
               },
@@ -327,20 +346,22 @@ class _SimpleMainCategoriesWidgetState extends State<SimpleMainCategoriesWidget>
     required ThemeData theme,
   }) {
     return Obx(() {
-      final bool isSelected = categoryId.isEmpty 
-          ? controller.selectedMainCategoryId.value.isEmpty
-          : controller.selectedMainCategoryId.value == categoryId;
+      final bool isSelected =
+          categoryId.isEmpty
+              ? controller.selectedMainCategoryId.value.isEmpty
+              : controller.selectedMainCategoryId.value == categoryId;
       final double targetWidth = isSelected ? 120 : 60;
       final double targetHeight = isSelected ? 100 : 50;
-      final double targetFontSize = isSelected ? 16 : 6;
-      final FontWeight targetFontWeight = isSelected ? FontWeight.w900 : FontWeight.bold;
-      final Color targetTextColor = isSelected ? theme.primaryColor : (imageUrl != null && imageUrl.isNotEmpty ? Colors.white : Colors.black87);
+      final double targetFontSize =
+          isSelected ? 12 : 6; // تقليل حجم الخط من 16 إلى 12
+      final FontWeight targetFontWeight =
+          isSelected ? FontWeight.w900 : FontWeight.bold;
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           AnimatedContainer(
             duration: const Duration(milliseconds: 400),
-            curve: Curves.elasticOut,
+            curve: Curves.easeInOutCubic, // توحيد منحنى الحركة
             width: targetWidth,
             height: targetHeight,
             margin: const EdgeInsets.only(left: 6),
@@ -362,63 +383,72 @@ class _SimpleMainCategoriesWidgetState extends State<SimpleMainCategoriesWidget>
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(isSelected ? 24 : 16),
-                    gradient: isSelected 
-                        ? LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [theme.primaryColor, theme.primaryColor.withOpacity(0.8)],
-                          )
-                        : const LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [Colors.white, Colors.white],
-                          ),
+                    gradient:
+                        isSelected
+                            ? LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                theme.primaryColor,
+                                theme.primaryColor.withOpacity(0.8),
+                              ],
+                            )
+                            : const LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [Colors.white, Colors.white],
+                            ),
                     border: Border.all(
                       color: isSelected ? Colors.deepPurple : Colors.grey[300]!,
                       width: isSelected ? 4 : 1,
                     ),
-                    boxShadow: isSelected 
-                        ? [
-                            BoxShadow(
-                              color: theme.primaryColor.withOpacity(0.3),
-                              blurRadius: 18,
-                              offset: const Offset(0, 6),
-                              spreadRadius: 2,
-                            ),
-                          ]
-                        : [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.1),
-                              blurRadius: 4,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
+                    boxShadow:
+                        isSelected
+                            ? [
+                              BoxShadow(
+                                color: theme.primaryColor.withOpacity(0.3),
+                                blurRadius: 18,
+                                offset: const Offset(0, 6),
+                                spreadRadius: 2,
+                              ),
+                            ]
+                            : [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.1),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
                   ),
                   child: Stack(
                     children: [
                       if (imageUrl != null && imageUrl.isNotEmpty)
                         Positioned.fill(
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(isSelected ? 23 : 15),
+                            borderRadius: BorderRadius.circular(
+                              isSelected ? 23 : 15,
+                            ),
                             child: CachedNetworkImage(
                               imageUrl: imageUrl,
                               fit: BoxFit.cover,
-                              placeholder: (context, url) => Container(
-                                color: Colors.grey[100],
-                                child: Icon(
-                                  _getIconForCategory(iconName),
-                                  color: Colors.grey[400],
-                                  size: isSelected ? 48 : 32,
-                                ),
-                              ),
-                              errorWidget: (context, url, error) => Container(
-                                color: Colors.grey[100],
-                                child: Icon(
-                                  _getIconForCategory(iconName),
-                                  color: Colors.grey[400],
-                                  size: isSelected ? 48 : 32,
-                                ),
-                              ),
+                              placeholder:
+                                  (context, url) => Container(
+                                    color: Colors.grey[100],
+                                    child: Icon(
+                                      _getIconForCategory(iconName),
+                                      color: Colors.grey[400],
+                                      size: isSelected ? 48 : 32,
+                                    ),
+                                  ),
+                              errorWidget:
+                                  (context, url, error) => Container(
+                                    color: Colors.grey[100],
+                                    child: Icon(
+                                      _getIconForCategory(iconName),
+                                      color: Colors.grey[400],
+                                      size: isSelected ? 48 : 32,
+                                    ),
+                                  ),
                             ),
                           ),
                         ),
@@ -426,11 +456,16 @@ class _SimpleMainCategoriesWidgetState extends State<SimpleMainCategoriesWidget>
                         Positioned.fill(
                           child: Container(
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(isSelected ? 23 : 15),
+                              borderRadius: BorderRadius.circular(
+                                isSelected ? 23 : 15,
+                              ),
                               gradient: LinearGradient(
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
-                                colors: [Colors.transparent, Colors.black.withOpacity(0.7)],
+                                colors: [
+                                  Colors.transparent,
+                                  Colors.black.withOpacity(0.7),
+                                ],
                                 stops: const [0.3, 1.0],
                               ),
                             ),
@@ -438,56 +473,89 @@ class _SimpleMainCategoriesWidgetState extends State<SimpleMainCategoriesWidget>
                         ),
                       Positioned.fill(
                         child: Padding(
-                          padding: const EdgeInsets.all(8),
+                          padding: EdgeInsets.all(
+                            isSelected ? 6 : 4,
+                          ), // padding متغير حسب الحالة
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               if (imageUrl == null || imageUrl.isEmpty)
-                                Icon(
-                                  _getIconForCategory(iconName),
-                                  color: isSelected ? Colors.white : _getColorFromString(color) ?? theme.primaryColor,
-                                  size: isSelected ? 32 : 16,
-                                ),
-                              const SizedBox(height: 1),
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: isSelected ? theme.primaryColor.withOpacity(0.85) : Colors.white.withOpacity(0.85),
-                                  borderRadius: BorderRadius.circular(8),
-                                  boxShadow: isSelected
-                                      ? [
-                                          BoxShadow(
-                                            color: theme.primaryColor.withOpacity(0.13),
-                                            blurRadius: 4,
-                                            offset: Offset(0, 1),
-                                          ),
-                                        ]
-                                      : [],
-                                ),
-                                child: AnimatedDefaultTextStyle(
-                                  duration: const Duration(milliseconds: 400),
-                                  curve: Curves.easeInOutCubic,
-                                  style: TextStyle(
-                                    fontSize: targetFontSize,
-                                    fontWeight: targetFontWeight,
-                                    color: isSelected ? Colors.white : theme.primaryColor,
-                                    letterSpacing: 0.1,
-                                    shadows: isSelected
-                                        ? [
-                                            Shadow(
-                                              offset: Offset(0, 1),
-                                              blurRadius: 4,
-                                              color: theme.primaryColor.withOpacity(0.18),
-                                            ),
-                                          ]
-                                        : [],
+                                Flexible(
+                                  // إضافة Flexible للأيقونة
+                                  child: Icon(
+                                    _getIconForCategory(iconName),
+                                    color:
+                                        isSelected
+                                            ? Colors.white
+                                            : _getColorFromString(color) ??
+                                                theme.primaryColor,
+                                    size:
+                                        isSelected
+                                            ? 28
+                                            : 16, // تقليل حجم الأيقونة من 32 إلى 28
                                   ),
-                                  child: Text(
-                                    categoryName,
-                                    textAlign: TextAlign.center,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
+                                ),
+                              SizedBox(
+                                height: isSelected ? 4 : 2,
+                              ), // مساحة متغيرة
+                              Flexible(
+                                // إضافة Flexible للنص
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal:
+                                        isSelected ? 4 : 3, // padding أقل للنص
+                                    vertical: isSelected ? 3 : 2,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        isSelected
+                                            ? theme.primaryColor.withOpacity(
+                                              0.85,
+                                            )
+                                            : Colors.white.withOpacity(0.85),
+                                    borderRadius: BorderRadius.circular(8),
+                                    boxShadow:
+                                        isSelected
+                                            ? [
+                                              BoxShadow(
+                                                color: theme.primaryColor
+                                                    .withOpacity(0.13),
+                                                blurRadius: 4,
+                                                offset: Offset(0, 1),
+                                              ),
+                                            ]
+                                            : [],
+                                  ),
+                                  child: AnimatedDefaultTextStyle(
+                                    duration: const Duration(milliseconds: 400),
+                                    curve: Curves.easeInOutCubic,
+                                    style: TextStyle(
+                                      fontSize: targetFontSize,
+                                      fontWeight: targetFontWeight,
+                                      color:
+                                          isSelected
+                                              ? Colors.white
+                                              : theme.primaryColor,
+                                      letterSpacing: 0.1,
+                                      shadows:
+                                          isSelected
+                                              ? [
+                                                Shadow(
+                                                  offset: Offset(0, 1),
+                                                  blurRadius: 4,
+                                                  color: theme.primaryColor
+                                                      .withOpacity(0.18),
+                                                ),
+                                              ]
+                                              : [],
+                                    ),
+                                    child: Text(
+                                      categoryName,
+                                      textAlign: TextAlign.center,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -515,20 +583,21 @@ class _SimpleMainCategoriesWidgetState extends State<SimpleMainCategoriesWidget>
     required ThemeData theme,
   }) {
     return Obx(() {
-      final bool isSelected = categoryId.isEmpty 
-          ? controller.selectedSubCategoryId.value.isEmpty
-          : controller.selectedSubCategoryId.value == categoryId;
+      final bool isSelected =
+          categoryId.isEmpty
+              ? controller.selectedSubCategoryId.value.isEmpty
+              : controller.selectedSubCategoryId.value == categoryId;
       final double targetWidth = isSelected ? 85 : 60;
       final double targetHeight = isSelected ? 75 : 54;
       final double targetFontSize = isSelected ? 10 : 5;
-      final FontWeight targetFontWeight = isSelected ? FontWeight.w900 : FontWeight.bold;
-      final Color targetTextColor = isSelected ? theme.primaryColor : (imageUrl != null && imageUrl.isNotEmpty ? Colors.white : Colors.black87);
+      final FontWeight targetFontWeight =
+          isSelected ? FontWeight.w900 : FontWeight.bold;
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           AnimatedContainer(
-            duration: const Duration(milliseconds: 350),
-            curve: Curves.elasticOut,
+            duration: const Duration(milliseconds: 400),
+            curve: Curves.easeInOutCubic, // توحيد منحنى الحركة
             width: targetWidth,
             height: targetHeight,
             margin: const EdgeInsets.only(left: 5),
@@ -551,63 +620,72 @@ class _SimpleMainCategoriesWidgetState extends State<SimpleMainCategoriesWidget>
                   duration: const Duration(milliseconds: 350),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(isSelected ? 28 : 20),
-                    gradient: isSelected
-                        ? LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [theme.primaryColor, theme.primaryColor.withOpacity(0.8)],
-                          )
-                        : const LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: [Colors.white, Colors.white],
-                          ),
+                    gradient:
+                        isSelected
+                            ? LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [
+                                theme.primaryColor,
+                                theme.primaryColor.withOpacity(0.8),
+                              ],
+                            )
+                            : const LinearGradient(
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                              colors: [Colors.white, Colors.white],
+                            ),
                     border: Border.all(
                       color: isSelected ? Colors.deepPurple : Colors.grey[300]!,
                       width: isSelected ? 4 : 1,
                     ),
-                    boxShadow: isSelected
-                        ? [
-                            BoxShadow(
-                              color: theme.primaryColor.withOpacity(0.4),
-                              blurRadius: 16,
-                              offset: const Offset(0, 4),
-                              spreadRadius: 2,
-                            ),
-                          ]
-                        : [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.15),
-                              blurRadius: 4,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
+                    boxShadow:
+                        isSelected
+                            ? [
+                              BoxShadow(
+                                color: theme.primaryColor.withOpacity(0.4),
+                                blurRadius: 16,
+                                offset: const Offset(0, 4),
+                                spreadRadius: 2,
+                              ),
+                            ]
+                            : [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.15),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
                   ),
                   child: Stack(
                     children: [
                       if (imageUrl != null && imageUrl.isNotEmpty)
                         Positioned.fill(
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(isSelected ? 27 : 19),
+                            borderRadius: BorderRadius.circular(
+                              isSelected ? 27 : 19,
+                            ),
                             child: CachedNetworkImage(
                               imageUrl: imageUrl,
                               fit: BoxFit.cover,
-                              placeholder: (context, url) => Container(
-                                color: Colors.grey[100],
-                                child: Icon(
-                                  Icons.category_outlined,
-                                  color: Colors.grey[400],
-                                  size: isSelected ? 28 : 14,
-                                ),
-                              ),
-                              errorWidget: (context, url, error) => Container(
-                                color: Colors.grey[100],
-                                child: Icon(
-                                  Icons.category_outlined,
-                                  color: Colors.grey[400],
-                                  size: isSelected ? 28 : 14,
-                                ),
-                              ),
+                              placeholder:
+                                  (context, url) => Container(
+                                    color: Colors.grey[100],
+                                    child: Icon(
+                                      Icons.category_outlined,
+                                      color: Colors.grey[400],
+                                      size: isSelected ? 28 : 14,
+                                    ),
+                                  ),
+                              errorWidget:
+                                  (context, url, error) => Container(
+                                    color: Colors.grey[100],
+                                    child: Icon(
+                                      Icons.category_outlined,
+                                      color: Colors.grey[400],
+                                      size: isSelected ? 28 : 14,
+                                    ),
+                                  ),
                             ),
                           ),
                         ),
@@ -615,11 +693,16 @@ class _SimpleMainCategoriesWidgetState extends State<SimpleMainCategoriesWidget>
                         Positioned.fill(
                           child: Container(
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(isSelected ? 27 : 13),
+                              borderRadius: BorderRadius.circular(
+                                isSelected ? 27 : 13,
+                              ),
                               gradient: LinearGradient(
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
-                                colors: [Colors.transparent, Colors.black.withOpacity(0.7)],
+                                colors: [
+                                  Colors.transparent,
+                                  Colors.black.withOpacity(0.7),
+                                ],
                                 stops: const [0.4, 1.0],
                               ),
                             ),
@@ -627,56 +710,90 @@ class _SimpleMainCategoriesWidgetState extends State<SimpleMainCategoriesWidget>
                         ),
                       Positioned.fill(
                         child: Padding(
-                          padding: const EdgeInsets.all(6),
+                          padding: EdgeInsets.all(
+                            isSelected ? 6 : 4,
+                          ), // padding متغير حسب الحالة
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               if (imageUrl == null || imageUrl.isEmpty)
-                                Icon(
-                                  Icons.category_outlined,
-                                  color: isSelected ? Colors.white : theme.primaryColor,
-                                  size: isSelected ? 28 : 14,
-                                ),
-                              const SizedBox(height: 1),
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-                                decoration: BoxDecoration(
-                                  color: isSelected ? theme.primaryColor.withOpacity(0.85) : Colors.white.withOpacity(0.85),
-                                  borderRadius: BorderRadius.circular(7),
-                                  boxShadow: isSelected
-                                      ? [
-                                          BoxShadow(
-                                            color: theme.primaryColor.withOpacity(0.13),
-                                            blurRadius: 3,
-                                            offset: Offset(0, 1),
-                                          ),
-                                        ]
-                                      : [],
-                                ),
-                                child: AnimatedDefaultTextStyle(
-                                  duration: const Duration(milliseconds: 350),
-                                  curve: Curves.easeInOutCubic,
-                                  style: TextStyle(
-                                    fontSize: targetFontSize,
-                                    fontWeight: targetFontWeight,
-                                    color: isSelected ? Colors.white : theme.primaryColor,
-                                    letterSpacing: 0.1,
-                                    shadows: isSelected
-                                        ? [
-                                            Shadow(
-                                              offset: Offset(0, 1),
-                                              blurRadius: 4,
-                                              color: theme.primaryColor.withOpacity(0.18),
-                                            ),
-                                          ]
-                                        : [],
+                                Flexible(
+                                  // إضافة Flexible للأيقونة
+                                  child: Icon(
+                                    Icons.category_outlined,
+                                    color:
+                                        isSelected
+                                            ? Colors.white
+                                            : theme.primaryColor,
+                                    size:
+                                        isSelected
+                                            ? 24
+                                            : 14, // تقليل حجم الأيقونة من 28 إلى 24
                                   ),
-                                  child: Text(
-                                    categoryName.isEmpty ? 'الكل' : categoryName,
-                                    textAlign: TextAlign.center,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
+                                ),
+                              SizedBox(
+                                height: isSelected ? 4 : 2,
+                              ), // مساحة متغيرة
+                              Flexible(
+                                // إضافة Flexible للنص
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal:
+                                        isSelected ? 4 : 3, // padding أقل للنص
+                                    vertical: isSelected ? 2 : 1,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        isSelected
+                                            ? theme.primaryColor.withOpacity(
+                                              0.85,
+                                            )
+                                            : Colors.white.withOpacity(0.85),
+                                    borderRadius: BorderRadius.circular(7),
+                                    boxShadow:
+                                        isSelected
+                                            ? [
+                                              BoxShadow(
+                                                color: theme.primaryColor
+                                                    .withOpacity(0.13),
+                                                blurRadius: 3,
+                                                offset: Offset(0, 1),
+                                              ),
+                                            ]
+                                            : [],
+                                  ),
+                                  child: AnimatedDefaultTextStyle(
+                                    duration: const Duration(milliseconds: 400),
+                                    curve: Curves.easeInOutCubic,
+                                    style: TextStyle(
+                                      fontSize: targetFontSize,
+                                      fontWeight: targetFontWeight,
+                                      color:
+                                          isSelected
+                                              ? Colors.white
+                                              : theme.primaryColor,
+                                      letterSpacing: 0.1,
+                                      shadows:
+                                          isSelected
+                                              ? [
+                                                Shadow(
+                                                  offset: Offset(0, 1),
+                                                  blurRadius: 4,
+                                                  color: theme.primaryColor
+                                                      .withOpacity(0.18),
+                                                ),
+                                              ]
+                                              : [],
+                                    ),
+                                    child: Text(
+                                      categoryName.isEmpty
+                                          ? 'الكل'
+                                          : categoryName,
+                                      textAlign: TextAlign.center,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -730,7 +847,7 @@ class _SimpleMainCategoriesWidgetState extends State<SimpleMainCategoriesWidget>
 
   Color? _getColorFromString(String? colorString) {
     if (colorString == null) return null;
-    
+
     switch (colorString.toLowerCase()) {
       case 'red':
         return Colors.red;
@@ -792,29 +909,29 @@ class _AnimationCardState extends State<AnimationCard>
       vsync: this,
     );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+      ),
+    );
 
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.5),
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: const Interval(0.2, 0.8, curve: Curves.easeOutCubic),
-    ));
+    ).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.2, 0.8, curve: Curves.easeOutCubic),
+      ),
+    );
 
-    _scaleAnimation = Tween<double>(
-      begin: 0.8,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: const Interval(0.4, 1.0, curve: Curves.elasticOut),
-    ));
+    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.4, 1.0, curve: Curves.elasticOut),
+      ),
+    );
 
     // تأخير بدء الانيميشن
     Future.delayed(widget.delay, () {
@@ -836,11 +953,8 @@ class _AnimationCardState extends State<AnimationCard>
       opacity: _fadeAnimation,
       child: SlideTransition(
         position: _slideAnimation,
-        child: ScaleTransition(
-          scale: _scaleAnimation,
-          child: widget.child,
-        ),
+        child: ScaleTransition(scale: _scaleAnimation, child: widget.child),
       ),
     );
   }
-} 
+}

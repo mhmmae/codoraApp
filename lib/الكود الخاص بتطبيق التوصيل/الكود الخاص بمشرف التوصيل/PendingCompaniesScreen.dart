@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import 'CompanyDetailsDialog.dart';
-import 'DeliveryCompanyModel.dart';
+import '../../Model/DeliveryCompanyModel.dart';
 import 'PendingCompaniesController.dart';
 
 class PendingCompaniesScreen extends GetView<PendingCompaniesController> {

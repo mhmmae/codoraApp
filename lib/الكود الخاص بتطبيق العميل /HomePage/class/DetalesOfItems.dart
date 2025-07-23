@@ -30,7 +30,7 @@ class AddItemDetailsController extends GetxController {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   // Dropdown states for 'Item'
-  static const Map<String, String> _itemConditionOptions = {'original': 'أصلي', 'commercial': 'تجاري'};
+  static const Map<String, String> _itemConditionOptions = {'original': 'براند', 'commercial': 'تجاري'};
   final RxnString selectedConditionKey = RxnString(null);
   List<DropdownMenuItem<String>> get conditionDropdownItems => _itemConditionOptions.entries.map((e) => DropdownMenuItem(value: e.key, child: Text(e.value))).toList();
   void updateCondition(String? key) => selectedConditionKey.value = key;

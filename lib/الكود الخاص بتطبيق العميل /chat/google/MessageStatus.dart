@@ -2,37 +2,37 @@
 enum MessageStatus {
   /// الرسالة قيد الإرسال
   sending,
-  
+
   /// تم إرسال الرسالة بنجاح
   sent,
-  
+
   /// تم تسليم الرسالة للمستلم
   delivered,
-  
+
   /// تمت قراءة الرسالة من قبل المستلم
   read,
-  
+
   /// فشل في إرسال الرسالة
   failed,
-  
+
   /// الرسالة معلقة في الانتظار
   pending,
-  
+
   /// تم تحديث الرسالة
   updated,
-  
+
   /// تم حذف الرسالة
   deleted,
-  
+
   /// الرسالة مؤرشفة
   archived,
-  
+
   /// تم استلام الرسالة
   received,
-  
+
   /// جارٍ تحميل الملف/الوسائط
   downloading,
-  
+
   /// فشل في تحميل الملف/الوسائط
   downloadFailed,
 }
@@ -68,7 +68,7 @@ extension MessageStatusExtension on MessageStatus {
         return 'فشل التحميل';
     }
   }
-  
+
   /// الحصول على أيقونة لحالة الرسالة
   String get icon {
     switch (this) {
@@ -98,33 +98,32 @@ extension MessageStatusExtension on MessageStatus {
         return '❌⬇️';
     }
   }
-  
+
   /// التحقق من إذا كانت الرسالة قد تم إرسالها بنجاح
   bool get isSuccessful {
-    return this == MessageStatus.sent || 
-           this == MessageStatus.delivered || 
-           this == MessageStatus.read ||
-           this == MessageStatus.received;
+    return this == MessageStatus.sent ||
+        this == MessageStatus.delivered ||
+        this == MessageStatus.read ||
+        this == MessageStatus.received;
   }
-  
+
   /// التحقق من إذا كانت الرسالة قيد المعالجة
   bool get isProcessing {
-    return this == MessageStatus.sending || 
-           this == MessageStatus.pending ||
-           this == MessageStatus.downloading;
+    return this == MessageStatus.sending ||
+        this == MessageStatus.pending ||
+        this == MessageStatus.downloading;
   }
-  
+
   /// التحقق من إذا كانت الرسالة فاشلة
   bool get isFailed {
-    return this == MessageStatus.failed ||
-           this == MessageStatus.downloadFailed;
+    return this == MessageStatus.failed || this == MessageStatus.downloadFailed;
   }
-  
+
   /// التحقق من إذا كانت الرسالة مقروءة
   bool get isRead {
     return this == MessageStatus.read;
   }
-  
+
   /// التحقق من إذا كانت الرسالة مسلمة
   bool get isDelivered {
     return this == MessageStatus.delivered || this == MessageStatus.read;

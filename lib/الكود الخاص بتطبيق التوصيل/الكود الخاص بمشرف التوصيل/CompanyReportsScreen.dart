@@ -8,7 +8,7 @@ import 'package:fl_chart/fl_chart.dart'; // <--- استيراد مكتبة ال�
 import '../../XXX/xxx_firebase.dart';
 import 'CompanyReportsController.dart';
 import 'DeliveryTaskDetailsForAdminScreen.dart';
-import 'DeliveryTaskModel.dart';
+import '../../Model/DeliveryTaskModel.dart';
 import 'DriverPerformanceData.dart'; // إذا كنت ستعرض Heatmap على GoogleMap
 
 // ... (استيراد المتحكم والنماذج و utils/status_visuals.dart) ...

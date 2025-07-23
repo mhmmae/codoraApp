@@ -10,7 +10,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../routes/app_routes.dart';
 import '../الكود الخاص بمشرف التوصيل/DeliveryTaskDetailsForAdminScreen.dart';
-import '../الكود الخاص بمشرف التوصيل/DeliveryTaskModel.dart';
+import '../../Model/DeliveryTaskModel.dart';
 import 'DeliveryNavigationController.dart'; // إذا كنت ستعرض صورة البائع/المشتري
 // (قد تحتاج AppRoutes إذا كانت هناك تنقلات من هنا)
 // import '../../main.dart'; // لـ AppRoutes

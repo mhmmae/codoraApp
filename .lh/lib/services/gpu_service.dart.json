@@ -1,0 +1,18 @@
+{
+    "sourceFile": "lib/services/gpu_service.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1753181638994,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1753181638994,
+            "name": "Commit-0",
+            "content": "import 'package:flutter/services.dart';\nimport 'package:flutter/painting.dart';\nimport 'dart:io';\n\nclass GPUService {\n  static const platform = MethodChannel('codora.gpu.channel');\n\n  static Future<void> clearMemory() async {\n    try {\n      if (Platform.isAndroid) {\n        await platform.invokeMethod('clearMemory');\n        print('GPU Service: Memory cleared successfully');\n      }\n    } on MissingPluginException catch (e) {\n      print('GPU Service: Plugin not implemented - $e');\n      // استمرار التنفيذ بدون خطأ\n    } catch (e) {\n      print('GPU Service: Error clearing memory: $e');\n    }\n  }\n\n  static Future<String> getGPUInfo() async {\n    try {\n      if (Platform.isAndroid) {\n        final String result = await platform.invokeMethod('getGpuInfo');\n        return result;\n      }\n      return 'iOS GPU';\n    } on MissingPluginException catch (e) {\n      print('GPU Service: GPU info plugin not implemented - $e');\n      return 'GPU info not available';\n    } catch (e) {\n      print('GPU Service: Error getting GPU info: $e');\n      return 'Unknown GPU';\n    }\n  }\n\n  static void optimizeForMaliGPU() {\n    // Force garbage collection\n    print('GPU Service: Optimizing for Mali GPU');\n\n    try {\n      // Clear any cached images or resources\n      PaintingBinding.instance.imageCache.clear();\n      PaintingBinding.instance.imageCache.clearLiveImages();\n\n      print('GPU Service: Image cache cleared for Mali optimization');\n    } catch (e) {\n      print('GPU Service: Error clearing image cache for Mali: $e');\n      // لا نوقف التنفيذ، نستمر\n    }\n  }\n\n  static void handlePageTransition() {\n    try {\n      // Clear memory before page transitions to prevent GPU errors\n      clearMemory();\n      optimizeForMaliGPU();\n      print('GPU Service: Page transition handled successfully');\n    } catch (e) {\n      print('GPU Service: Error handling page transition: $e');\n      // لا نوقف التنفيذ\n    }\n  }\n}\n"
+        }
+    ]
+}

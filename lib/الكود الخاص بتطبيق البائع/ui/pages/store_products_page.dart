@@ -33,7 +33,7 @@ class ImageCacheManager {
     final double safeWidth = (width.isFinite && width > 0) ? width : 100.0;
     final double safeHeight = (height.isFinite && height > 0) ? height : 100.0;
 
-    final cacheKey = '${imageUrl}_${safeWidth}_${safeHeight}';
+    final cacheKey = '${imageUrl}_${safeWidth}_$safeHeight';
 
     if (_imageCache.containsKey(cacheKey)) {
       return _imageCache[cacheKey]!;
@@ -1214,7 +1214,7 @@ Widget _buildProductCard(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
                 splashColor: Colors.grey.withOpacity(0.2),
                 highlightColor: Colors.grey.withOpacity(0.1),
-                child: Container(
+                child: SizedBox(
                   height: 120.h,
                   width: double.infinity,
                   child: ClipRRect(
@@ -1720,7 +1720,7 @@ Widget _buildCartButtons(String productId, StoreProductsController controller) {
         // عرض أزرار التحكم في الكمية مع تقريب المسافات
         return Padding(
           padding: EdgeInsets.symmetric(horizontal: 15.w),
-          child: Container(
+          child: SizedBox(
             width: double.infinity, // العرض الكامل
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -2997,7 +2997,7 @@ Widget _buildFavoriteProductCard(
                       ),
                       SizedBox(width: 6.w),
                       Text(
-                        '${_formatPrice(originalPrice)}',
+                        _formatPrice(originalPrice),
                         style: TextStyle(
                           fontSize: 10.sp,
                           color: Colors.grey[500],
@@ -3101,7 +3101,7 @@ Widget _buildBottomNavigationWidget(StoreProductsController controller) {
                         : Icons.favorite_border,
                 label: 'المفضلة',
                 badge:
-                    controller.favoriteProducts.length > 0
+                    controller.favoriteProducts.isNotEmpty
                         ? controller.favoriteProducts.length.toString()
                         : null,
                 onTap: () => _showFavoritesDialog(),
@@ -3121,7 +3121,7 @@ Widget _buildBottomNavigationWidget(StoreProductsController controller) {
                         : Icons.compare_arrows_outlined,
                 label: 'المقارنة',
                 badge:
-                    controller.compareProducts.length > 0
+                    controller.compareProducts.isNotEmpty
                         ? controller.compareProducts.length.toString()
                         : null,
                 onTap: () => _showCompareDialog(controller),

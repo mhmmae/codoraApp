@@ -9,7 +9,7 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../XXX/xxx_firebase.dart';
-import '../الكود الخاص بمشرف التوصيل/DeliveryCompanyModel.dart';
+import '../../Model/DeliveryCompanyModel.dart';
 import 'DeliveryDriverModel.dart';
 
 // مثال لـ FirebaseX إذا لم يكن معرفًا

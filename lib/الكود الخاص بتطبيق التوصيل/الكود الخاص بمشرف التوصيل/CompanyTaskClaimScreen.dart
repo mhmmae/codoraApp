@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import 'CompanyTaskClaimController.dart';
-import 'DeliveryTaskModel.dart';
+import '../../Model/DeliveryTaskModel.dart';
 // استورد المتحكم والنماذج ودالة الحالة
 // import 'company_task_claim_controller.dart';
 // import '../models/DeliveryTaskModel.dart';

@@ -20,7 +20,7 @@ class EnhancedProductGridWidget extends StatelessWidget {
   final String? selectedSubtypeKey;
   final bool showLoadingShimmer;
   final int? maxItems;
-  
+
   const EnhancedProductGridWidget({
     super.key,
     this.selectedSubtypeKey,
@@ -30,14 +30,15 @@ class EnhancedProductGridWidget extends StatelessWidget {
 
   // مرجع ثابت لـ allItemsFilterKey
   static const String allItemsFilterKey = 'all_items';
-  
+
   // التحقق من حالة الأدمن
-  bool get _isAdmin => FirebaseAuth.instance.currentUser?.email == FirebaseX.EmailOfWnerApp;
+  bool get _isAdmin =>
+      FirebaseAuth.instance.currentUser?.email == FirebaseX.EmailOfWnerApp;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
       stream: _buildProductStream(),
       builder: (context, snapshot) {
@@ -45,7 +46,8 @@ class EnhancedProductGridWidget extends StatelessWidget {
           return _buildErrorWidget(context, snapshot.error.toString());
         }
 
-        if (snapshot.connectionState == ConnectionState.waiting && showLoadingShimmer) {
+        if (snapshot.connectionState == ConnectionState.waiting &&
+            showLoadingShimmer) {
           return _buildLoadingShimmer();
         }
 
@@ -54,9 +56,10 @@ class EnhancedProductGridWidget extends StatelessWidget {
           return _buildEmptyStateWidget(context, filterController);
         }
 
-        final items = snapshot.data!.docs
-            .map((doc) => ItemModel.fromMap(doc.data(), doc.id))
-            .toList();
+        final items =
+            snapshot.data!.docs
+                .map((doc) => ItemModel.fromMap(doc.data(), doc.id))
+                .toList();
 
         return _buildProductGrid(context, items, theme);
       },
@@ -66,7 +69,7 @@ class EnhancedProductGridWidget extends StatelessWidget {
   /// بناء stream المنتجات مع الفلترة
   Stream<QuerySnapshot<Map<String, dynamic>>> _buildProductStream() {
     final filterController = Get.find<EnhancedCategoryFilterController>();
-    
+
     // بناء الاستعلام الأساسي
     Query<Map<String, dynamic>> query = FirebaseFirestore.instance
         .collection(FirebaseX.itemsCollection)
@@ -76,24 +79,31 @@ class EnhancedProductGridWidget extends StatelessWidget {
     final currentFilterKey = filterController.getFilterKey();
     if (currentFilterKey != 'all_items') {
       // دعم النظام القديم (typeItem) والنظام الجديد (mainCategoryId/subCategoryId)
-      if (currentFilterKey.contains('_') && currentFilterKey.split('_').length >= 2) {
+      if (currentFilterKey.contains('_') &&
+          currentFilterKey.split('_').length >= 2) {
         // نظام جديد: mainCategoryId_subCategoryId أو mainCategoryId_subCategoryId_productType
         final parts = currentFilterKey.split('_');
         final mainCategoryId = parts[0];
         final subCategoryId = parts[1];
         final productType = parts.length > 2 ? parts[2] : null;
-        
-        debugPrint("📱 EnhancedProductGrid: تطبيق فلتر النظام الجديد: mainCategory=$mainCategoryId, subCategory=$subCategoryId, productType=$productType");
+
+        debugPrint(
+          "📱 EnhancedProductGrid: تطبيق فلتر النظام الجديد: mainCategory=$mainCategoryId, subCategory=$subCategoryId, productType=$productType",
+        );
         query = query.where('mainCategoryId', isEqualTo: mainCategoryId);
         if (subCategoryId != 'all' && subCategoryId.isNotEmpty) {
           query = query.where('subCategoryId', isEqualTo: subCategoryId);
         }
-        if (productType != null && productType != 'all' && productType.isNotEmpty) {
+        if (productType != null &&
+            productType != 'all' &&
+            productType.isNotEmpty) {
           query = query.where('itemCondition', isEqualTo: productType);
         }
       } else {
         // النظام القديم: typeItem
-        debugPrint("📱 EnhancedProductGrid: تطبيق فلتر النظام القديم: typeItem=$currentFilterKey");
+        debugPrint(
+          "📱 EnhancedProductGrid: تطبيق فلتر النظام القديم: typeItem=$currentFilterKey",
+        );
         query = query.where('typeItem', isEqualTo: currentFilterKey);
       }
     }
@@ -113,12 +123,16 @@ class EnhancedProductGridWidget extends StatelessWidget {
     debugPrint("   - الفلتر: $currentFilterKey");
     debugPrint("   - الحد الأقصى للعناصر: ${maxItems ?? 50}");
     debugPrint("══════════════════════════════════════════════════");
-    
+
     return query.snapshots();
   }
 
   /// بناء شبكة المنتجات
-  Widget _buildProductGrid(BuildContext context, List<ItemModel> items, ThemeData theme) {
+  Widget _buildProductGrid(
+    BuildContext context,
+    List<ItemModel> items,
+    ThemeData theme,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: GridView.builder(
@@ -140,7 +154,11 @@ class EnhancedProductGridWidget extends StatelessWidget {
   }
 
   /// بناء بطاقة المنتج
-  Widget _buildProductCard(BuildContext context, ItemModel item, ThemeData theme) {
+  Widget _buildProductCard(
+    BuildContext context,
+    ItemModel item,
+    ThemeData theme,
+  ) {
     final favoriteController = Get.put(FavoriteController());
 
     return Card(
@@ -148,7 +166,10 @@ class EnhancedProductGridWidget extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: InkWell(
         onTap: () => Get.to(() => DetailsOfItemScreen(item: item)),
-        onTapDown: _isAdmin ? (details) => _showAdminContextMenu(context, details, item) : null,
+        onTapDown:
+            _isAdmin
+                ? (details) => _showAdminContextMenu(context, details, item)
+                : null,
         borderRadius: BorderRadius.circular(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -162,24 +183,28 @@ class EnhancedProductGridWidget extends StatelessWidget {
                   borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
                 ),
                 child: ClipRRect(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(12),
+                  ),
                   child: CachedNetworkImage(
                     imageUrl: item.imageUrl ?? '',
                     fit: BoxFit.cover,
-                    placeholder: (context, url) => Shimmer.fromColors(
-                      baseColor: Colors.grey[300]!,
-                      highlightColor: Colors.grey[100]!,
-                      child: Container(color: Colors.white),
-                    ),
-                    errorWidget: (context, url, error) => Container(
-                      color: Colors.grey[200],
-                      child: const Icon(Icons.error, color: Colors.grey),
-                    ),
+                    placeholder:
+                        (context, url) => Shimmer.fromColors(
+                          baseColor: Colors.grey[300]!,
+                          highlightColor: Colors.grey[100]!,
+                          child: Container(color: Colors.white),
+                        ),
+                    errorWidget:
+                        (context, url, error) => Container(
+                          color: Colors.grey[200],
+                          child: const Icon(Icons.error, color: Colors.grey),
+                        ),
                   ),
                 ),
               ),
             ),
-            
+
             // معلومات المنتج
             Expanded(
               flex: 2,
@@ -199,26 +224,23 @@ class EnhancedProductGridWidget extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
-                    
+
                     // نوع المنتج
                     Text(
                       item.typeItem,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey[600],
-                      ),
+                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    
+
                     const Spacer(),
-                    
+
                     // السعر وأزرار الإضافة/المفضلة
                     Row(
                       children: [
                         // السعر
                         Text(
-                          '${item.price} ${FirebaseX.currency ?? ''}',
+                          '${item.suggestedRetailPrice ?? item.price} ${FirebaseX.currency ?? ''}',
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.bold,
@@ -226,7 +248,7 @@ class EnhancedProductGridWidget extends StatelessWidget {
                           ),
                         ),
                         const Spacer(),
-                        
+
                         // زر المفضلة
                         StreamBuilder<bool>(
                           stream: favoriteController.isFavoriteStream(item.id),
@@ -234,22 +256,31 @@ class EnhancedProductGridWidget extends StatelessWidget {
                             final bool isFavorite = snapshot.data ?? false;
                             return IconButton(
                               icon: Icon(
-                                isFavorite ? Icons.favorite : Icons.favorite_border,
+                                isFavorite
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
                                 color: Colors.red,
                                 size: 20,
                               ),
-                              onPressed: () => favoriteController.toggleFavorite(item.id, isFavorite),
+                              onPressed:
+                                  () => favoriteController.toggleFavorite(
+                                    item.id,
+                                    isFavorite,
+                                  ),
                               padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints(minWidth: 30, minHeight: 30),
+                              constraints: const BoxConstraints(
+                                minWidth: 30,
+                                minHeight: 30,
+                              ),
                             );
                           },
                         ),
-                        
+
                         // زر الإضافة للسلة
                         BoxAddAndRemove(
                           uidItem: item.id,
                           uidAdd: item.uidAdd,
-                          price: item.price,
+                          price: item.suggestedRetailPrice ?? item.price,
                           name: item.name,
                           isOffer: item.isOffer,
                         ),
@@ -266,13 +297,18 @@ class EnhancedProductGridWidget extends StatelessWidget {
   }
 
   /// عرض قائمة السياق للأدمن
-  Future<void> _showAdminContextMenu(BuildContext context, TapDownDetails details, ItemModel item) async {
+  Future<void> _showAdminContextMenu(
+    BuildContext context,
+    TapDownDetails details,
+    ItemModel item,
+  ) async {
     if (!_isAdmin) return;
 
-    final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
+    final RenderBox overlay =
+        Overlay.of(context).context.findRenderObject() as RenderBox;
     final RelativeRect position = RelativeRect.fromRect(
-        details.globalPosition & const Size(40, 40),
-        Offset.zero & overlay.size
+      details.globalPosition & const Size(40, 40),
+      Offset.zero & overlay.size,
     );
 
     final String? selectedValue = await showMenu<String>(
@@ -303,7 +339,10 @@ class EnhancedProductGridWidget extends StatelessWidget {
           value: 'add_as_offer',
           child: ListTile(
             leading: Icon(Icons.local_offer_outlined, color: Colors.blue[700]),
-            title: Text('إضافة كعرض', style: TextStyle(color: Colors.blue[700])),
+            title: Text(
+              'إضافة كعرض',
+              style: TextStyle(color: Colors.blue[700]),
+            ),
             dense: true,
             contentPadding: EdgeInsets.zero,
           ),
@@ -312,7 +351,11 @@ class EnhancedProductGridWidget extends StatelessWidget {
         PopupMenuItem<String>(
           value: 'delete',
           child: ListTile(
-            leading: Icon(Icons.delete_outline, color: Colors.red[700], size: 20),
+            leading: Icon(
+              Icons.delete_outline,
+              color: Colors.red[700],
+              size: 20,
+            ),
             title: Text('حذف المنتج', style: TextStyle(color: Colors.red[700])),
             dense: true,
             contentPadding: EdgeInsets.zero,
@@ -339,9 +382,16 @@ class EnhancedProductGridWidget extends StatelessWidget {
   }
 
   /// حوار تعديل المنتج
-  void _showEditDialog(BuildContext context, ItemModel item, {required bool isEditingName}) {
+  void _showEditDialog(
+    BuildContext context,
+    ItemModel item, {
+    required bool isEditingName,
+  }) {
     final TextEditingController controller = TextEditingController(
-      text: isEditingName ? item.name : item.price.toString(),
+      text:
+          isEditingName
+              ? item.name
+              : (item.suggestedRetailPrice ?? item.price).toString(),
     );
 
     Get.defaultDialog(
@@ -349,7 +399,8 @@ class EnhancedProductGridWidget extends StatelessWidget {
       content: TextField(
         controller: controller,
         keyboardType: isEditingName ? TextInputType.text : TextInputType.number,
-        inputFormatters: isEditingName ? null : [FilteringTextInputFormatter.digitsOnly],
+        inputFormatters:
+            isEditingName ? null : [FilteringTextInputFormatter.digitsOnly],
         decoration: InputDecoration(
           labelText: isEditingName ? 'اسم المنتج' : 'السعر',
           border: const OutlineInputBorder(),
@@ -361,9 +412,10 @@ class EnhancedProductGridWidget extends StatelessWidget {
         final newValue = controller.text.trim();
         if (newValue.isNotEmpty) {
           try {
-            final updateData = isEditingName
-                ? {'nameOfItem': newValue}
-                : {'priceOfItem': double.parse(newValue)};
+            final updateData =
+                isEditingName
+                    ? {'nameOfItem': newValue}
+                    : {'priceOfItem': double.parse(newValue)};
 
             await FirebaseFirestore.instance
                 .collection(FirebaseX.itemsCollection)
@@ -378,7 +430,12 @@ class EnhancedProductGridWidget extends StatelessWidget {
               colorText: Colors.white,
             );
           } catch (e) {
-            Get.snackbar('خطأ', 'فشل في التحديث: $e', backgroundColor: Colors.red, colorText: Colors.white);
+            Get.snackbar(
+              'خطأ',
+              'فشل في التحديث: $e',
+              backgroundColor: Colors.red,
+              colorText: Colors.white,
+            );
           }
         }
       },
@@ -392,9 +449,12 @@ class EnhancedProductGridWidget extends StatelessWidget {
     final Rxn<DateTime> expiryDate = Rxn<DateTime>(null);
 
     void calculateRate() {
-      final double? newPrice = double.tryParse(offerPriceController.text.trim());
-      if (newPrice != null && item.price > 0 && newPrice < item.price) {
-        final double discount = ((item.price - newPrice) / item.price) * 100;
+      final double? newPrice = double.tryParse(
+        offerPriceController.text.trim(),
+      );
+      final double itemPrice = item.suggestedRetailPrice ?? item.price;
+      if (newPrice != null && itemPrice > 0 && newPrice < itemPrice) {
+        final double discount = ((itemPrice - newPrice) / itemPrice) * 100;
         rateController.text = discount.toStringAsFixed(0);
       } else {
         rateController.text = '';
@@ -409,7 +469,9 @@ class EnhancedProductGridWidget extends StatelessWidget {
         child: Column(
           children: [
             Text("منتج: ${item.name}"),
-            Text("السعر الأصلي: ${item.price} ${FirebaseX.currency ?? ''}"),
+            Text(
+              "السعر الأصلي: ${item.suggestedRetailPrice ?? item.price} ${FirebaseX.currency}",
+            ),
             const SizedBox(height: 16),
             TextField(
               controller: offerPriceController,
@@ -429,39 +491,44 @@ class EnhancedProductGridWidget extends StatelessWidget {
               enabled: false,
             ),
             const SizedBox(height: 16),
-            Obx(() => ListTile(
-              leading: const Icon(Icons.calendar_today_outlined),
-              title: Text(
-                expiryDate.value == null
-                    ? "تحديد تاريخ انتهاء العرض (اختياري)"
-                    : "ينتهي في: ${DateFormat('yyyy/MM/dd').format(expiryDate.value!)}"
+            Obx(
+              () => ListTile(
+                leading: const Icon(Icons.calendar_today_outlined),
+                title: Text(
+                  expiryDate.value == null
+                      ? "تحديد تاريخ انتهاء العرض (اختياري)"
+                      : "ينتهي في: ${DateFormat('yyyy/MM/dd').format(expiryDate.value!)}",
+                ),
+                onTap: () async {
+                  final DateTime? picked = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now().add(const Duration(days: 7)),
+                    firstDate: DateTime.now(),
+                    lastDate: DateTime.now().add(const Duration(days: 365)),
+                  );
+                  if (picked != null) {
+                    expiryDate.value = picked;
+                  }
+                },
               ),
-              onTap: () async {
-                final DateTime? picked = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now().add(const Duration(days: 7)),
-                  firstDate: DateTime.now(),
-                  lastDate: DateTime.now().add(const Duration(days: 365)),
-                );
-                if (picked != null) {
-                  expiryDate.value = picked;
-                }
-              },
-            )),
+            ),
           ],
         ),
       ),
       textConfirm: 'إضافة العرض',
       textCancel: 'إلغاء',
       onConfirm: () async {
-        final double? offerPrice = double.tryParse(offerPriceController.text.trim());
-        if (offerPrice != null && offerPrice > 0 && offerPrice < item.price) {
+        final double? offerPrice = double.tryParse(
+          offerPriceController.text.trim(),
+        );
+        final double itemPrice = item.suggestedRetailPrice ?? item.price;
+        if (offerPrice != null && offerPrice > 0 && offerPrice < itemPrice) {
           try {
             // إضافة منتج جديد كعرض
             final offerData = {
               'nameOfItem': item.name,
               'priceOfItem': offerPrice,
-              'originalPrice': item.price,
+              'originalPrice': item.suggestedRetailPrice ?? item.price,
               'url': item.imageUrl,
               'manyImages': item.manyImages,
               'videoURL': item.videoUrl ?? 'noVideo',
@@ -489,10 +556,20 @@ class EnhancedProductGridWidget extends StatelessWidget {
               colorText: Colors.white,
             );
           } catch (e) {
-            Get.snackbar('خطأ', 'فشل في إضافة العرض: $e', backgroundColor: Colors.red, colorText: Colors.white);
+            Get.snackbar(
+              'خطأ',
+              'فشل في إضافة العرض: $e',
+              backgroundColor: Colors.red,
+              colorText: Colors.white,
+            );
           }
         } else {
-          Get.snackbar('خطأ', 'يرجى إدخال سعر عرض صحيح', backgroundColor: Colors.orange, colorText: Colors.white);
+          Get.snackbar(
+            'خطأ',
+            'يرجى إدخال سعر عرض صحيح',
+            backgroundColor: Colors.orange,
+            colorText: Colors.white,
+          );
         }
       },
     );
@@ -502,7 +579,8 @@ class EnhancedProductGridWidget extends StatelessWidget {
   void _showDeleteConfirmationDialog(BuildContext context, String itemId) {
     Get.defaultDialog(
       title: 'تأكيد الحذف',
-      middleText: 'هل أنت متأكد من حذف هذا المنتج؟ لا يمكن التراجع عن هذا الإجراء.',
+      middleText:
+          'هل أنت متأكد من حذف هذا المنتج؟ لا يمكن التراجع عن هذا الإجراء.',
       textConfirm: 'حذف',
       textCancel: 'إلغاء',
       confirmTextColor: Colors.white,
@@ -522,7 +600,12 @@ class EnhancedProductGridWidget extends StatelessWidget {
             colorText: Colors.white,
           );
         } catch (e) {
-          Get.snackbar('خطأ', 'فشل في حذف المنتج: $e', backgroundColor: Colors.red, colorText: Colors.white);
+          Get.snackbar(
+            'خطأ',
+            'فشل في حذف المنتج: $e',
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
         }
       },
     );
@@ -560,7 +643,10 @@ class EnhancedProductGridWidget extends StatelessWidget {
   }
 
   /// widget حالة فارغة
-  Widget _buildEmptyStateWidget(BuildContext context, EnhancedCategoryFilterController filterController) {
+  Widget _buildEmptyStateWidget(
+    BuildContext context,
+    EnhancedCategoryFilterController filterController,
+  ) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -609,7 +695,9 @@ class EnhancedProductGridWidget extends StatelessWidget {
         itemBuilder: (context, index) {
           return Card(
             elevation: 2,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
             child: Shimmer.fromColors(
               baseColor: Colors.grey[300]!,
               highlightColor: Colors.grey[100]!,
@@ -621,7 +709,9 @@ class EnhancedProductGridWidget extends StatelessWidget {
                     child: Container(
                       width: double.infinity,
                       decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(12),
+                        ),
                         color: Colors.white,
                       ),
                     ),
@@ -645,11 +735,7 @@ class EnhancedProductGridWidget extends StatelessWidget {
                             color: Colors.white,
                           ),
                           const Spacer(),
-                          Container(
-                            height: 14,
-                            width: 80,
-                            color: Colors.white,
-                          ),
+                          Container(height: 14, width: 80, color: Colors.white),
                         ],
                       ),
                     ),
@@ -662,4 +748,4 @@ class EnhancedProductGridWidget extends StatelessWidget {
       ),
     );
   }
-} 
+}

@@ -1,0 +1,18 @@
+{
+    "sourceFile": "FIREBASE_TROUBLESHOOTING_GUIDE.md",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1752858134110,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1752858134110,
+            "name": "Commit-0",
+            "content": "## 🔧 دليل استكشاف أخطاء Firebase internal-error\n\n### خطوات التشخيص:\n\n#### 1. Firebase Console ✅\n- ✅ تأكد من تفعيل Phone Authentication\n- ✅ تأكد من صحة SHA-1: `68:AE:1B:D8:91:FA:07:3B:73:AE:E3:A7:6C:24:BF:68:EC:0E:36:36`\n- ✅ تأكد من Package Name: `com.homy.codora`\n\n#### 2. Google Play Services 🔄\nالمشكلة المحتملة في logs:\n```\nE/GoogleApiManager: Failed to get service from broker\nE/GoogleApiManager: java.lang.SecurityException: Unknown calling package name 'com.google.android.gms'\n```\n\n**الحل:**\n- تحديث Google Play Services على الجهاز\n- إعادة تشغيل الجهاز\n- Clear cache لتطبيق Google Play Services\n\n#### 3. اختبار بديل 🧪\nإذا استمرت المشكلة، جرب:\n\n1. **جهاز مختلف** (emulator أو جهاز آخر)\n2. **إنترنت مختلف** (WiFi مختلف أو Mobile Data)\n3. **تطبيق جديد** لاختبار Firebase\n\n#### 4. Debug Mode 🐛\nأضف هذا في main.dart للمزيد من التفاصيل:\n\n```dart\nFirebaseAuth.instance.setSettings(\n  appVerificationDisabledForTesting: false,\n);\n```\n\n### 🎯 الخلاصة:\nالتطبيق يعمل بنجاح، والمشكلة غالباً في إعدادات Firebase Console أو Google Play Services على الجهاز.\n"
+        }
+    ]
+}

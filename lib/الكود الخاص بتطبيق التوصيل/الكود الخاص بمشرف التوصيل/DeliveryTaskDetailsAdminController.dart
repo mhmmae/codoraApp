@@ -12,7 +12,7 @@ import '../../routes/app_routes.dart';
 import '../الكود الخاص بعامل/DeliveryDriverModel.dart';
 import 'CompanyActiveTasksTrackingController.dart';
 import 'CompanyAdminDashboardController.dart';
-import 'DeliveryTaskModel.dart';
+import '../../Model/DeliveryTaskModel.dart';
 import '../../Model/SellerModel.dart'; // لرسم المسارات
 
 class DeliveryTaskDetailsAdminController extends GetxController {

@@ -730,7 +730,7 @@ class WholesaleMarketPage extends StatelessWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
-                            if (store.shopCategory.isNotEmpty) ...[
+                            if (store.shopCategories.isNotEmpty) ...[
                               SizedBox(height: 3.h),
                               Container(
                                 padding: EdgeInsets.symmetric(
@@ -744,7 +744,7 @@ class WholesaleMarketPage extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(6.r),
                                 ),
                                 child: Text(
-                                  store.shopCategory,
+                                  store.shopCategories.join(', '),
                                   style: TextStyle(
                                     fontSize: 9.sp,
                                     color: const Color(0xFF6366F1),
@@ -868,28 +868,35 @@ class WholesaleMarketPage extends StatelessWidget {
                       SizedBox(height: 8.h),
                       Row(
                         children: [
-                          if (store.shopCategory.isNotEmpty) ...[
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 8.w,
-                                vertical: 4.h,
-                              ),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF6366F1).withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(8.r),
-                              ),
-                              child: Text(
-                                store.shopCategory,
-                                style: TextStyle(
-                                  fontSize: 10.sp,
-                                  color: const Color(0xFF6366F1),
-                                  fontWeight: FontWeight.w500,
+                          if (store.shopCategories.isNotEmpty) ...[
+                            Expanded(
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 8.w,
+                                  vertical: 4.h,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: const Color(
+                                    0xFF6366F1,
+                                  ).withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(8.r),
+                                ),
+                                child: Text(
+                                  store.shopCategories.join(', '),
+                                  style: TextStyle(
+                                    fontSize: 10.sp,
+                                    color: const Color(0xFF6366F1),
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                             ),
-                            const Spacer(),
+                            SizedBox(width: 8.w),
                           ],
                           Row(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(
                                 Icons.verified_rounded,

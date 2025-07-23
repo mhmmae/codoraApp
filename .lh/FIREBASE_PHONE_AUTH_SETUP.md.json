@@ -1,0 +1,18 @@
+{
+    "sourceFile": "FIREBASE_PHONE_AUTH_SETUP.md",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1753181638413,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1753181638412,
+            "name": "Commit-0",
+            "content": "# Firebase Phone Authentication Setup Guide\n\n## المشكلة الحالية\n```\noperation-not-allowed - This operation is not allowed. This may be because the given sign-in provider is disabled for this Firebase project.\n```\n\n## الحل\n\n### 1. تفعيل Phone Authentication في Firebase Console\n\n1. اذهب إلى [Firebase Console](https://console.firebase.google.com/)\n2. اختر مشروعك\n3. اذهب إلى **Authentication** > **Sign-in method**\n4. ابحث عن **Phone** وانقر **Enable**\n5. احفظ التغييرات\n\n### 2. إعداد الأرقام التجريبية (Test Phone Numbers)\n\n1. في نفس الصفحة، انتقل إلى **Phone numbers for testing**\n2. أضف الأرقام التجريبية:\n   ```\n   +1 555 123 4567 → 123456\n   +966 50 123 4567 → 123456\n   +964 780 334 6793 → 123456\n   ```\n\n### 3. تحقق من إعدادات Android\n\nتأكد من وجود هذا في `android/app/build.gradle`:\n```gradle\nandroid {\n    compileSdkVersion 34\n    ...\n}\n\ndependencies {\n    implementation 'com.google.firebase:firebase-auth:22.3.0'\n    implementation 'com.google.android.gms:play-services-auth:20.7.0'\n}\n```\n\n### 4. تحديث قواعد Firebase Security Rules\n\n```javascript\nrules_version = '2';\nservice firebase.storage {\n  match /b/{bucket}/o {\n    match /{allPaths=**} {\n      allow read, write: if request.auth != null;\n    }\n  }\n}\n```\n\n### 5. اختبار النظام\n\nبعد تطبيق الإعدادات:\n1. استخدم رقم تجريبي أولاً: `+1 555 123 4567`\n2. ادخل الرمز: `123456`\n3. إذا نجح، جرب رقماً حقيقياً\n\n### 6. حل مشاكل إضافية\n\n#### إذا استمرت المشكلة:\n- تأكد من تشغيل Firebase CLI: `firebase use --add`\n- تحديث Firebase SDK: `flutter pub upgrade`\n- إعادة تشغيل التطبيق\n\n#### للأرقام الحقيقية:\n- تأكد من أن منطقتك مدعومة\n- تحقق من حصة SMS في Firebase Console\n- قد تحتاج إلى تفعيل حسابك الفوري (Billing Account)\n\n## الحالة الحالية للكود\n✅ **تم إصلاح:**\n- SellerAuthController مسجل في GetX\n- GPU Service محسن لتجنب الأخطاء\n- معالجة أخطاء شاملة\n\n⚠️ **يحتاج إصلاح:**\n- إعداد Phone Authentication في Firebase Console\n- إضافة أرقام تجريبية\n"
+        }
+    ]
+}

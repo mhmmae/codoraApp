@@ -24,13 +24,17 @@ class MarketplaceStoreCard extends StatelessWidget {
       margin: EdgeInsets.only(bottom: isGridView ? 0 : 16.h),
       decoration: BoxDecoration(
         color: MarketplaceColors.backgroundWhite,
-        borderRadius: BorderRadius.circular(MarketplaceDimensions.radiusXLarge.r),
+        borderRadius: BorderRadius.circular(
+          MarketplaceDimensions.radiusXLarge.r,
+        ),
         boxShadow: MarketplaceColors.mediumShadow,
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          borderRadius: BorderRadius.circular(MarketplaceDimensions.radiusXLarge.r),
+          borderRadius: BorderRadius.circular(
+            MarketplaceDimensions.radiusXLarge.r,
+          ),
           onTap: onTap,
           child: isGridView ? _buildGridCard() : _buildListCard(),
         ),
@@ -54,7 +58,7 @@ class MarketplaceStoreCard extends StatelessWidget {
             ),
           ),
         ),
-        
+
         // معلومات المتجر
         Expanded(
           flex: 2,
@@ -63,10 +67,7 @@ class MarketplaceStoreCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildStoreHeader(),
-                _buildStoreFooter(),
-              ],
+              children: [_buildStoreHeader(), _buildStoreFooter()],
             ),
           ),
         ),
@@ -83,11 +84,13 @@ class MarketplaceStoreCard extends StatelessWidget {
           _buildStoreImage(
             width: MarketplaceDimensions.imageMedium.w,
             height: MarketplaceDimensions.imageMedium.h,
-            borderRadius: BorderRadius.circular(MarketplaceDimensions.radiusLarge.r),
+            borderRadius: BorderRadius.circular(
+              MarketplaceDimensions.radiusLarge.r,
+            ),
           ),
-          
+
           SizedBox(width: MarketplaceDimensions.spaceMedium.w),
-          
+
           // معلومات المتجر
           Expanded(
             child: Column(
@@ -101,7 +104,7 @@ class MarketplaceStoreCard extends StatelessWidget {
                 ],
                 Row(
                   children: [
-                    if (store.shopCategory.isNotEmpty) ...[
+                    if (store.shopCategories.isNotEmpty) ...[
                       _buildCategoryChip(),
                       const Spacer(),
                     ],
@@ -111,9 +114,9 @@ class MarketplaceStoreCard extends StatelessWidget {
               ],
             ),
           ),
-          
+
           SizedBox(width: MarketplaceDimensions.spaceSmall.w),
-          
+
           // سهم التنقل
           Icon(
             Icons.arrow_forward_ios_rounded,
@@ -142,29 +145,32 @@ class MarketplaceStoreCard extends StatelessWidget {
         child: Stack(
           children: [
             // الصورة أو الرمز الافتراضي
-            store.shopFrontImageUrl != null && store.shopFrontImageUrl!.isNotEmpty
+            store.shopFrontImageUrl != null &&
+                    store.shopFrontImageUrl!.isNotEmpty
                 ? Image.network(
-                    store.shopFrontImageUrl!,
-                    width: width,
-                    height: height,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => _buildDefaultImage(),
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return Center(
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2.w,
-                          color: MarketplaceColors.primaryBlue,
-                          value: loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded /
-                                  loadingProgress.expectedTotalBytes!
-                              : null,
-                        ),
-                      );
-                    },
-                  )
+                  store.shopFrontImageUrl!,
+                  width: width,
+                  height: height,
+                  fit: BoxFit.cover,
+                  errorBuilder:
+                      (context, error, stackTrace) => _buildDefaultImage(),
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Center(
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.w,
+                        color: MarketplaceColors.primaryBlue,
+                        value:
+                            loadingProgress.expectedTotalBytes != null
+                                ? loadingProgress.cumulativeBytesLoaded /
+                                    loadingProgress.expectedTotalBytes!
+                                : null,
+                      ),
+                    );
+                  },
+                )
                 : _buildDefaultImage(),
-            
+
             // تدرج خفيف للتحسين البصري
             if (store.shopFrontImageUrl?.isNotEmpty ?? false)
               Container(
@@ -173,10 +179,7 @@ class MarketplaceStoreCard extends StatelessWidget {
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withOpacity(0.1),
-                    ],
+                    colors: [Colors.transparent, Colors.black.withOpacity(0.1)],
                   ),
                 ),
               ),
@@ -188,9 +191,7 @@ class MarketplaceStoreCard extends StatelessWidget {
 
   Widget _buildDefaultImage() {
     return Container(
-      decoration: const BoxDecoration(
-        gradient: MarketplaceColors.cardGradient,
-      ),
+      decoration: const BoxDecoration(gradient: MarketplaceColors.cardGradient),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -231,9 +232,9 @@ class MarketplaceStoreCard extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
-        
+
         // فئة المتجر في العرض الشبكي
-        if (isGridView && store.shopCategory.isNotEmpty) ...[
+        if (isGridView && store.shopCategories.isNotEmpty) ...[
           SizedBox(height: MarketplaceDimensions.spaceTiny.h),
           _buildCategoryChip(),
         ],
@@ -256,10 +257,7 @@ class MarketplaceStoreCard extends StatelessWidget {
   Widget _buildSellerInfo() {
     return Text(
       'البائع: ${store.sellerName}',
-      style: TextStyle(
-        fontSize: 12.sp,
-        color: MarketplaceColors.textSecondary,
-      ),
+      style: TextStyle(fontSize: 12.sp, color: MarketplaceColors.textSecondary),
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
     );
@@ -273,14 +271,16 @@ class MarketplaceStoreCard extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: MarketplaceColors.primaryBlue.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(MarketplaceDimensions.radiusSmall.r),
+        borderRadius: BorderRadius.circular(
+          MarketplaceDimensions.radiusSmall.r,
+        ),
         border: Border.all(
           color: MarketplaceColors.primaryBlue.withOpacity(0.2),
           width: 1,
         ),
       ),
       child: Text(
-        store.shopCategory,
+        store.shopCategories.join(', '),
         style: TextStyle(
           fontSize: 10.sp,
           color: MarketplaceColors.primaryBlue,
@@ -298,7 +298,9 @@ class MarketplaceStoreCard extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         color: MarketplaceColors.success.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(MarketplaceDimensions.radiusSmall.r),
+        borderRadius: BorderRadius.circular(
+          MarketplaceDimensions.radiusSmall.r,
+        ),
         border: Border.all(
           color: MarketplaceColors.success.withOpacity(0.3),
           width: 1,
@@ -331,7 +333,9 @@ class MarketplaceStoreCard extends StatelessWidget {
       padding: EdgeInsets.all(MarketplaceDimensions.paddingTiny.w),
       decoration: BoxDecoration(
         color: MarketplaceColors.info.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(MarketplaceDimensions.radiusSmall.r),
+        borderRadius: BorderRadius.circular(
+          MarketplaceDimensions.radiusSmall.r,
+        ),
       ),
       child: Icon(
         Icons.phone_rounded,
@@ -360,10 +364,12 @@ class AnimatedMarketplaceStoreCard extends StatefulWidget {
   });
 
   @override
-  State<AnimatedMarketplaceStoreCard> createState() => _AnimatedMarketplaceStoreCardState();
+  State<AnimatedMarketplaceStoreCard> createState() =>
+      _AnimatedMarketplaceStoreCardState();
 }
 
-class _AnimatedMarketplaceStoreCardState extends State<AnimatedMarketplaceStoreCard>
+class _AnimatedMarketplaceStoreCardState
+    extends State<AnimatedMarketplaceStoreCard>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
@@ -378,29 +384,29 @@ class _AnimatedMarketplaceStoreCardState extends State<AnimatedMarketplaceStoreC
       vsync: this,
     );
 
-    _scaleAnimation = Tween<double>(
-      begin: 0.8,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: MarketplaceAnimations.easeOutBack,
-    ));
+    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: MarketplaceAnimations.easeOutBack,
+      ),
+    );
 
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: MarketplaceAnimations.easeInOut,
-    ));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: MarketplaceAnimations.easeInOut,
+      ),
+    );
 
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.3),
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: MarketplaceAnimations.easeOutBack,
-    ));
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: MarketplaceAnimations.easeOutBack,
+      ),
+    );
 
     // بدء الانيميشن مع تأخير
     Future.delayed(widget.animationDelay, () {
@@ -439,4 +445,4 @@ class _AnimatedMarketplaceStoreCardState extends State<AnimatedMarketplaceStoreC
       },
     );
   }
-} 
+}

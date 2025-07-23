@@ -8,7 +8,7 @@ import '../../XXX/xxx_firebase.dart';
 import '../الكود الخاص بعامل/DeliveryDriverModel.dart';
 import 'CompanyAdminDashboardController.dart';
 import 'CompanyDriversListScreen.dart';
-import 'DeliveryTaskModel.dart';
+import '../../Model/DeliveryTaskModel.dart';
 
 class FullDriverProfileAdminController extends GetxController {
   final String driverId; // يتم تمريرها من الـ Binding

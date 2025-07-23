@@ -4,7 +4,7 @@ import 'package:flutter/material.dart'; // For BuildContext
 import 'package:geocoding/geocoding.dart' as geo;
 import 'package:get/get.dart';
 import '../../XXX/xxx_firebase.dart'; // تأكد من صحة المسار
-import '../../الكود الخاص بتطبيق التوصيل/الكود الخاص بمشرف التوصيل/DeliveryTaskModel.dart';
+import '../../Model/DeliveryTaskModel.dart';
 import '../controllers/local_notification_controller.dart';
 import 'Orderofuser/OrderOfUser.dart';
 

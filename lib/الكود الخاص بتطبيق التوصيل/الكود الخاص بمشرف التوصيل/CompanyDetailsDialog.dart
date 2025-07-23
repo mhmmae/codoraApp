@@ -4,7 +4,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart'; // لعرض الخريطة
 import 'package:intl/intl.dart';
 
-import 'DeliveryCompanyModel.dart';
+import '../../Model/DeliveryCompanyModel.dart';
 import 'PendingCompaniesController.dart';
 
 // افترض وجود هذه الملفات

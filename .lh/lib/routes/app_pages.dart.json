@@ -1,0 +1,18 @@
+{
+    "sourceFile": "lib/routes/app_pages.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1752858134110,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1752858134110,
+            "name": "Commit-0",
+            "content": "import 'package:get/get.dart';\nimport '../الكود الخاص بتطبيق البائع/ui/pages/retail_cart_page.dart';\nimport '../الكود الخاص بتطبيق البائع/ui/pages/location_picker_page.dart';\nimport '../الكود الخاص بتطبيق البائع/ui/pages/order_confirmation_page.dart';\nimport '../الكود الخاص بتطبيق البائع/ui/pages/enhanced_orders_page.dart';\nimport '../الكود الخاص بتطبيق البائع/ui/pages/store_map_page.dart';\nimport '../الكود الخاص بتطبيق البائع/ui/seller_main_screen.dart';\nimport '../الكود الخاص بتطبيق البائع/ui/controllers/retail_cart_controller.dart';\nimport '../الكود الخاص بتطبيق البائع/ui/controllers/location_picker_controller.dart';\nimport '../الكود الخاص بتطبيق البائع/ui/controllers/order_confirmation_controller.dart';\nimport '../الكود الخاص بتطبيق البائع/ui/controllers/enhanced_orders_controller.dart';\nimport 'app_routes.dart';\n\nclass AppPages {\n  static final routes = [\n\n    GetPage(\n      name: AppRoutes.retailCart,\n      page: () => const RetailCartPage(),\n      binding: BindingsBuilder(() {\n        Get.lazyPut<RetailCartController>(() => RetailCartController());\n      }),\n    ),\n    GetPage(\n      name: AppRoutes.locationPicker,\n      page: () => const LocationPickerPage(),\n      binding: BindingsBuilder(() {\n        Get.lazyPut<LocationPickerController>(() => LocationPickerController());\n      }),\n    ),\n    GetPage(\n      name: AppRoutes.orderConfirmation,\n      page: () => const OrderConfirmationPage(),\n      binding: BindingsBuilder(() {\n        Get.lazyPut<OrderConfirmationController>(() => OrderConfirmationController());\n      }),\n    ),\n    GetPage(\n      name: AppRoutes.enhancedOrders,\n      page: () => const EnhancedOrdersPage(),\n      binding: BindingsBuilder(() {\n        Get.lazyPut<EnhancedOrdersController>(() => EnhancedOrdersController());\n      }),\n    ),\n    GetPage(\n      name: AppRoutes.sellerMain,\n      page: () => SellerMainScreen(),\n    ),\n    GetPage(\n      name: AppRoutes.storeMap,\n      page: () => const StoreMapPage(),\n    ),\n  ];\n} "
+        }
+    ]
+}

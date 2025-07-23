@@ -29,8 +29,6 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>fb2706958992839491</string>
-				<string>twitter-login-homy</string>
 				<string>com.googleusercontent.apps.1055248567801-1m88bdj7h49pupand41n468ql0rem01h</string>
 			</array>
 		</dict>
@@ -71,6 +69,8 @@
 	<string>This app require access to Microphone</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app require access for Photo library Usage</string>
+	<key>RECAPTCHA_SITE_KEY</key>
+	<string>6Lft8GkrAAAAABYG67brC5p_-GYvwkckIPOqwvRm</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UIBackgroundModes</key>

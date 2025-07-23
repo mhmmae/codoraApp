@@ -15,8 +15,8 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../XXX/xxx_firebase.dart';
 import '../../routes/app_routes.dart';
-import '../الكود الخاص بمشرف التوصيل/DeliveryCompanyModel.dart';
-import '../الكود الخاص بمشرف التوصيل/DeliveryTaskModel.dart';
+import '../../Model/DeliveryCompanyModel.dart';
+import '../../Model/DeliveryTaskModel.dart';
 import 'DeliveryDriverModel.dart';
 import 'DriverDashboardController.dart'; // To launch external map apps
 

@@ -9,7 +9,7 @@ import 'package:get/get.dart';
 import '../../XXX/xxx_firebase.dart';
 import 'CompanyAdminDashboardController.dart';
 import 'CompanyTasksPendingDriverController.dart';
-import 'DeliveryTaskModel.dart';
+import '../../Model/DeliveryTaskModel.dart';
 
 class CompanyTaskClaimController extends GetxController {
   final String companyId;

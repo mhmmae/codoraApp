@@ -6,7 +6,7 @@ import 'package:geolocator/geolocator.dart';
 
 import '../../XXX/xxx_firebase.dart';
 import '../../routes/app_routes.dart';
-import '../الكود الخاص بمشرف التوصيل/DeliveryTaskModel.dart'; // لحساب المسافة وفلترتها
+import '../../Model/DeliveryTaskModel.dart'; // لحساب المسافة وفلترتها
 // ... (imports أخرى)
 
 // افترض أن DeliveryDriverModel لديك بها approvedCompanyId و currentLocation

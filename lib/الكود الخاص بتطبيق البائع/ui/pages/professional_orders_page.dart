@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math' as math;
@@ -23,7 +24,7 @@ class _ProfessionalOrdersPageState extends State<ProfessionalOrdersPage>
   late AnimationController _slideController;
   late AnimationController _scaleController;
   late TabController _tabController;
-  
+
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
   late Animation<double> _scaleAnimation;
@@ -31,50 +32,41 @@ class _ProfessionalOrdersPageState extends State<ProfessionalOrdersPage>
   @override
   void initState() {
     super.initState();
-    
+
     // إعداد متحكمات الأنيميشن
     _fadeController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    
+
     _slideController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-    
+
     _scaleController = AnimationController(
       duration: const Duration(milliseconds: 400),
       vsync: this,
     );
-    
+
     _tabController = TabController(length: 3, vsync: this);
-    
+
     // إعداد الأنيميشن
-    _fadeAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeInOut,
-    ));
-    
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(parent: _fadeController, curve: Curves.easeInOut),
+    );
+
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.3),
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _slideController,
-      curve: Curves.easeOutBack,
-    ));
-    
-    _scaleAnimation = Tween<double>(
-      begin: 0.8,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _scaleController,
-      curve: Curves.elasticOut,
-    ));
-    
+    ).animate(
+      CurvedAnimation(parent: _slideController, curve: Curves.easeOutBack),
+    );
+
+    _scaleAnimation = Tween<double>(begin: 0.8, end: 1.0).animate(
+      CurvedAnimation(parent: _scaleController, curve: Curves.elasticOut),
+    );
+
     // بدء الأنيميشن
     _fadeController.forward();
     _slideController.forward();
@@ -90,22 +82,72 @@ class _ProfessionalOrdersPageState extends State<ProfessionalOrdersPage>
     super.dispose();
   }
 
+  /// تحديد نوع الطلب (جملة أو تجزئة)
+  Map<String, dynamic> _getOrderTypeInfo(Map<String, dynamic> orderData) {
+    final orderType = orderData['orderType'] ?? '';
+    final buyerType = orderData['buyerType'] ?? '';
+    final source = orderData['source'] ?? '';
+
+    // تحديد نوع الطلب
+    bool isRetail = false;
+
+    // طلبات التجزئة من تطبيق العميل
+    if (orderType == 'retail' ||
+        buyerType == 'customer' ||
+        source == 'customer_app' ||
+        orderType == 'customer_order') {
+      isRetail = true;
+    }
+    // طلبات الجملة من تطبيق البائع
+    else if (orderType == 'wholesale' ||
+        buyerType == 'retailer' ||
+        source == 'seller_app' ||
+        orderType == 'wholesale_to_retail') {
+      isRetail = false;
+    }
+    // افتراضي: إذا لم نتمكن من تحديد النوع نعتبره تجزئة
+    else {
+      isRetail = true;
+    }
+
+    if (isRetail) {
+      return {
+        'type': 'retail',
+        'label': 'تجزئة',
+        'icon': Icons.person,
+        'color': Colors.blue,
+        'bgColor': Colors.blue.withOpacity(0.1),
+        'borderColor': Colors.blue.withOpacity(0.3),
+        'description': 'طلب من العميل',
+      };
+    } else {
+      return {
+        'type': 'wholesale',
+        'label': 'جملة',
+        'icon': Icons.business,
+        'color': Colors.orange,
+        'bgColor': Colors.orange.withOpacity(0.1),
+        'borderColor': Colors.orange.withOpacity(0.3),
+        'description': 'طلب من البائع',
+      };
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final ordersController = Get.put(OrdersController());
-    final size = MediaQuery.of(context).size;
-    
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
       body: SafeArea(
         child: Column(
           children: [
             // Header مع أنيميشن
-            _buildAnimatedHeader(ordersController, size),
-            
+            _buildAnimatedHeader(ordersController),
+
             // TabBar احترافي
             _buildProfessionalTabBar(ordersController),
-            
+
             // محتوى الطلبات
             Expanded(
               child: SlideTransition(
@@ -142,18 +184,18 @@ class _ProfessionalOrdersPageState extends State<ProfessionalOrdersPage>
   }
 
   /// بناء الهيدر المتحرك
-  Widget _buildAnimatedHeader(OrdersController controller, Size size) {
+  Widget _buildAnimatedHeader(OrdersController controller) {
     return FadeTransition(
       opacity: _fadeAnimation,
       child: Container(
-        padding: EdgeInsets.all(size.width * 0.05),
+        padding: EdgeInsets.all(20.w),
         decoration: BoxDecoration(
           color: Colors.white,
           boxShadow: [
             BoxShadow(
               color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
+              blurRadius: 10.r,
+              offset: Offset(0, 5.h),
             ),
           ],
         ),
@@ -191,72 +233,74 @@ class _ProfessionalOrdersPageState extends State<ProfessionalOrdersPage>
 
   /// بناء بطاقة الإحصائيات
   Widget _buildStatCard(RxInt count, String label, Color color, IconData icon) {
-    return Obx(() => ScaleTransition(
-      scale: _scaleAnimation,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: color.withOpacity(0.3)),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, color: color, size: 24),
-            const SizedBox(width: 8),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 500),
-                  transitionBuilder: (Widget child, Animation<double> animation) {
-                    return FadeTransition(
-                      opacity: animation,
-                      child: ScaleTransition(
-                        scale: animation,
-                        child: child,
+    return Obx(
+      () => ScaleTransition(
+        scale: _scaleAnimation,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+          decoration: BoxDecoration(
+            color: color.withOpacity(0.1),
+            borderRadius: BorderRadius.circular(15.r),
+            border: Border.all(color: color.withOpacity(0.3)),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, color: color, size: 24.sp),
+              SizedBox(width: 8.w),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 500),
+                    transitionBuilder: (
+                      Widget child,
+                      Animation<double> animation,
+                    ) {
+                      return FadeTransition(
+                        opacity: animation,
+                        child: ScaleTransition(scale: animation, child: child),
+                      );
+                    },
+                    child: Text(
+                      '${count.value}',
+                      key: ValueKey<int>(count.value),
+                      style: TextStyle(
+                        fontSize: 24.sp,
+                        fontWeight: FontWeight.bold,
+                        color: color,
                       ),
-                    );
-                  },
-                  child: Text(
-                    '${count.value}',
-                    key: ValueKey<int>(count.value),
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: color,
                     ),
                   ),
-                ),
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: color.withOpacity(0.8),
+                  Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: color.withOpacity(0.8),
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
-    ));
+    );
   }
 
   /// بناء TabBar احترافي
   Widget _buildProfessionalTabBar(OrdersController controller) {
     return Container(
-      margin: const EdgeInsets.all(16),
+      margin: EdgeInsets.all(16.w),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(20.r),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 5),
+            blurRadius: 10.r,
+            offset: Offset(0, 5.h),
           ),
         ],
       ),
@@ -269,12 +313,12 @@ class _ProfessionalOrdersPageState extends State<ProfessionalOrdersPage>
               Theme.of(context).primaryColor.withOpacity(0.8),
             ],
           ),
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(20.r),
           boxShadow: [
             BoxShadow(
               color: Theme.of(context).primaryColor.withOpacity(0.3),
-              blurRadius: 8,
-              offset: const Offset(0, 3),
+              blurRadius: 8.r,
+              offset: Offset(0, 3.h),
             ),
           ],
         ),
@@ -283,7 +327,11 @@ class _ProfessionalOrdersPageState extends State<ProfessionalOrdersPage>
         unselectedLabelColor: Colors.grey[600],
         tabs: [
           _buildAnimatedTab('جديد', controller.newOrdersCount, Colors.blue),
-          _buildAnimatedTab('قيد التحضير', controller.acceptedOrdersCount, Colors.orange),
+          _buildAnimatedTab(
+            'قيد التحضير',
+            controller.acceptedOrdersCount,
+            Colors.orange,
+          ),
           _buildAnimatedTab('جاهز', controller.readyOrdersCount, Colors.green),
         ],
       ),
@@ -293,36 +341,41 @@ class _ProfessionalOrdersPageState extends State<ProfessionalOrdersPage>
   /// بناء تاب متحرك
   Widget _buildAnimatedTab(String label, RxInt count, Color color) {
     return Tab(
-      child: Obx(() => AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(label),
-            if (count.value > 0) ...[
-              const SizedBox(width: 8),
-              AnimatedScale(
-                scale: count.value > 0 ? 1.0 : 0.0,
-                duration: const Duration(milliseconds: 300),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: color,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    '${count.value}',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
+      child: Obx(
+        () => AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(label, style: TextStyle(fontSize: 10.sp)),
+              if (count.value > 0) ...[
+                // SizedBox(width: 1.w),
+                AnimatedScale(
+                  scale: count.value > 0 ? 1.0 : 0.0,
+                  duration: const Duration(milliseconds: 300),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 6.w,
+                      vertical: 2.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: color,
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: Text(
+                      '${count.value}',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
-              ),
+              ],
             ],
-          ],
+          ),
         ),
-      )),
+      ),
     );
   }
 
@@ -333,7 +386,7 @@ class _ProfessionalOrdersPageState extends State<ProfessionalOrdersPage>
     Color accentColor,
   ) {
     final ordersController = Get.find<OrdersController>();
-    
+
     return Obx(() {
       if (ordersList.isEmpty) {
         return _buildEmptyState(status, accentColor);
@@ -343,20 +396,17 @@ class _ProfessionalOrdersPageState extends State<ProfessionalOrdersPage>
         onRefresh: () => ordersController.refreshOrders(),
         color: accentColor,
         child: ListView.builder(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.all(16.w),
           itemCount: ordersList.length,
           itemBuilder: (context, index) {
             final orderDoc = ordersList[index];
             final orderData = orderDoc.data() as Map<String, dynamic>;
-            
+
             return AnimatedBuilder(
               animation: _scaleController,
               builder: (context, child) {
                 final delay = index * 0.1;
-                final animation = Tween<double>(
-                  begin: 0.0,
-                  end: 1.0,
-                ).animate(
+                final animation = Tween<double>(begin: 0.0, end: 1.0).animate(
                   CurvedAnimation(
                     parent: _scaleController,
                     curve: Interval(
@@ -366,7 +416,7 @@ class _ProfessionalOrdersPageState extends State<ProfessionalOrdersPage>
                     ),
                   ),
                 );
-                
+
                 return Transform.scale(
                   scale: animation.value,
                   child: _buildProfessionalOrderCard(
@@ -391,53 +441,100 @@ class _ProfessionalOrdersPageState extends State<ProfessionalOrdersPage>
     OrderStatus status,
     Color accentColor,
   ) {
+    // تحديد نوع الطلب
+    final orderTypeInfo = _getOrderTypeInfo(orderData);
+    final typeColor = orderTypeInfo['color'] as Color;
+    final typeBgColor = orderTypeInfo['bgColor'] as Color;
+    final typeBorderColor = orderTypeInfo['borderColor'] as Color;
+
     return FutureBuilder<DocumentSnapshot>(
-      future: FirebaseFirestore.instance
-          .collection(FirebaseX.collectionApp)
-          .doc(orderData['uidUser'])
-          .get(),
+      future:
+          FirebaseFirestore.instance
+              .collection(FirebaseX.collectionApp)
+              .doc(orderData['uidUser'])
+              .get(),
       builder: (context, userSnapshot) {
         if (!userSnapshot.hasData || !userSnapshot.data!.exists) {
           return const SizedBox.shrink();
         }
 
         final userData = userSnapshot.data!.data() as Map<String, dynamic>;
-        
+
         return Container(
-          margin: const EdgeInsets.only(bottom: 16),
+          margin: EdgeInsets.only(bottom: 16.h),
           child: Material(
             color: Colors.white,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(20.r),
             elevation: 2,
-            shadowColor: accentColor.withOpacity(0.2),
+            shadowColor: typeColor.withOpacity(0.2),
             child: InkWell(
-              borderRadius: BorderRadius.circular(20),
-              onTap: () => _showOrderDetails(orderDoc, orderData, userData, status),
+              borderRadius: BorderRadius.circular(20.r),
+              onTap:
+                  () =>
+                      _showOrderDetails(orderDoc, orderData, userData, status),
               child: Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: accentColor.withOpacity(0.2),
-                    width: 1,
+                  borderRadius: BorderRadius.circular(20.r),
+                  border: Border.all(color: typeBorderColor, width: 2.w),
+                  // إضافة تدرج لوني خفيف
+                  gradient: LinearGradient(
+                    colors: [typeBgColor, Colors.white],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
                 ),
                 child: Column(
                   children: [
+                    // شريط علوي لنوع الطلب
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(
+                        vertical: 8.h,
+                        horizontal: 16.w,
+                      ),
+                      decoration: BoxDecoration(
+                        color: typeColor,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(18.r),
+                          topRight: Radius.circular(18.r),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            orderTypeInfo['icon'] as IconData,
+                            color: Colors.white,
+                            size: 18.sp,
+                          ),
+                          SizedBox(width: 8.w),
+                          Text(
+                            orderTypeInfo['label'] as String,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14.sp,
+                            ),
+                          ),
+                          SizedBox(width: 4.w),
+                          Text(
+                            '• ${orderTypeInfo['description']}',
+                            style: TextStyle(
+                              color: Colors.white.withOpacity(0.9),
+                              fontSize: 12.sp,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                     // Header مع معلومات الطلب
                     Container(
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.all(16.w),
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            accentColor.withOpacity(0.1),
-                            accentColor.withOpacity(0.05),
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(20),
-                          topRight: Radius.circular(20),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(18.r),
+                          bottomRight: Radius.circular(18.r),
                         ),
                       ),
                       child: Row(
@@ -446,13 +543,13 @@ class _ProfessionalOrdersPageState extends State<ProfessionalOrdersPage>
                           Hero(
                             tag: 'user_${orderDoc.id}',
                             child: Container(
-                              width: 60,
-                              height: 60,
+                              width: 60.w,
+                              height: 60.h,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: accentColor.withOpacity(0.3),
-                                  width: 2,
+                                  color: typeColor,
+                                  width: 3.w,
                                 ),
                                 image: DecorationImage(
                                   fit: BoxFit.cover,
@@ -461,7 +558,7 @@ class _ProfessionalOrdersPageState extends State<ProfessionalOrdersPage>
                               ),
                             ),
                           ),
-                          const SizedBox(width: 12),
+                          SizedBox(width: 12.w),
                           // معلومات العميل
                           Expanded(
                             child: Column(
@@ -469,27 +566,27 @@ class _ProfessionalOrdersPageState extends State<ProfessionalOrdersPage>
                               children: [
                                 Text(
                                   userData['name'] ?? 'عميل',
-                                  style: const TextStyle(
-                                    fontSize: 16,
+                                  style: TextStyle(
+                                    fontSize: 16.sp,
                                     fontWeight: FontWeight.bold,
                                   ),
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 1,
                                 ),
-                                const SizedBox(height: 4),
+                                SizedBox(height: 4.h),
                                 Row(
                                   children: [
                                     Icon(
                                       Icons.phone,
-                                      size: 14,
+                                      size: 14.sp,
                                       color: Colors.grey[600],
                                     ),
-                                    const SizedBox(width: 4),
+                                    SizedBox(width: 4.w),
                                     Flexible(
                                       child: Text(
                                         userData['phneNumber'] ?? 'غير محدد',
                                         style: TextStyle(
-                                          fontSize: 12,
+                                          fontSize: 12.sp,
                                           color: Colors.grey[600],
                                         ),
                                         overflow: TextOverflow.ellipsis,
@@ -501,48 +598,57 @@ class _ProfessionalOrdersPageState extends State<ProfessionalOrdersPage>
                               ],
                             ),
                           ),
-                          // التاريخ والوقت فقط
+                          // التاريخ والوقت
                           GetBuilder<GetDateToText>(
                             init: GetDateToText(),
-                            builder: (dateController) => Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 6,
-                              ),
-                              decoration: BoxDecoration(
-                                color: accentColor.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                  color: accentColor.withOpacity(0.3),
-                                  width: 1,
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.access_time,
-                                    size: 14,
-                                    color: accentColor,
+                            builder:
+                                (dateController) => Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 12.w,
+                                    vertical: 6.h,
                                   ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    dateController.dateToText(orderData['timeOrder']),
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: accentColor,
-                                      fontWeight: FontWeight.w500,
+                                  decoration: BoxDecoration(
+                                    color: typeColor.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(20.r),
+                                    border: Border.all(
+                                      color: typeColor.withOpacity(0.3),
+                                      width: 1.w,
                                     ),
                                   ),
-                                ],
-                              ),
-                            ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.access_time,
+                                        size: 14.sp,
+                                        color: typeColor,
+                                      ),
+                                      SizedBox(width: 4.w),
+                                      Text(
+                                        dateController.dateToText(
+                                          orderData['timeOrder'],
+                                        ),
+                                        style: TextStyle(
+                                          fontSize: 11.sp,
+                                          color: typeColor,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                           ),
                         ],
                       ),
                     ),
                     // أزرار الإجراءات
-                    _buildActionSection(orderDoc.id, orderData, userData, status, accentColor),
+                    _buildActionSection(
+                      orderDoc.id,
+                      orderData,
+                      userData,
+                      status,
+                      typeColor, // استخدام لون نوع الطلب بدلاً من accentColor
+                    ),
                   ],
                 ),
               ),
@@ -561,9 +667,8 @@ class _ProfessionalOrdersPageState extends State<ProfessionalOrdersPage>
     OrderStatus status,
     Color accentColor,
   ) {
-
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: EdgeInsets.all(16.w),
       child: Row(
         children: [
           if (status == OrderStatus.pending) ...[
@@ -576,7 +681,7 @@ class _ProfessionalOrdersPageState extends State<ProfessionalOrdersPage>
                 isOutlined: true,
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: 12.w),
             Expanded(
               flex: 2,
               child: _buildAnimatedButton(
@@ -620,7 +725,7 @@ class _ProfessionalOrdersPageState extends State<ProfessionalOrdersPage>
                 isOutlined: true,
               ),
             ),
-            const SizedBox(width: 12),
+            SizedBox(width: 12.w),
             Expanded(
               flex: 2,
               child: _buildAnimatedButton(
@@ -657,25 +762,26 @@ class _ProfessionalOrdersPageState extends State<ProfessionalOrdersPage>
                     color: Colors.blue,
                     isOutlined: true,
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12.h),
                   Text(
                     'في انتظار عامل التوصيل',
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 14.sp,
                       color: Colors.grey[700],
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  SizedBox(height: 12.h),
                   // QR Code
                   GestureDetector(
-                    onTap: () => BarcodeHelper.showBarcodeDialog(
-                      context,
-                      orderData['numberOfOrder'].toString(),
-                      'طلب من ${userData['name'] ?? 'عميل'}',
-                    ),
+                    onTap:
+                        () => BarcodeHelper.showBarcodeDialog(
+                          context,
+                          orderData['numberOfOrder'].toString(),
+                          'طلب من ${userData['name'] ?? 'عميل'}',
+                        ),
                     child: Container(
-                      padding: const EdgeInsets.all(16),
+                      padding: EdgeInsets.all(16.w),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
@@ -683,7 +789,7 @@ class _ProfessionalOrdersPageState extends State<ProfessionalOrdersPage>
                             Colors.green.withOpacity(0.1),
                           ],
                         ),
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(16.r),
                         border: Border.all(
                           color: Colors.green.withOpacity(0.3),
                           width: 1.5,
@@ -694,23 +800,23 @@ class _ProfessionalOrdersPageState extends State<ProfessionalOrdersPage>
                           Icon(
                             Icons.qr_code_2,
                             color: Colors.green[700],
-                            size: 40,
+                            size: 40.sp,
                           ),
-                          const SizedBox(height: 8),
+                          SizedBox(height: 8.h),
                           Text(
                             'عرض رمز QR للتسليم',
                             style: TextStyle(
                               color: Colors.green[700],
                               fontWeight: FontWeight.bold,
-                              fontSize: 16,
+                              fontSize: 16.sp,
                             ),
                           ),
-                          const SizedBox(height: 4),
+                          SizedBox(height: 4.h),
                           Text(
                             'اطلب من عامل التوصيل مسح الرمز',
                             style: TextStyle(
                               color: Colors.green[600],
-                              fontSize: 12,
+                              fontSize: 12.sp,
                             ),
                           ),
                         ],
@@ -738,14 +844,14 @@ class _ProfessionalOrdersPageState extends State<ProfessionalOrdersPage>
       duration: const Duration(milliseconds: 200),
       child: Material(
         color: isOutlined ? Colors.transparent : color,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
         child: InkWell(
           onTap: onPressed,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(12.r),
           child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 12),
+            padding: EdgeInsets.symmetric(vertical: 12.h),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(12),
+              borderRadius: BorderRadius.circular(12.r),
               border: isOutlined ? Border.all(color: color, width: 1.5) : null,
             ),
             child: Row(
@@ -754,14 +860,15 @@ class _ProfessionalOrdersPageState extends State<ProfessionalOrdersPage>
                 Icon(
                   icon,
                   color: isOutlined ? color : Colors.white,
-                  size: 20,
+                  size: 16.sp,
                 ),
-                const SizedBox(width: 8),
+                SizedBox(width: 8.w),
                 Text(
                   label,
                   style: TextStyle(
                     color: isOutlined ? color : Colors.white,
                     fontWeight: FontWeight.bold,
+                    fontSize: 10.sp,
                   ),
                 ),
               ],
@@ -781,34 +888,31 @@ class _ProfessionalOrdersPageState extends State<ProfessionalOrdersPage>
   ) {
     Get.bottomSheet(
       Container(
-        padding: const EdgeInsets.all(20),
-        decoration: const BoxDecoration(
+        padding: EdgeInsets.all(20.w),
+        decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(25),
-            topRight: Radius.circular(25),
+            topLeft: Radius.circular(25.r),
+            topRight: Radius.circular(25.r),
           ),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 50,
-              height: 5,
+              width: 50.w,
+              height: 5.h,
               decoration: BoxDecoration(
                 color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(10.r),
               ),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20.h),
             Text(
               'تفاصيل الطلب',
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20.h),
             // يمكنك إضافة المزيد من التفاصيل هنا
           ],
         ),
@@ -823,22 +927,24 @@ class _ProfessionalOrdersPageState extends State<ProfessionalOrdersPage>
     HapticFeedback.mediumImpact();
     Get.dialog(
       AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.r),
+        ),
         title: Row(
           children: [
             Icon(Icons.warning, color: Colors.orange[700]),
-            const SizedBox(width: 8),
-            const Text('تأكيد رفض الطلب'),
+            SizedBox(width: 8.w),
+            Text('تأكيد رفض الطلب', style: TextStyle(fontSize: 18.sp)),
           ],
         ),
-        content: const Text(
+        content: Text(
           'هل أنت متأكد من رفض هذا الطلب؟\nلا يمكن التراجع عن هذا الإجراء.',
-          style: TextStyle(height: 1.5),
+          style: TextStyle(height: 1.5, fontSize: 14.sp),
         ),
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: const Text('إلغاء'),
+            child: Text('إلغاء', style: TextStyle(fontSize: 14.sp)),
           ),
           ElevatedButton(
             onPressed: () {
@@ -848,12 +954,13 @@ class _ProfessionalOrdersPageState extends State<ProfessionalOrdersPage>
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(10.r),
               ),
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
             ),
-            child: const Text(
+            child: Text(
               'رفض الطلب',
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: Colors.white, fontSize: 14.sp),
             ),
           ),
         ],
@@ -867,57 +974,110 @@ class _ProfessionalOrdersPageState extends State<ProfessionalOrdersPage>
     HapticFeedback.mediumImpact();
     Get.dialog(
       AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.r),
+        ),
         title: Row(
           children: [
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: EdgeInsets.all(8.w),
               decoration: BoxDecoration(
                 color: Colors.orange.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                Icons.inventory_2,
+                Icons.delivery_dining,
                 color: Colors.orange[700],
-                size: 24,
+                size: 24.sp,
               ),
             ),
-            const SizedBox(width: 12),
-            const Text(
-              'تأكيد جاهزية الطلب',
-              style: TextStyle(fontSize: 18),
-            ),
+            SizedBox(width: 12.w),
+            Text('تأكيد جاهزية الطلب', style: TextStyle(fontSize: 18.sp)),
           ],
         ),
-        content: const Text(
-          'هل أنت متأكد من انتهاء تجهيز الطلب؟\n\nسوف يتم استدعاء عامل التوصيل لأخذ الطلب.',
-          style: TextStyle(height: 1.5),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'هل أنت متأكد من انتهاء تجهيز الطلب؟',
+              style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w500),
+            ),
+            SizedBox(height: 12.h),
+            Container(
+              padding: EdgeInsets.all(12.w),
+              decoration: BoxDecoration(
+                color: Colors.blue.withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8.r),
+                border: Border.all(color: Colors.blue.withOpacity(0.3)),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.info_outline, color: Colors.blue, size: 20.sp),
+                  SizedBox(width: 8.w),
+                  Expanded(
+                    child: Text(
+                      'سيتم إشعار عامل التوصيل تلقائياً لاستلام الطلب',
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: Colors.blue[700],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
         actions: [
           TextButton(
             onPressed: () => Get.back(),
             child: Text(
               'إلغاء',
-              style: TextStyle(color: Colors.grey[600]),
+              style: TextStyle(color: Colors.grey[600], fontSize: 14.sp),
             ),
           ),
-          const SizedBox(width: 8),
+          SizedBox(width: 8.w),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               HapticFeedback.mediumImpact();
               Get.back();
-              Get.find<OrdersController>().markOrderReady(orderId);
+
+              try {
+                await Get.find<OrdersController>().markOrderReady(orderId);
+
+                // إشعار إضافي لاستدعاء عامل التوصيل
+                Get.snackbar(
+                  '🚚 تم استدعاء عامل التوصيل',
+                  'تم إشعار عامل التوصيل لاستلام الطلب',
+                  backgroundColor: Colors.blue.withOpacity(0.1),
+                  colorText: Colors.blue,
+                  duration: const Duration(seconds: 4),
+                  icon: const Icon(Icons.delivery_dining, color: Colors.blue),
+                );
+              } catch (e) {
+                Get.snackbar(
+                  '❌ خطأ',
+                  'فشل في تحديث حالة الطلب',
+                  backgroundColor: Colors.red.withOpacity(0.1),
+                  colorText: Colors.red,
+                );
+              }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.orange,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.r),
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
             ),
-            child: const Text(
+            child: Text(
               'نعم، الطلب جاهز',
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 14.sp,
+              ),
             ),
           ),
         ],
@@ -962,32 +1122,29 @@ class _ProfessionalOrdersPageState extends State<ProfessionalOrdersPage>
                   angle: value * 2 * math.pi,
                   child: Icon(
                     data['icon'],
-                    size: 80,
+                    size: 80.sp,
                     color: color.withOpacity(0.3),
                   ),
                 );
               },
             ),
-            const SizedBox(height: 20),
+            SizedBox(height: 20.h),
             Text(
               data['title'],
               style: TextStyle(
-                fontSize: 18,
+                fontSize: 18.sp,
                 fontWeight: FontWeight.bold,
                 color: Colors.grey[700],
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8.h),
             Text(
               data['subtitle'],
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[500],
-              ),
+              style: TextStyle(fontSize: 14.sp, color: Colors.grey[500]),
             ),
           ],
         ),
       ),
     );
   }
-} 
+}

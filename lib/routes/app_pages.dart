@@ -31,7 +31,9 @@ class AppPages {
       name: AppRoutes.orderConfirmation,
       page: () => const OrderConfirmationPage(),
       binding: BindingsBuilder(() {
-        Get.lazyPut<OrderConfirmationController>(() => OrderConfirmationController());
+        Get.lazyPut<OrderConfirmationController>(
+          () => OrderConfirmationController(),
+        );
       }),
     ),
     GetPage(
@@ -41,13 +43,7 @@ class AppPages {
         Get.lazyPut<EnhancedOrdersController>(() => EnhancedOrdersController());
       }),
     ),
-    GetPage(
-      name: AppRoutes.sellerMain,
-      page: () => SellerMainScreen(),
-    ),
-    GetPage(
-      name: AppRoutes.storeMap,
-      page: () => const StoreMapPage(),
-    ),
+    GetPage(name: AppRoutes.sellerMain, page: () => SellerMainScreen()),
+    GetPage(name: AppRoutes.storeMap, page: () => const StoreMapPage()),
   ];
-} 
+}

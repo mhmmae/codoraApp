@@ -11,7 +11,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../XXX/xxx_firebase.dart';
 import '../../routes/app_routes.dart';
 import '../الكود الخاص بمشرف التوصيل/CompanyDriversListScreen.dart';
-import '../الكود الخاص بمشرف التوصيل/DeliveryTaskModel.dart';
+import '../../Model/DeliveryTaskModel.dart';
 import 'DeliveryDriverModel.dart';
 import 'DriverLocationService.dart';
 import 'ProcessedTaskForDriverDisplay.dart'; //  تأكد من إضافة الحزمة

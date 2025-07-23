@@ -8,7 +8,7 @@ import 'package:intl/intl.dart'; // إذا احتجت لتنسيق تواريخ 
 // استورد المتحكم والنماذج وأي ودجات مساعدة
 import '../../routes/app_routes.dart';
 import '../الكود الخاص بمشرف التوصيل/DeliveryTaskDetailsForAdminScreen.dart';
-import '../الكود الخاص بمشرف التوصيل/DeliveryTaskModel.dart';
+import '../../Model/DeliveryTaskModel.dart';
 import 'MyTasksController.dart';
 import 'ProcessedTaskForDriverDisplay.dart';
 

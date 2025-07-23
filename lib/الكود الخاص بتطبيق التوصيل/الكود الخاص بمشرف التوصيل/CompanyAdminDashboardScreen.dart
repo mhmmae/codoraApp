@@ -5,7 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 import '../الكود الخاص بعامل/DeliveryDriverModel.dart';
 import 'CompanyAdminDashboardController.dart';
-import 'DeliveryTaskModel.dart';
+import '../../Model/DeliveryTaskModel.dart';
 
 
 class CompanyAdminDashboardScreen extends GetView<CompanyAdminDashboardController> {

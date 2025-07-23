@@ -4,7 +4,7 @@ import 'package:intl/intl.dart';
 
 import 'CompanyTaskHistoryController.dart';
 import 'DeliveryTaskDetailsForAdminScreen.dart';
-import 'DeliveryTaskModel.dart';
+import '../../Model/DeliveryTaskModel.dart';
 // استورد المتحكم والنماذج وأي أدوات مساعدة (مثل getTaskStatusVisuals)
 // import 'company_task_history_controller.dart';
 // import '../models/DeliveryTaskModel.dart';
@@ -17,7 +17,6 @@ class CompanyTaskHistoryScreen extends GetView<CompanyTaskHistoryController> {
 
   Widget _buildTaskHistoryCard(DeliveryTaskModel task, BuildContext context) {
     final statusVisuals = getTaskStatusVisuals(task.status, context); // استخدم دالة عرض الحالة
-    final theme = Theme.of(context);
 
     return Card(
         elevation: 1.5,

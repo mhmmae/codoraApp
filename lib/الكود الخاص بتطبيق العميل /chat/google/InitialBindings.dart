@@ -16,7 +16,7 @@ import 'LocalDatabaseService2GetxService.dart';
 import 'MessageRepository.dart';
 import 'StorageService.dart';
 
-class InitialBindings extends Bindings {
+class InitialBindings1 extends Bindings {
   @override
   void dependencies() async{
     // Get.lazyPut(()=>CompanyRegistrationController());

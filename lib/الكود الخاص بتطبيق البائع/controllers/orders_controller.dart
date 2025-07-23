@@ -12,7 +12,7 @@ enum OrderStatus {
   readyForPickup, // جاهز للاستلام من قبل عامل التوصيل
   pickedUp, // تم استلامه من قبل عامل التوصيل
   delivered, // تم التسليم
-  cancelled // تم الإلغاء
+  cancelled, // تم الإلغاء
 }
 
 /// متحكم إدارة الطلبات للبائع
@@ -20,28 +20,32 @@ enum OrderStatus {
 class OrdersController extends GetxController {
   // حالة عدد الطلبات الجديدة
   final RxInt newOrdersCount = 0.obs;
-  
+
   // حالة عدد الطلبات المقبولة
   final RxInt acceptedOrdersCount = 0.obs;
-  
+
   // حالة عدد الطلبات الجاهزة للاستلام
   final RxInt readyOrdersCount = 0.obs;
-  
+
   // حالة التحميل
   final RxBool isLoading = false.obs;
-  
+
   // قائمة جميع الطلبات
-  final RxList<QueryDocumentSnapshot> allOrdersList = <QueryDocumentSnapshot>[].obs;
-  
+  final RxList<QueryDocumentSnapshot> allOrdersList =
+      <QueryDocumentSnapshot>[].obs;
+
   // قائمة الطلبات الجديدة
-  final RxList<QueryDocumentSnapshot> newOrdersList = <QueryDocumentSnapshot>[].obs;
-  
+  final RxList<QueryDocumentSnapshot> newOrdersList =
+      <QueryDocumentSnapshot>[].obs;
+
   // قائمة الطلبات المقبولة
-  final RxList<QueryDocumentSnapshot> acceptedOrdersList = <QueryDocumentSnapshot>[].obs;
-  
+  final RxList<QueryDocumentSnapshot> acceptedOrdersList =
+      <QueryDocumentSnapshot>[].obs;
+
   // قائمة الطلبات الجاهزة للاستلام
-  final RxList<QueryDocumentSnapshot> readyOrdersList = <QueryDocumentSnapshot>[].obs;
-  
+  final RxList<QueryDocumentSnapshot> readyOrdersList =
+      <QueryDocumentSnapshot>[].obs;
+
   // للاستماع لتغييرات الطلبات في الوقت الفعلي
   StreamSubscription<QuerySnapshot>? _ordersStreamSubscription;
 
@@ -65,24 +69,26 @@ class OrdersController extends GetxController {
     if (currentSellerId == null) return;
 
     _ordersStreamSubscription = FirebaseFirestore.instance
-        .collection('orders')
+        .collection(FirebaseX.ordersCollection)
         .where('appName', isEqualTo: FirebaseX.appName)
         .where('uidAdd', isEqualTo: currentSellerId)
         .snapshots()
         .listen(
-      (QuerySnapshot snapshot) {
-        allOrdersList.value = snapshot.docs;
-        _categorizeOrders(snapshot.docs);
-        
-        debugPrint("📋 [OrdersController] تم تحديث جميع الطلبات: ${allOrdersList.length}");
-        debugPrint("   - طلبات جديدة: ${newOrdersCount.value}");
-        debugPrint("   - طلبات مقبولة: ${acceptedOrdersCount.value}");
-        debugPrint("   - طلبات جاهزة: ${readyOrdersCount.value}");
-      },
-      onError: (error) {
-        debugPrint("❌ [OrdersController] خطأ في جلب الطلبات: $error");
-      },
-    );
+          (QuerySnapshot snapshot) {
+            allOrdersList.value = snapshot.docs;
+            _categorizeOrders(snapshot.docs);
+
+            debugPrint(
+              "📋 [OrdersController] تم تحديث جميع الطلبات: ${allOrdersList.length}",
+            );
+            debugPrint("   - طلبات جديدة: ${newOrdersCount.value}");
+            debugPrint("   - طلبات مقبولة: ${acceptedOrdersCount.value}");
+            debugPrint("   - طلبات جاهزة: ${readyOrdersCount.value}");
+          },
+          onError: (error) {
+            debugPrint("❌ [OrdersController] خطأ في جلب الطلبات: $error");
+          },
+        );
   }
 
   /// تصنيف الطلبات حسب حالتها
@@ -94,7 +100,7 @@ class OrdersController extends GetxController {
     for (var order in orders) {
       final data = order.data() as Map<String, dynamic>;
       final orderStatus = _getOrderStatus(data);
-      
+
       switch (orderStatus) {
         case OrderStatus.pending:
           newOrders.add(order);
@@ -114,7 +120,7 @@ class OrdersController extends GetxController {
     newOrdersList.value = newOrders;
     acceptedOrdersList.value = acceptedOrders;
     readyOrdersList.value = readyOrders;
-    
+
     newOrdersCount.value = newOrders.length;
     acceptedOrdersCount.value = acceptedOrders.length;
     readyOrdersCount.value = readyOrders.length;
@@ -124,11 +130,11 @@ class OrdersController extends GetxController {
   OrderStatus _getOrderStatus(Map<String, dynamic> orderData) {
     final isAccepted = orderData['RequestAccept'] ?? false;
     final orderStatus = orderData['orderStatus'] as String?;
-    
+
     if (!isAccepted) {
       return OrderStatus.pending;
     }
-    
+
     switch (orderStatus) {
       case 'accepted':
         return OrderStatus.accepted;
@@ -150,18 +156,21 @@ class OrdersController extends GetxController {
     if (currentSellerId == null) return;
 
     isLoading.value = true;
-    
+
     try {
-      final QuerySnapshot snapshot = await FirebaseFirestore.instance
-          .collection('orders')
-          .where('appName', isEqualTo: FirebaseX.appName)
-          .where('uidAdd', isEqualTo: currentSellerId)
-          .get();
+      final QuerySnapshot snapshot =
+          await FirebaseFirestore.instance
+              .collection(FirebaseX.ordersCollection)
+              .where('appName', isEqualTo: FirebaseX.appName)
+              .where('uidAdd', isEqualTo: currentSellerId)
+              .get();
 
       allOrdersList.value = snapshot.docs;
       _categorizeOrders(snapshot.docs);
-      
-      debugPrint("🔄 [OrdersController] تم تحديث جميع الطلبات يدوياً: ${allOrdersList.length}");
+
+      debugPrint(
+        "🔄 [OrdersController] تم تحديث جميع الطلبات يدوياً: ${allOrdersList.length}",
+      );
     } catch (e) {
       debugPrint("❌ [OrdersController] خطأ في تحديث الطلبات: $e");
     } finally {
@@ -172,10 +181,11 @@ class OrdersController extends GetxController {
   /// جلب تفاصيل طلب معين
   Future<Map<String, dynamic>?> getOrderDetails(String orderId) async {
     try {
-      final DocumentSnapshot orderDoc = await FirebaseFirestore.instance
-          .collection('orders')
-          .doc(orderId)
-          .get();
+      final DocumentSnapshot orderDoc =
+          await FirebaseFirestore.instance
+              .collection(FirebaseX.ordersCollection)
+              .doc(orderId)
+              .get();
 
       if (orderDoc.exists) {
         return orderDoc.data() as Map<String, dynamic>?;
@@ -191,15 +201,15 @@ class OrdersController extends GetxController {
   Future<void> acceptOrder(String orderId) async {
     try {
       await FirebaseFirestore.instance
-          .collection('orders')
+          .collection(FirebaseX.ordersCollection)
           .doc(orderId)
           .update({
-        'RequestAccept': true,
-        'orderStatus': 'accepted',
-        'acceptedAt': FieldValue.serverTimestamp(),
-        'updatedAt': FieldValue.serverTimestamp(),
-      });
-      
+            'RequestAccept': true,
+            'orderStatus': 'accepted',
+            'acceptedAt': FieldValue.serverTimestamp(),
+            'updatedAt': FieldValue.serverTimestamp(),
+          });
+
       Get.snackbar(
         '✅ تم قبول الطلب',
         'يمكنك الآن البدء في تحضير المنتجات',
@@ -207,7 +217,7 @@ class OrdersController extends GetxController {
         colorText: Get.theme.colorScheme.primary,
         duration: Duration(seconds: 3),
       );
-      
+
       debugPrint("✅ [OrdersController] تم قبول الطلب $orderId");
     } catch (e) {
       debugPrint("❌ [OrdersController] خطأ في قبول الطلب: $e");
@@ -225,15 +235,15 @@ class OrdersController extends GetxController {
   Future<void> rejectOrder(String orderId) async {
     try {
       await FirebaseFirestore.instance
-          .collection('orders')
+          .collection(FirebaseX.ordersCollection)
           .doc(orderId)
           .update({
-        'RequestAccept': false,
-        'orderStatus': 'cancelled',
-        'rejectedAt': FieldValue.serverTimestamp(),
-        'updatedAt': FieldValue.serverTimestamp(),
-      });
-      
+            'RequestAccept': false,
+            'orderStatus': 'cancelled',
+            'rejectedAt': FieldValue.serverTimestamp(),
+            'updatedAt': FieldValue.serverTimestamp(),
+          });
+
       Get.snackbar(
         '❌ تم رفض الطلب',
         'تم رفض الطلب بنجاح',
@@ -241,7 +251,7 @@ class OrdersController extends GetxController {
         colorText: Get.theme.colorScheme.error,
         duration: Duration(seconds: 3),
       );
-      
+
       debugPrint("❌ [OrdersController] تم رفض الطلب $orderId");
     } catch (e) {
       debugPrint("❌ [OrdersController] خطأ في رفض الطلب: $e");
@@ -253,14 +263,14 @@ class OrdersController extends GetxController {
   Future<void> markOrderReady(String orderId) async {
     try {
       await FirebaseFirestore.instance
-          .collection('orders')
+          .collection(FirebaseX.ordersCollection)
           .doc(orderId)
           .update({
-        'orderStatus': 'readyForPickup',
-        'readyAt': FieldValue.serverTimestamp(),
-        'updatedAt': FieldValue.serverTimestamp(),
-      });
-      
+            'orderStatus': 'readyForPickup',
+            'readyAt': FieldValue.serverTimestamp(),
+            'updatedAt': FieldValue.serverTimestamp(),
+          });
+
       Get.snackbar(
         '📦 الطلب جاهز!',
         'تم تحديد الطلب كجاهز للاستلام من قبل عامل التوصيل',
@@ -268,8 +278,10 @@ class OrdersController extends GetxController {
         colorText: Get.theme.colorScheme.tertiary,
         duration: Duration(seconds: 3),
       );
-      
-      debugPrint("📦 [OrdersController] تم تحديد الطلب $orderId كجاهز للاستلام");
+
+      debugPrint(
+        "📦 [OrdersController] تم تحديد الطلب $orderId كجاهز للاستلام",
+      );
     } catch (e) {
       debugPrint("❌ [OrdersController] خطأ في تحديد الطلب كجاهز: $e");
       Get.snackbar(
@@ -286,14 +298,14 @@ class OrdersController extends GetxController {
   Future<void> confirmPickup(String orderId) async {
     try {
       await FirebaseFirestore.instance
-          .collection('orders')
+          .collection(FirebaseX.ordersCollection)
           .doc(orderId)
           .update({
-        'orderStatus': 'pickedUp',
-        'pickedUpAt': FieldValue.serverTimestamp(),
-        'updatedAt': FieldValue.serverTimestamp(),
-      });
-      
+            'orderStatus': 'pickedUp',
+            'pickedUpAt': FieldValue.serverTimestamp(),
+            'updatedAt': FieldValue.serverTimestamp(),
+          });
+
       Get.snackbar(
         '🚚 تم الاستلام',
         'تم استلام الطلب من قبل عامل التوصيل',
@@ -301,8 +313,10 @@ class OrdersController extends GetxController {
         colorText: Get.theme.colorScheme.secondary,
         duration: Duration(seconds: 3),
       );
-      
-      debugPrint("🚚 [OrdersController] تم استلام الطلب $orderId من قبل عامل التوصيل");
+
+      debugPrint(
+        "🚚 [OrdersController] تم استلام الطلب $orderId من قبل عامل التوصيل",
+      );
     } catch (e) {
       debugPrint("❌ [OrdersController] خطأ في تأكيد استلام الطلب: $e");
       rethrow;
@@ -344,4 +358,4 @@ class OrdersController extends GetxController {
         return '❌';
     }
   }
-} 
+}

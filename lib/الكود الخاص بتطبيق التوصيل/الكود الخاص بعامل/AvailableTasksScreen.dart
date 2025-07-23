@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../../XXX/xxx_firebase.dart';
-import '../الكود الخاص بمشرف التوصيل/DeliveryTaskModel.dart';
+import '../../Model/DeliveryTaskModel.dart';
 import 'AvailableTasksController.dart';
 // import 'available_tasks_controller.dart';
 // import '../models/DeliveryTaskModel.dart';

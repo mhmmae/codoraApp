@@ -9,7 +9,7 @@ import 'package:fl_chart/fl_chart.dart'; // <--- استيراد fl_chart
 import '../../XXX/xxx_firebase.dart';
 import '../../routes/app_routes.dart';
 import '../الكود الخاص بمشرف التوصيل/DeliveryTaskDetailsForAdminScreen.dart';
-import '../الكود الخاص بمشرف التوصيل/DeliveryTaskModel.dart';
+import '../../Model/DeliveryTaskModel.dart';
 import 'DriverDashboardController.dart';
 import 'ProcessedTaskForDriverDisplay.dart'; // <--- استيراد responsive_framework
 

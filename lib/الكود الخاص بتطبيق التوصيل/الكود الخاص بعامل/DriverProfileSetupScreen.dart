@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../الكود الخاص بمشرف التوصيل/DeliveryCompanyModel.dart';
+import '../../Model/DeliveryCompanyModel.dart';
 import 'DriverProfileSetupController.dart';
 
 // افتراض وجود هذه الملفات، قم بتعديل المسارات

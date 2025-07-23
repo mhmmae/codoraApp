@@ -1,0 +1,18 @@
+{
+    "sourceFile": ".vscode/tasks.json",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1752939410111,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1752939410111,
+            "name": "Commit-0",
+            "content": "{\n\t\"version\": \"2.0.0\",\n\t\"tasks\": [\n\t\t{\n\t\t\t\"label\": \"Flutter Run\",\n\t\t\t\"type\": \"shell\",\n\t\t\t\"command\": \"flutter\",\n\t\t\t\"args\": [\n\t\t\t\t\"run\"\n\t\t\t],\n\t\t\t\"group\": \"build\",\n\t\t\t\"isBackground\": true,\n\t\t\t\"problemMatcher\": [\n\t\t\t\t\"$flutter\"\n\t\t\t]\n\t\t}\n\t]\n}"
+        }
+    ]
+}

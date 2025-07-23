@@ -11,7 +11,7 @@ import '../../XXX/xxx_firebase.dart';
 import '../الكود الخاص بعامل/DeliveryDriverModel.dart';
 import 'CompanyAdminDashboardController.dart';
 import 'CompanyDriversListScreen.dart';
-import 'DeliveryTaskModel.dart';
+import '../../Model/DeliveryTaskModel.dart';
 import 'TasksNeedingInterventionController.dart';
 
 // استورد نماذجك، ثوابتك، مساراتك، ومتحكمات أخرى

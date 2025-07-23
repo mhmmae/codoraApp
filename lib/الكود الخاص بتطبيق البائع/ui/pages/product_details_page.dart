@@ -1675,25 +1675,6 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     );
   }
 
-  String _formatDate(dynamic dateValue) {
-    if (dateValue == null) return 'غير محدد';
-    
-    try {
-      DateTime date;
-      if (dateValue is String) {
-        date = DateTime.parse(dateValue);
-      } else if (dateValue is DateTime) {
-        date = dateValue;
-      } else {
-        return 'غير محدد';
-      }
-      
-      final formatter = DateFormat('dd/MM/yyyy', 'ar');
-      return formatter.format(date);
-    } catch (e) {
-      return 'غير محدد';
-    }
-  }
 
   Widget _buildBottomCartBar() {
     return GetBuilder<RetailCartController>(

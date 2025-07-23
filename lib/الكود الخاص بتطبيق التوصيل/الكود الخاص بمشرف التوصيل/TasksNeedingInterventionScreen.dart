@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import 'DeliveryTaskModel.dart';
+import '../../Model/DeliveryTaskModel.dart';
 import 'TasksNeedingInterventionController.dart'; // لتنسيق التاريخ
 
 // استورد المتحكم والنموذج

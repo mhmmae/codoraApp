@@ -6,7 +6,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import '../الكود الخاص بعامل/DeliveryDriverModel.dart';
 import 'AssignTaskController.dart';
 import 'DeliveryTaskDetailsForAdminScreen.dart';
-import 'DeliveryTaskModel.dart';
+import '../../Model/DeliveryTaskModel.dart';
 // استورد المتحكم والنماذج ودالة الحالة
 // import 'assign_task_controller.dart';
 // import '../models/DeliveryTaskModel.dart';

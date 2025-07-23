@@ -22,8 +22,8 @@ import '../../XXX/xxx_firebase.dart'; // عدّل المسار
 // قد تحتاج إلى هذا إذا كنت تستخدم PosAlign من esc_pos_utils
 // import 'package:esc_pos_utils/esc_pos_utils.dart';
 
-import '../الكود الخاص بمشرف التوصيل/DeliveryCompanyModel.dart';
-import '../الكود الخاص بمشرف التوصيل/DeliveryTaskModel.dart'; // لاستخدام StaffUserRole
+import '../../Model/DeliveryCompanyModel.dart';
+import '../../Model/DeliveryTaskModel.dart'; // لاستخدام StaffUserRole
 // (قد تحتاج لنموذج الطرد المجمع لاحقًا)
 // import '../models/consolidated_package_model.dart'; //  إذا أنشأته
 

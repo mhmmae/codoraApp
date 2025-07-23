@@ -28,10 +28,7 @@ class GetSignup1 extends GetxController {
   // متغير تفاعلي لحالة التحميل
   final RxBool isLoading = false.obs;
 
-  GetSignup1({
-    required this.email,
-    required this.password,
-  });
+  GetSignup1({required this.email, required this.password});
 
   /// دالة تسجيل الحساب باستخدام البريد الإلكتروني وكلمة المرور.
   /// تتحقق أولاً من صلاحية النموذج باستخدام [globalKey]، وإن كانت البيانات صحيحة يتم إنشاء الحساب،
@@ -71,7 +68,8 @@ class GetSignup1 extends GetxController {
         case 'email-already-in-use':
           Get.defaultDialog(
             title: 'البريد موجود',
-            middleText: 'هذا البريد مستخدم بالفعل. قم بتسجيل الدخول بدلاً من إنشاء حساب جديد.',
+            middleText:
+                'هذا البريد مستخدم بالفعل. قم بتسجيل الدخول بدلاً من إنشاء حساب جديد.',
             textConfirm: 'موافق',
             onConfirm: () => Get.back(),
             barrierDismissible: true,
@@ -121,13 +119,7 @@ class GetSignup1 extends GetxController {
   }
 }
 
-
-
-
-
-
-class Get3  extends GetxController{}
-
+class Get3 extends GetxController {}
 
 /// Controller شامل لإدارة تسجيل الدخول باستخدام مزودي المصادقة المتعددين.
 /// يعتمد على GetX لتحديث الحالة وإدارة التنقل دون استخدام BuildContext عبر الفجوات غير المتزامنة.
@@ -170,9 +162,13 @@ class SignInController1 extends GetxController {
 
   /// توليد سلسلة عشوائية (nonce)، بطول 32 حرفًا افتراضيًا.
   String generateNonce([int length = 32]) {
-    const charset = '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
+    const charset =
+        '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
     final random = Random.secure();
-    return List.generate(length, (_) => charset[random.nextInt(charset.length)]).join();
+    return List.generate(
+      length,
+      (_) => charset[random.nextInt(charset.length)],
+    ).join();
   }
 
   /// ترجيع قيمة SHA-256 للسلسلة (hex).
@@ -196,8 +192,10 @@ class SignInController1 extends GetxController {
       await docRef.update({'fcmToken': token.toString()});
       Get.offAll(() => SellerMainScreen());
     } else {
-      Get.to(() => SellerTypeSelectionScreen(), 
-          routeName: '/seller_type_selection');
+      Get.to(
+        () => SellerTypeSelectionScreen(),
+        routeName: '/seller_type_selection',
+      );
     }
   }
 
@@ -235,13 +233,14 @@ class SignInController1 extends GetxController {
   Future<void> signInWithGoogle() async {
     try {
       isLoading.value = true;
-      final googleUser = await GoogleSignIn(
-        // scopes:
-        // [
-        //   'email',
-        //   'https://www.googleapis.com/auth/contacts.readonly',
-        // ]
-      ).signIn();
+      final googleUser =
+          await GoogleSignIn(
+            // scopes:
+            // [
+            //   'email',
+            //   'https://www.googleapis.com/auth/contacts.readonly',
+            // ]
+          ).signIn();
       if (googleUser == null) return; // في حال إلغاء تسجيل الدخول
 
       final googleAuth = await googleUser.authentication;
@@ -265,9 +264,13 @@ class SignInController1 extends GetxController {
   Future<UserCredential?> signInWithFacebookForAndroid() async {
     try {
       isLoading.value = true;
-      final result = await FacebookAuth.instance.login(permissions: ['public_profile', 'email']);
+      final result = await FacebookAuth.instance.login(
+        permissions: ['public_profile', 'email'],
+      );
       if (result.status == LoginStatus.success && result.accessToken != null) {
-        final credential = FacebookAuthProvider.credential(result.accessToken!.tokenString);
+        final credential = FacebookAuthProvider.credential(
+          result.accessToken!.tokenString,
+        );
         final userCredential = await auth.signInWithCredential(credential);
         await handleUserNavigation();
         return userCredential;
@@ -303,7 +306,9 @@ class SignInController1 extends GetxController {
         switch (loginResult.accessToken!.type) {
           case AccessTokenType.classic:
             final token = loginResult.accessToken as ClassicToken;
-            facebookCredential = FacebookAuthProvider.credential(token.authenticationToken!);
+            facebookCredential = FacebookAuthProvider.credential(
+              token.authenticationToken!,
+            );
             break;
           case AccessTokenType.limited:
             final token = loginResult.accessToken as LimitedToken;
@@ -314,14 +319,16 @@ class SignInController1 extends GetxController {
               rawNonce: rawNonce,
             );
             break;
-          default:
-            throw Exception('نوع التوكن غير معروف.');
         }
       } else {
-        facebookCredential = FacebookAuthProvider.credential(loginResult.accessToken!.tokenString);
+        facebookCredential = FacebookAuthProvider.credential(
+          loginResult.accessToken!.tokenString,
+        );
       }
 
-      final userCredential = await auth.signInWithCredential(facebookCredential);
+      final userCredential = await auth.signInWithCredential(
+        facebookCredential,
+      );
       await handleUserNavigation();
       return userCredential;
     } on FirebaseAuthException catch (e) {
@@ -415,10 +422,11 @@ class SignInController1 extends GetxController {
         password: passwordController.text.trim(),
       );
       if (userCredential.user?.emailVerified ?? false) {
-        final docSnapshot = await FirebaseFirestore.instance
-            .collection(FirebaseX.collectionSeller)
-            .doc(auth.currentUser!.uid)
-            .get();
+        final docSnapshot =
+            await FirebaseFirestore.instance
+                .collection(FirebaseX.collectionSeller)
+                .doc(auth.currentUser!.uid)
+                .get();
         if (docSnapshot.exists) {
           final token = await FirebaseMessaging.instance.getToken();
           await FirebaseFirestore.instance
@@ -427,12 +435,85 @@ class SignInController1 extends GetxController {
               .update({'token': token.toString()});
           Get.offAll(() => SellerMainScreen());
         } else {
-          Get.to(() => SellerRegistrationScreen(
-
-          ));
+          Get.to(
+            () => const SellerRegistrationScreen(),
+            binding: BindingsBuilder(() {
+              Get.lazyPut(() => SellerRegistrationController());
+            }),
+          );
         }
       } else {
-        await Get.dialog(AlertDialog(
+        await Get.dialog(
+          AlertDialog(
+            title: Text('قم بالتحقق من الآيميل'),
+            content: Text('اذهب إلى البريد الوارد لتفعيل حسابك.'),
+            actions: [
+              IconButton(
+                icon: Icon(Icons.close),
+                onPressed: () {
+                  isFirstTime = false;
+                  Get.back();
+                },
+              ),
+            ],
+          ),
+        );
+        return;
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        await Get.dialog(
+          AlertDialog(
+            title: Text('الايميل غير صحيح'),
+            content: Text('هذا الايميل غير موجود.'),
+            actions: [
+              IconButton(
+                icon: Icon(Icons.close),
+                onPressed: () {
+                  isFirstTime = false;
+                  Get.back();
+                },
+              ),
+            ],
+          ),
+        );
+      } else if (e.code == 'wrong-password') {
+        await Get.dialog(
+          AlertDialog(
+            title: Text('الايميل أو الرمز السري خطأ'),
+            content: Text('حاول مرة أخرى.'),
+            actions: [
+              IconButton(
+                icon: Icon(Icons.close),
+                onPressed: () {
+                  isFirstTime = false;
+                  Get.back();
+                },
+              ),
+            ],
+          ),
+        );
+      } else {
+        showError(
+          'خطأ أثناء تسجيل الدخول بواسطة البريد الإلكتروني: ${e.message}',
+        );
+      }
+    } catch (e) {
+      showError(
+        'خطأ غير معروف أثناء تسجيل الدخول بواسطة البريد الإلكتروني: $e',
+      );
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  @override
+  void onInit() async {
+    // TODO: implement onInit
+    super.onInit();
+    if (isFirstTime) {
+      await Get.dialog(
+        AlertDialog(
           title: Text('قم بالتحقق من الآيميل'),
           content: Text('اذهب إلى البريد الوارد لتفعيل حسابك.'),
           actions: [
@@ -442,81 +523,13 @@ class SignInController1 extends GetxController {
                 isFirstTime = false;
                 Get.back();
               },
-            )
+            ),
           ],
-        ));
-        return;
-      }
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        await Get.dialog(AlertDialog(
-          title: Text('الايميل غير صحيح'),
-          content: Text('هذا الايميل غير موجود.'),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.close),
-              onPressed: () {
-                isFirstTime = false;
-                Get.back();
-              },
-            )
-          ],
-        ));
-      } else if (e.code == 'wrong-password') {
-        await Get.dialog(AlertDialog(
-          title: Text('الايميل أو الرمز السري خطأ'),
-          content: Text('حاول مرة أخرى.'),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.close),
-              onPressed: () {
-                isFirstTime = false;
-                Get.back();
-              },
-            )
-          ],
-        ));
-      } else {
-        showError('خطأ أثناء تسجيل الدخول بواسطة البريد الإلكتروني: ${e.message}');
-      }
-    } catch (e) {
-      showError('خطأ غير معروف أثناء تسجيل الدخول بواسطة البريد الإلكتروني: $e');
-    } finally {
-      isLoading.value = false;
+        ),
+      );
     }
   }
-
-
-
-
-
-  @override
-  void onInit() async{
-    // TODO: implement onInit
-    super.onInit();
-    if(isFirstTime){
-      await Get.dialog(AlertDialog(
-        title: Text('قم بالتحقق من الآيميل'),
-        content: Text('اذهب إلى البريد الوارد لتفعيل حسابك.'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.close),
-            onPressed: () {
-              isFirstTime = false;
-              Get.back();
-            },
-          )
-        ],
-      ));
-
-    }
-  }
-
-
 }
-
-
-
 
 class SellerAuthController extends GetxController {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -526,11 +539,13 @@ class SellerAuthController extends GetxController {
   String? sellerType;
   String? get sellerType1 => sellerType;
 
-
   Future<void> selectSellerTypeAndNavigate(String type) async {
     User? currentUser = _auth.currentUser;
     if (currentUser == null) {
-      Get.snackbar('خطأ', 'لم يتم تسجيل دخول المستخدم. يرجى تسجيل الدخول أولاً.');
+      Get.snackbar(
+        'خطأ',
+        'لم يتم تسجيل دخول المستخدم. يرجى تسجيل الدخول أولاً.',
+      );
       // يمكنك هنا إضافة انتقال إلى شاشة تسجيل الدخول إذا لزم الأمر
       // مثال: Get.offAll(() => SellerLoginScreen());
       return;
@@ -539,7 +554,7 @@ class SellerAuthController extends GetxController {
     try {
       // تحسين GPU قبل التنقل
       GPUService.handlePageTransition();
-      
+
       Get.dialog(
         const Center(child: CircularProgressIndicator()),
         barrierDismissible: false,
@@ -558,9 +573,13 @@ class SellerAuthController extends GetxController {
       }
 
       // تنظيف الصفحات والتنقل مع إعطاء اسم للصفحة
-      Get.to(() => const SellerRegistrationScreen(), 
-          routeName: '/seller_registration');
-
+      Get.to(
+        () => const SellerRegistrationScreen(),
+        routeName: '/seller_registration',
+        binding: BindingsBuilder(() {
+          Get.lazyPut(() => SellerRegistrationController());
+        }),
+      );
     } catch (e) {
       if (Get.isDialogOpen ?? false) {
         Get.back(); // إغلاق الحوار
@@ -572,7 +591,4 @@ class SellerAuthController extends GetxController {
       );
     }
   }
-
-
 }
-

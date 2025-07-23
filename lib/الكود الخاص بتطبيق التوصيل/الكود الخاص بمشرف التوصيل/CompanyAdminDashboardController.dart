@@ -8,7 +8,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../XXX/xxx_firebase.dart';
 import '../../routes/app_routes.dart';
 import '../الكود الخاص بعامل/DeliveryDriverModel.dart';
-import 'DeliveryTaskModel.dart';
+import '../../Model/DeliveryTaskModel.dart';
 import 'DriverMapInfoDialog.dart';
 
 // In DeliveryDriverModel.dart (أو ملف enums الخاص بك)
